@@ -4,7 +4,7 @@
     <v-sheet
       :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`"
       class="pa-3"
-      style="height: 700px"
+      style="height: 1000px"
     >
       <vl-map data-projection="EPSG:4326" style="height: 300px">
         <vl-view
