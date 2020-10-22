@@ -4,6 +4,7 @@
     <v-sheet
       :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`"
       class="pa-3"
+      style="height: 700px"
     >
       <vl-map data-projection="EPSG:4326" style="height: 300px">
         <vl-view
@@ -20,32 +21,31 @@
           <vl-geom-point :coordinates="[-3.688173, 40.453206]"></vl-geom-point>
         </vl-feature>
       </vl-map>
+      <v-row>
+        <v-col cols="4" md="1">
+          <v-text-field
+            disable
+            v-model="cordenadas"
+            label="Cordenadas(Altitud/latitud)"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="3" md="1">
+          <v-text-field
+            v-model="tiempo_activo"
+            label="Uptime(hours)"
+          ></v-text-field>
+          <v-text-field
+            v-model="id_device"
+            label="Uptime(hours)"
+          ></v-text-field>
+        </v-col>
+      </v-row>
     </v-sheet>
-
-    <v-row>
-      <v-col cols="4" md="1">
-        <v-text-field
-          disable
-          v-model="cordenadas"
-          label="Cordenadas(Altitud/latitud)"
-        ></v-text-field>
-      </v-col>
-      <v-col cols="3" md="1">
-        <v-text-field
-          v-model="tiempo_activo"
-          label="Uptime(hours)"
-        ></v-text-field>
-        <v-text-field
-          v-model="id_device"
-          label="Uptime(hours)"
-        ></v-text-field>
-      </v-col>
-    </v-row>
   </div>
 </template>
 <script>
-import VueLayers from 'vuelayers';
-import 'vuelayers/lib/style.css';
+import VueLayers from "vuelayers";
+import "vuelayers/lib/style.css";
 export default {
   components: {
     VueLayers,
@@ -58,8 +58,8 @@ export default {
   },
   data() {
     return {
-      cordenadas:"",
-      center:"",
+      cordenadas: "",
+      center: "",
       zoom: 15,
       center: [-3.688173, 40.453206],
       rotation: 0,
