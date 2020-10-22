@@ -37,31 +37,33 @@
         </v-form>
         <v-card class="mx-auto">
           <v-list dense class="lista1">
-            <v-subheader>NAME</v-subheader>
+            <v-subheader>Devices</v-subheader>
             <v-list-item-group color="primary">
-              <v-list-item v-for="resultado in resultados" :key="resultado.id">
+              <v-list-item v-for="resultado in resultados" :key="resultado.id" @click="routeremulador(resultado.id)">
                 <v-list-item-content>
                   <v-list-item-title
                     v-text="resultado.Nombre"
-                    @click="routeremulador(resultado.id)"
                   ></v-list-item-title>
+                   <v-list-item-subtitle 
+                  v-text="resultado.id"
+                  ></v-list-item-subtitle>
                 </v-list-item-content>
+                <v-list-item-action>
+                  <v-icon>mdi-chevron-right</v-icon>
+                </v-list-item-action>
               </v-list-item>
             </v-list-item-group>
           </v-list>
-          <v-list dense class="lista2">
+          <!-- <v-list dense class="lista2">
             <v-subheader>ID</v-subheader>
             <v-list-item-group color="primary">
               <v-list-item v-for="resultado in resultados" :key="resultado.id">
                 <v-list-item-content>
-                  <v-list-item-title 
-                  v-text="resultado.id"
-                  @click="routeremulador(resultado.id)"
-                  ></v-list-item-title>
+                 
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
-          </v-list>
+          </v-list> -->
         </v-card>
       </v-container>
       {{ field }}
@@ -142,6 +144,7 @@ export default {
 }
 .lista1 {
   float: left;
+  width: 100%;
 }
 .lista2 {
   float: right;

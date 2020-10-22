@@ -1,48 +1,46 @@
 <template>
   <div>
     <h4>Device Geolocation</h4>
-    <v-card elevation="14">
-      <v-sheet
-        :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`"
-        class="pa-3"
-      >
-        <vl-map data-projection="EPSG:4326" style="height: 300px">
-          <vl-view
-            :zoom.sync="zoom"
-            :center.sync="center"
-            :rotation.sync="rotation"
-          ></vl-view>
+    <v-sheet
+      :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`"
+      class="pa-3"
+    >
+      <vl-map data-projection="EPSG:4326" style="height: 300px">
+        <vl-view
+          :zoom.sync="zoom"
+          :center.sync="center"
+          :rotation.sync="rotation"
+        ></vl-view>
 
-          <vl-layer-tile>
-            <vl-source-osm></vl-source-osm>
-          </vl-layer-tile>
+        <vl-layer-tile>
+          <vl-source-osm></vl-source-osm>
+        </vl-layer-tile>
 
-          <vl-feature>
-            <vl-geom-point :coordinates="[-3.688173, 40.453206]"></vl-geom-point>
-          </vl-feature>
-        </vl-map>
-      </v-sheet>
+        <vl-feature>
+          <vl-geom-point :coordinates="[-3.688173, 40.453206]"></vl-geom-point>
+        </vl-feature>
+      </vl-map>
+    </v-sheet>
 
-      <v-row>
-        <v-col cols="4" md="1">
-          <v-text-field
-            disable
-            v-model="cordenadas"
-            label="Cordenadas(Altitud/latitud)"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3" md="1">
-          <v-text-field
-            v-model="tiempo_activo"
-            label="Uptime(hours)"
-          ></v-text-field>
-          <v-text-field
-            v-model="id_device"
-            label="Uptime(hours)"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-    </v-card>
+    <v-row>
+      <v-col cols="4" md="1">
+        <v-text-field
+          disable
+          v-model="cordenadas"
+          label="Cordenadas(Altitud/latitud)"
+        ></v-text-field>
+      </v-col>
+      <v-col cols="3" md="1">
+        <v-text-field
+          v-model="tiempo_activo"
+          label="Uptime(hours)"
+        ></v-text-field>
+        <v-text-field
+          v-model="id_device"
+          label="Uptime(hours)"
+        ></v-text-field>
+      </v-col>
+    </v-row>
   </div>
 </template>
 <script>
