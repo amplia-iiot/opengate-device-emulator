@@ -19,8 +19,9 @@
 </template> 
 <script>
 import "codemirror/mode/javascript/javascript.js";
-import { codemirror } from "vue-codemirror-lite";
+import { codemirror } from 'vue-codemirror';
 import "codemirror/theme/base16-dark.css";
+import 'codemirror/lib/codemirror.css';
 
 import VJsf from "@koumoul/vjsf/lib/VJsf.js";
 import "@koumoul/vjsf/lib/VJsf.css";

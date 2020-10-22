@@ -46,10 +46,11 @@
   </div>
 </template>
 <script>
-import { PointGeom } from "vuelayers";
+import VueLayers from 'vuelayers';
+import 'vuelayers/lib/style.css';
 export default {
   components: {
-    PointGeom,
+    VueLayers,
   },
   name: "mapas",
   inject: {
