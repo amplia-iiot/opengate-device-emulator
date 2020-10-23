@@ -2,7 +2,6 @@
   <v-app>
     <v-dialog v-model="dialog" persistent max-width="290">
       <template v-slot:activator="{ on, attrs }">
-        {{deviceapi.device.identifier}}
         <v-btn
           class="boton"
           color="red"
@@ -40,15 +39,16 @@
           <v-list dense class="lista1">
             <v-subheader>Devices</v-subheader>
             <v-list-item-group color="primary">
-              <v-list-item v-for="resultado in resultados" :key="resultado.id" @click="routeremulador(resultado.id)">
+              <v-list-item v-for="(value, key) in name" :key="value">
                 <v-list-item-content>
-                  <v-list-item-title
-                    v-text="resultado.Nombre"
-                  ></v-list-item-title>
-                   <v-list-item-subtitle 
-                  v-text="resultado.id"
-                  ></v-list-item-subtitle>
-                </v-list-item-content>
+                  <v-list-item-title>
+                    {{value}}
+                  </v-list-item-title>
+                   <v-list-item-subtitle> 
+                     {{id[key]}}
+                   </v-list-item-subtitle> 
+                 </v-list-item-content>
+                
                 <v-list-item-action>
                   <v-icon>mdi-chevron-right</v-icon>
                 </v-list-item-action>
@@ -85,7 +85,9 @@ export default {
   mixins: [baseUserApiMixin],
   data() {
     return {
-      deviceapi: "",
+      deviceapi: [],
+      name:[],
+      id: [],
       todo: true,
       field: null,
       dialog: false,
@@ -140,9 +142,9 @@ export default {
       return resultados;
     },
   },
-  async mounted() {
+   mounted() {
       
-      this.deviceapi = await this.$api.entitiesSearchBuilder().flattened().filter(
+     const response =  this.$api.entitiesSearchBuilder().flattened().filter(
       { 
          and: [
            {
@@ -152,8 +154,15 @@ export default {
            }
          ]
        }
-     ).limit(50, 1).build().execute()
-    
+     ).limit(50, 1).build().execute().then((response)=>{
+       this.deviceapi = response.data.entities
+       this.deviceapi.forEach(element => {
+         this.id.push(element["provision.device.identifier"]._value._current.value)
+         this.name.push(element["provision.device.name"]._value._current.value)
+       });
+        
+     }
+     )
    
     
 
