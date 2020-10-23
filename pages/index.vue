@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <v-app id="inspire">
+      {{apiUsuario}}
       <v-form
-        @submit.prevent="enviar()"
         ref="form"
         v-model="valid"
         lazy-validation
@@ -10,9 +10,9 @@
         <v-autocomplete
           style="color: red"
           class="items"
-          v-model="Servidor"
+          v-model="servidor"
           :items="items"
-          label="Servidor"
+          label="servidor"
           required
         ></v-autocomplete>
         <v-text-field
@@ -46,22 +46,25 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+import baseUserApiMixin from '@/mixins/baseUserApi.mixin.js'
+
 export default {
   name: "formulario",
-
+  mixins: [baseUserApiMixin],
   data() {
     return {
       name: "nombre",
       pass_user: ["Angel11111111", "Chema22222222", "Diego33333333", "Monica44444444"],
       valid: true,
       
-      Servidor: null,
+      servidor: null,
       items: [
-        "Servidor 1",
-        "Servidor 2",
-        "Servidor 3",
-        "Servidor 4",
-        "Servidor test",
+        "servidor 1",
+        "servidor 2",
+        "servidor 3",
+        "servidor 4",
+        "servidor test",
       ],
       checkbox: false,
       /* Contraseña */
@@ -71,51 +74,83 @@ export default {
       
     };
   },
-
   methods: {
-    enviar() {
-      if (this.checkbox == true) {
-        localStorage.setItem("nombre", this.name);
-        localStorage.setItem("servidor", this.Servidor);
-        localStorage.setItem("contraseña", this.password);
-      } else{
-      localStorage.nombre = "";
-      localStorage.Servidor = "";
-      localStorage.password = "";
-      }
+    ...mapMutations({
+        configure: 'ogapi/setOgapi'
+    }),
+    async enviar() {
+      this.configure( {
+        config: {
+          servidor: this.servidor
+        }
+      })
 
-      if (this.pass_user.includes(this.name + this.password) && ((this.nombre + this.password) != "test00000000")) {
-        alert("Bienvenido");
-        this.$router.push("/listerpage"); /*Aqui deberia ir la ruta del buscador*/ 
-      } else {
-        alert("Constraseña o Usuario Incorrectos!");
+      try {
+        const response = await this.$api.newUserFinder().findByEmailAndPassword(this.name, this.password)
+
+        if (response && response.data) {
+          alert("Bienvenido");
+
+          if (this.checkbox == true) {
+            localStorage.setItem("nombre", this.name)
+            localStorage.setItem("servidor", this.servidor)
+            localStorage.setItem("contraseña", this.password)
+          } else{
+            delete localStorage.nombre
+            delete localStorage.servidor
+            delete localStorage.password
+          }
+
+          this.configure( {
+            config: {
+              apiKey: response.data.apiKey,
+              servidor: this.servidor
+            }
+          })
+
+          this.$router.push("/listerpage") /*Aqui deberia ir la ruta del buscador*/  
+        } 
+      } catch (errPeticion) {
+        console.error(errPeticion)
+        alert("Constraseña o Usuario Incorrectos!")
+        delete localStorage.nombre
+        delete localStorage.servidor
+        delete localStorage.password
+      
       }
+    
+      // if (this.pass_user.includes(this.name + this.password) && ((this.nombre + this.password) != "test00000000")) {
+      //   alert("Bienvenido");
+      //   this.$router.push("/listerpage"); /*Aqui deberia ir la ruta del buscador*/ 
+      // } else {
+      //   alert("Constraseña o Usuario Incorrectos!")
+      // }
       console.log(
         "Nombre " +
           this.name +
-          " Servidor: " +
-          this.Servidor +
+          " servidor: " +
+          this.servidor +
           " Contraseña: " +
           this.password +
           " Recordar: " +
           this.checkbox
-      );
+      )
     },
     reset() {
       this.$refs.form.reset();
     },
   },
   mounted() {
-    if (localStorage.nombre) {
-      this.name = localStorage.nombre;
-      this.password = localStorage.contraseña;
-      this.Servidor = localStorage.Servidor;
+    if (localStorage && localStorage.nombre) {
+      this.name = localStorage.nombre
+      this.password = localStorage.password
+      this.servidor = localStorage.servidor
     }
   },
   watch: {
-    name(newName) {
-      localStorage.nombre = newName;
-    },
+    // name(newName, oldName) {
+    //   localStorage.nombre = newName;
+    // }
   },
 };
 </script>

@@ -71,13 +71,17 @@
   </v-app>
 </template>
 <script>
-import VJsf from "@koumoul/vjsf/lib/VJsf.js";
-import "@koumoul/vjsf/lib/VJsf.css";
-import "@koumoul/vjsf/lib/deps/third-party.js";
+import VJsf from "@koumoul/vjsf/lib/VJsf.js"
+import "@koumoul/vjsf/lib/VJsf.css"
+import "@koumoul/vjsf/lib/deps/third-party.js"
+
+import baseUserApiMixin from '@/mixins/baseUserApi.mixin.js'
+
 export default {
   components: {
-    VJsf,
+    VJsf
   },
+  mixins: [baseUserApiMixin],
   data() {
     return {
       todo: true,
@@ -116,7 +120,7 @@ export default {
       this.$router.push({ path: '/emulador', query: { id: id } })
     },
     routerdialog(){
-  this.$router.push({path:'/'})
+      this.$router.push({path:'/'})
     }
   },
   computed: {
@@ -134,6 +138,48 @@ export default {
       return resultados;
     },
   },
+  mounted() {
+    // Busqueda de todos
+  // this.$api.entitiesSearchBuilder().flattened().filter(
+  //     { 
+  //       and: [
+  //         {
+  //             "eq": {
+  //                 "resourceType": "entity.device"
+  //             }
+  //         }
+  //       ]
+  //     }
+  //   ).limit(50, 1).build().execute()
+
+    // Busqueda con filtro
+//   this.$api.entitiesSearchBuilder().flattened().filter(
+      // { 
+      //   and: [
+      //     {
+      //         "eq": {
+      //             "resourceType": "entity.device"
+      //         }
+      //     },
+      //     { 
+      //       or: [
+      //         {
+      //             "like": {
+      //                 "provision.device.identifier": "filtro"
+      //             }
+      //         },
+      //         {
+      //             "like": {
+      //                 "provision.device.name": "filtro"
+      //             }
+      //         }
+      //       ]
+      //     } 
+      //   ]
+      // }
+//     ).limit(50, 1).build().execute()
+    
+  }
 };
 </script>
 <style scoped>
