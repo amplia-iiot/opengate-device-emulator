@@ -27,28 +27,27 @@
     </v-dialog>
     <template>
       <v-container>
-        <v-form>
           <br />
           <v-text-field
             label="Search device"
             clearable
             v-model="field"
+            @keyup.enter.native="search"
           ></v-text-field>
-        </v-form>
         <v-card class="mx-auto">
           <v-list dense class="lista1">
             <v-subheader>Devices</v-subheader>
             <v-list-item-group color="primary">
-              <v-list-item v-for="(value, key) in name" :key="value">
+              <v-list-item v-for="value in devices" :key="value.id">
                 <v-list-item-content>
                   <v-list-item-title>
-                    {{value}}
+                    {{ value.name }}
                   </v-list-item-title>
-                   <v-list-item-subtitle> 
-                     {{id[key]}}
-                   </v-list-item-subtitle> 
-                 </v-list-item-content>
-                
+                  <v-list-item-subtitle>
+                    {{ value.id }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+
                 <v-list-item-action>
                   <v-icon>mdi-chevron-right</v-icon>
                 </v-list-item-action>
@@ -72,23 +71,22 @@
   </v-app>
 </template>
 <script>
-import VJsf from "@koumoul/vjsf/lib/VJsf.js"
-import "@koumoul/vjsf/lib/VJsf.css"
-import "@koumoul/vjsf/lib/deps/third-party.js"
+import VJsf from "@koumoul/vjsf/lib/VJsf.js";
+import "@koumoul/vjsf/lib/VJsf.css";
+import "@koumoul/vjsf/lib/deps/third-party.js";
 
-import baseUserApiMixin from '@/mixins/baseUserApi.mixin.js'
+import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 
 export default {
   components: {
-    VJsf
+    VJsf,
   },
   mixins: [baseUserApiMixin],
   data() {
     return {
       deviceapi: [],
-      name:[],
-      id: [],
       todo: true,
+      devices: [],
       field: null,
       dialog: false,
       valid: false,
@@ -120,79 +118,89 @@ export default {
     };
   },
   methods: {
-    routeremulador(id){
-      this.$router.push({ path: '/emulador', query: { id: id } })
+    routeremulador(id) {
+      this.$router.push({ path: "/emulador", query: { id: id } });
     },
-    routerdialog(){
-      this.$router.push({path:'/'})
-    }
-  },
-  computed: {
-    resultados() {
-       let resultados = [];
-      this.models.forEach((model) => {
-        if (
-          !this.field ||
-          model.Nombre.includes(this.field) ||
-          model.id == this.field
-        ) {
-          resultados.push(model);
-        }
-      });
-      return resultados;
+    routerdialog() {
+      this.$router.push({ path: "/" });
     },
-  },
-   mounted() {
-      
-     const response =  this.$api.entitiesSearchBuilder().flattened().filter(
-      { 
-         and: [
-           {
-               "eq": {
-                   "resourceType": "entity.device"
-               }
-           }
-         ]
-       }
-     ).limit(50, 1).build().execute().then((response)=>{
-       this.deviceapi = response.data.entities
-       this.deviceapi.forEach(element => {
-         this.id.push(element["provision.device.identifier"]._value._current.value)
-         this.name.push(element["provision.device.name"]._value._current.value)
-       });
-        
-     }
-     )
-   
-    
+    search() {
+      const response = this.$api
+        .entitiesSearchBuilder()
+        .flattened()
+        .filter({
+          and: [
+            {
+              eq: {
+                resourceType: "entity.device",
+              },
+            },
+            {
+              or: [
+                {
+                  like: {
+                    "provision.device.identifier": this.field,
+                  },
+                },
+                {
+                  like: {
+                    "provision.device.name": this.field,
+                  },
+                },
+              ],
+            },
+          ],
+        })
+        .limit(50, 1)
+        .build()
+        .execute()
+        .then((response) => {
+          this.deviceapi = response.data.entities;
+          this.devices = null;
+          this.deviceapi.forEach((element) => {
+            let device = {
+              name: element["provision.device.name"]._value._current.name,
+              id: element["provision.device.identifier"]._value._current.value,
+            };
 
-    // Busqueda con filtro
-   this.$api.entitiesSearchBuilder().flattened().filter(
-       { 
-         and: [
-           {
-               "eq": {
-                   "resourceType": "entity.device"
-               }
-           },
-           { 
-             or: [
-               {
-                   "like": {
-                       "provision.device.identifier": "filtro"
-                   }
-               },
-               {
-                   "like": {
-                      "provision.device.name": "filtro"
-                   }
-               }
-             ]
-           } 
-         ]
-       }
-     ).limit(50, 1).build().execute()
-      }
+            devices.push(device)
+          });
+          
+        });
+    },
+  },
+   
+    mounted() {
+      const response = this.$api
+        .entitiesSearchBuilder()
+        .flattened()
+        .filter({
+          and: [
+            {
+              eq: {
+                resourceType: "entity.device",
+              },
+            },
+          ],
+        })
+        .limit(50, 1)
+        .build()
+        .execute()
+        .then((response) => {
+          this.deviceapi = response.data.entities
+          this.deviceapi.forEach((element) => {
+            let device = {
+              name: element["provision.device.name"]._value._current.value,
+              id: element["provision.device.identifier"]._value._current.value,
+            };
+
+            this.devices.push(device);
+          });
+          
+        });
+
+      // Busqueda con filtro
+    },
   
 };
 </script>
