@@ -2,6 +2,7 @@
   <v-app>
     <v-dialog v-model="dialog" persistent max-width="290">
       <template v-slot:activator="{ on, attrs }">
+        {{deviceapi.device.identifier}}
         <v-btn
           class="boton"
           color="red"
@@ -84,6 +85,7 @@ export default {
   mixins: [baseUserApiMixin],
   data() {
     return {
+      deviceapi: "",
       todo: true,
       field: null,
       dialog: false,
@@ -125,7 +127,7 @@ export default {
   },
   computed: {
     resultados() {
-      let resultados = [];
+       let resultados = [];
       this.models.forEach((model) => {
         if (
           !this.field ||
@@ -138,48 +140,51 @@ export default {
       return resultados;
     },
   },
-  mounted() {
-    // Busqueda de todos
-  // this.$api.entitiesSearchBuilder().flattened().filter(
-  //     { 
-  //       and: [
-  //         {
-  //             "eq": {
-  //                 "resourceType": "entity.device"
-  //             }
-  //         }
-  //       ]
-  //     }
-  //   ).limit(50, 1).build().execute()
+  async mounted() {
+      
+      this.deviceapi = await this.$api.entitiesSearchBuilder().flattened().filter(
+      { 
+         and: [
+           {
+               "eq": {
+                   "resourceType": "entity.device"
+               }
+           }
+         ]
+       }
+     ).limit(50, 1).build().execute()
+    
+   
+    
 
     // Busqueda con filtro
-//   this.$api.entitiesSearchBuilder().flattened().filter(
-      // { 
-      //   and: [
-      //     {
-      //         "eq": {
-      //             "resourceType": "entity.device"
-      //         }
-      //     },
-      //     { 
-      //       or: [
-      //         {
-      //             "like": {
-      //                 "provision.device.identifier": "filtro"
-      //             }
-      //         },
-      //         {
-      //             "like": {
-      //                 "provision.device.name": "filtro"
-      //             }
-      //         }
-      //       ]
-      //     } 
-      //   ]
-      // }
-//     ).limit(50, 1).build().execute()
-    
-  }
+   this.$api.entitiesSearchBuilder().flattened().filter(
+       { 
+         and: [
+           {
+               "eq": {
+                   "resourceType": "entity.device"
+               }
+           },
+           { 
+             or: [
+               {
+                   "like": {
+                       "provision.device.identifier": "filtro"
+                   }
+               },
+               {
+                   "like": {
+                      "provision.device.name": "filtro"
+                   }
+               }
+             ]
+           } 
+         ]
+       }
+     ).limit(50, 1).build().execute()
+      }
+  
 };
 </script>
 <style scoped>
