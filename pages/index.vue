@@ -79,6 +79,7 @@ export default {
         configure: 'ogapi/setOgapi'
     }),
     async enviar() {
+      
       this.configure( {
         config: {
           servidor: this.servidor
@@ -141,6 +142,7 @@ export default {
     },
   },
   mounted() {
+    if(this.$store.state.ogapi.apiKey) this.$store.state.ogapi.apiKey= null
     if (localStorage && localStorage.nombre) {
       this.name = localStorage.nombre
       this.password = localStorage.password

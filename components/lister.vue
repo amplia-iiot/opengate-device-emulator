@@ -89,31 +89,6 @@ export default {
       field: null,
       dialog: false,
       valid: false,
-      models: [
-        {
-          Nombre: "Samsung s9",
-          id: 1234,
-        },
-        {
-          Nombre: "One plus nord",
-          id: 4567,
-        },
-
-        {
-          Nombre: "Iphone 11",
-          id: 8901,
-        },
-
-        {
-          Nombre: "Xiaomi Redmi",
-          id: 2345,
-        },
-
-        {
-          Nombre: "Apple watch",
-          id: 6789,
-        },
-      ],
     };
   },
   methods: {
