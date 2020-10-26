@@ -39,7 +39,7 @@
             <v-subheader>Devices</v-subheader>
             <v-list-item-group color="primary">
               <v-list-item v-for="value in devices" :key="value.id">
-                <v-list-item-content>
+                <v-list-item-content @click="routeremulador(value.id)">
                   <v-list-item-title>
                     {{ value.name }}
                   </v-list-item-title>
@@ -66,7 +66,6 @@
           </v-list> -->
         </v-card>
       </v-container>
-      {{ field }}
     </template>
   </v-app>
 </template>
@@ -156,14 +155,14 @@ export default {
         .execute()
         .then((response) => {
           this.deviceapi = response.data.entities;
-          this.devices = null;
+          this.devices = [];
           this.deviceapi.forEach((element) => {
             let device = {
-              name: element["provision.device.name"]._value._current.name,
+              name: element["provision.device.name"]._value._current.value,
               id: element["provision.device.identifier"]._value._current.value,
             };
 
-            devices.push(device)
+            this.devices.push(device)
           });
           
         });
