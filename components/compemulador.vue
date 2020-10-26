@@ -19,7 +19,7 @@
           <v-icon> mdi-arrow-left </v-icon>
         </v-app-bar-nav-icon>
 
-        <v-toolbar-title class="tittle">Device {{ id }} - Device Emulator</v-toolbar-title>
+        <v-toolbar-title class="tittle">Device {{ deviceId }} - Device Emulator</v-toolbar-title>
 
         <v-spacer></v-spacer>
 
@@ -72,7 +72,7 @@
               <sistema />
             </v-tab-item>
             <v-tab-item value="sensores">
-              <sensores />
+              <sensores :sensors-schema="sensorsSchema" />
               </v-tab-item>
             <v-tab-item value="configuracion">
               <configuracion />
@@ -91,25 +91,116 @@ import sistema from "@/components/sistema";
 import sensores from "@/components/sensores";
 import configuracion from "@/components/configuracion";
 import mapas from "@/components/mapas";
+import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
+
 export default {
+  mixins: [baseUserApiMixin],
   components: {
     sistema,
     sensores,
     configuracion,
     mapas,
   },
-  data() {
-    return {
-      id: this.$route.query.id,
-      tabActivo: 'sistema'
-    };
-  },
-  methods: {
-    routerlister(id) {
-      this.$router.push({ path: "/listerpage" });
+  computed: {
+    deviceId() {
+      return this.$route.query.id
+    },
+    deviceOrganization() {
+      return this.$route.query.organization
+    },
+    sensorsSchema() {
+      if (this.basicTypes && this.datastreams && this.datastreams.length > 0) {
+        const finalSchema = {
+          type: 'object',
+          properties: {},
+          definitions: this.basicTypes.definitions
+        }
+
+        this.datastreams.forEach((dsTmp) => {
+          if (!dsTmp.identifier.startsWith('provision.') && !dsTmp.identifier.includes('communicationModules[]')) {
+            finalSchema.properties[dsTmp.identifier] = dsTmp.schema
+          }
+        })
+
+        console.log(finalSchema)
+
+        return finalSchema
+      } else{
+        return {
+          type: 'object',
+          properties: {}
+        }
+      }
     }
   },
-};
+  data() {
+    return {
+      tabActivo: 'sistema',
+      deviceData: null,
+      basicTypes: null,
+      datastreams: null
+    }
+  },
+  mounted() {
+    console.log('device id: ' + this.deviceId)
+    console.log('device org: ' + this.deviceOrganization)
+
+    this.findDevice()
+  },
+  methods: {
+    async findDevice() {
+      // consulta de datos de dispositivo
+      const data = await this.$api.newDeviceFinder().findByOrganizationAndId(this.deviceOrganization, this.deviceId, true)
+      console.log(data)
+
+      // consulta de tipos disponibles en datastreams
+      const basicTypes = await this.$api.basicTypesSearchBuilder().build().execute()
+
+      console.log(basicTypes)
+
+      this.basicTypes = basicTypes.data
+
+      // Consulta de datamodels disponibles para la organización del dispositivo
+      const datamodels = await this.$api.datamodelsSearchBuilder()
+        .filter({
+          and: [{
+            in: {
+              'datamodels.allowedResourceTypes': ['entity.device']
+            }
+          }, {
+            eq: {
+              'datamodels.organizationName': this.deviceOrganization
+            }
+          }]
+        })
+        .build()
+        .execute()
+
+      console.log(datamodels)
+
+      // Se extrae los datastremas
+      const finalDatastreams = []
+
+      datamodels.data.datamodels.forEach((datamodelTmp) => {
+        datamodelTmp.categories.forEach((catTmp) => {
+          catTmp.datastreams.forEach((dsTmp) => {
+            if (dsTmp.schema && dsTmp.schema.$ref) {
+              dsTmp.schema.$ref = dsTmp.schema.$ref.replace('og_basic_types.json', '')
+            }
+
+            finalDatastreams.push(dsTmp)
+          })
+        })
+      })
+
+      console.log(finalDatastreams)
+      this.datastreams = finalDatastreams
+    },
+    routerlister(id) {
+      this.$router.push({ path: "/listerpage" })
+    }
+  },
+}
 </script>
 <style scoped>
 .menu,.mobile{

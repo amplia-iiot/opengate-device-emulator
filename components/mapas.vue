@@ -1,11 +1,7 @@
 <template>
   <div>
     <h4>Device Geolocation</h4>
-    <v-sheet
-      :color="`grey ${theme.isDark ? 'darken-2' : 'lighten-4'}`"
-      class="pa-3"
-      style="height: 1000px"
-    >
+    <v-sheet class="pa-3">
       <vl-map data-projection="EPSG:4326" style="height: 300px">
         <vl-view
           :zoom.sync="zoom"

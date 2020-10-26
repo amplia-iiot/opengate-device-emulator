@@ -38,8 +38,8 @@
           <v-list dense class="lista1">
             <v-subheader>Devices</v-subheader>
             <v-list-item-group color="primary">
-              <v-list-item v-for="value in devices" :key="value.id">
-                <v-list-item-content @click="routeremulador(value.id)">
+              <v-list-item v-for="value in devices" :key="value.id" @click="routeremulador(value)">
+                <v-list-item-content>
                   <v-list-item-title>
                     {{ value.name }}
                   </v-list-item-title>
@@ -117,40 +117,46 @@ export default {
     };
   },
   methods: {
-    routeremulador(id) {
-      this.$router.push({ path: "/emulador", query: { id: id } });
+    routeremulador(deviceData) {
+      this.$router.push({ path: "/emulador", query: { id: deviceData.id, organization: deviceData.organization } });
     },
     routerdialog() {
       this.$router.push({ path: "/" });
     },
-    search() {
-      const response = this.$api
-        .entitiesSearchBuilder()
-        .flattened()
-        .filter({
-          and: [
-            {
-              eq: {
-                resourceType: "entity.device",
+    search(deviceFilter) {
+      this.devices = [];
+
+      let searcherBuilder = this.$api.entitiesSearchBuilder().flattened().limit(50, 1)
+
+      const filter = {
+        and: [
+          {
+            eq: {
+              resourceType: "entity.device",
+            }
+          }
+        ]
+      }
+
+      if (this.field) {
+        filter.and.push({
+            or: [
+              {
+                like: {
+                  "provision.device.identifier": this.field,
+                }
               },
-            },
-            {
-              or: [
-                {
-                  like: {
-                    "provision.device.identifier": this.field,
-                  },
-                },
-                {
-                  like: {
-                    "provision.device.name": this.field,
-                  },
-                },
-              ],
-            },
-          ],
-        })
-        .limit(50, 1)
+              {
+                like: {
+                  "provision.device.name": this.field,
+                }
+              }
+            ]
+          })
+      }
+
+      const response = searcherBuilder
+        .filter(filter)
         .build()
         .execute()
         .then((response) => {
@@ -158,49 +164,22 @@ export default {
           this.devices = [];
           this.deviceapi.forEach((element) => {
             let device = {
-              name: element["provision.device.name"]._value._current.value,
               id: element["provision.device.identifier"]._value._current.value,
+              organization: element["provision.administration.organization"]._value._current.value,
             };
+
+            if (element["provision.device.name"]) {
+              device.name = element["provision.device.name"]._value._current.value
+            }
 
             this.devices.push(device)
           });
-          
-        });
+        })
     },
   },
-   
-    mounted() {
-      const response = this.$api
-        .entitiesSearchBuilder()
-        .flattened()
-        .filter({
-          and: [
-            {
-              eq: {
-                resourceType: "entity.device",
-              },
-            },
-          ],
-        })
-        .limit(50, 1)
-        .build()
-        .execute()
-        .then((response) => {
-          this.deviceapi = response.data.entities
-          this.deviceapi.forEach((element) => {
-            let device = {
-              name: element["provision.device.name"]._value._current.value,
-              id: element["provision.device.identifier"]._value._current.value,
-            };
-
-            this.devices.push(device);
-          });
-          
-        });
-
-      // Busqueda con filtro
-    },
-  
+  mounted() {
+    this.search()
+  },
 };
 </script>
 <style scoped>

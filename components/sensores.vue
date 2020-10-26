@@ -1,10 +1,9 @@
 <template>
   <v-app>
     <br />
-    <v-form>
-      <v-form ref="form" v-model="valid">
-        <v-jsf v-model="model" :schema="schema" :options="options" />
-      </v-form>
+    <v-form ref="form" v-model="valid">
+      {{model}}
+      <v-jsf v-if="sensorsSchema" v-model="model" :schema="sensorsSchema" :options="options" />
       <v-btn :disabled="disabled1" @click="botonEditar" class="btn btn-primary"
         >Editar</v-btn
       >
@@ -22,7 +21,12 @@ export default {
   components: {
     VJsf,
   },
-
+  props: {
+    sensorsSchema: {
+      type: Object,
+      default: () => null
+    },
+  },
   data() {
     return {
       valid: false,
