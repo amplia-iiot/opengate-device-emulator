@@ -2,7 +2,14 @@
   <div>
     <h4>Device Geolocation</h4>
     <v-sheet class="pa-3">
-      <vl-map data-projection="EPSG:4326" style="height: 300px">
+      <v-col cols="8" md="1">
+        <v-text-field
+          disable
+          v-model="cordenadas"
+          label="Cordenadas(Altitud/latitud)"
+        ></v-text-field>
+      </v-col>
+      <vl-map data-projection="EPSG:4326" style="height: 700px">
         <vl-view
           :zoom.sync="zoom"
           :center.sync="center"
@@ -17,25 +24,6 @@
           <vl-geom-point :coordinates="[-3.688173, 40.453206]"></vl-geom-point>
         </vl-feature>
       </vl-map>
-      <v-row>
-        <v-col cols="4" md="1">
-          <v-text-field
-            disable
-            v-model="cordenadas"
-            label="Cordenadas(Altitud/latitud)"
-          ></v-text-field>
-        </v-col>
-        <v-col cols="3" md="1">
-          <v-text-field
-            v-model="tiempo_activo"
-            label="Uptime(hours)"
-          ></v-text-field>
-          <v-text-field
-            v-model="id_device"
-            label="Uptime(hours)"
-          ></v-text-field>
-        </v-col>
-      </v-row>
     </v-sheet>
   </div>
 </template>
@@ -60,7 +48,6 @@ export default {
       center: [-3.688173, 40.453206],
       rotation: 0,
       cordenadas: "-3.688173, 40.453206",
-      tiempo_activo: "1440",
       id_device: this.$route.query.id,
       date: null,
       trip: {

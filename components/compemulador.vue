@@ -68,7 +68,11 @@
         <v-card-text>
           <v-tabs-items v-model="tabActivo">
             <v-tab-item value="sistema">
+<<<<<<< HEAD
               <sistema :system-schema="systemSchema" :models="models"/>
+=======
+              <sistema :system-schema="systemSchema" />
+>>>>>>> 7847580293bc27f67bfc18fa3ef99a2b2cea276e
             </v-tab-item>
             <v-tab-item value="sensores">
               <sensores :sensors-schema="sensorsSchema" />
@@ -119,7 +123,22 @@ export default {
         this.datastreams.forEach((dsTmp) => {
           if (
             !dsTmp.identifier.startsWith("provision.") &&
-            !dsTmp.identifier.includes("communicationModules[]")
+            !dsTmp.identifier.includes("communicationModules[]") &&
+            dsTmp.identifier != "device.identifier" &&
+            dsTmp.identifier != "device.identification" &&
+            dsTmp.identifier != "entity.areas" &&
+            dsTmp.identifier != "entity.location" &&
+            dsTmp.identifier != "device.specificType" &&
+            dsTmp.identifier != "device.name" &&
+            dsTmp.identifier != "device.description" &&
+            dsTmp.identifier != "device.birthDate" &&
+            dsTmp.identifier != "device.serialNumber" &&
+            dsTmp.identifier != "device.model" &&
+            dsTmp.identifier != "device.software" &&
+            dsTmp.identifier != "device.operationalStatus" &&
+            dsTmp.identifier != "device.administrativeState" &&
+            dsTmp.identifier != "device.topology.path" &&
+            dsTmp.identifier != "device.trustedBoot"
           ) {
             finalSchema.properties[dsTmp.identifier] = dsTmp.schema;
           }
@@ -144,11 +163,30 @@ export default {
         };
 
         this.datastreams.forEach((dsTmp) => {
+<<<<<<< HEAD
          
             if(this.sistemSchema.includes(dsTmp.identifier)) {
               finalSchema.properties[dsTmp.identifier] = dsTmp.schema
               }
           
+=======
+          if (
+            dsTmp.identifier == "device.identifier" ||
+            dsTmp.identifier == "device.specificType" ||
+            dsTmp.identifier == "device.name" ||
+            dsTmp.identifier == "device.description" ||
+            dsTmp.identifier == "device.birthDate" ||
+            dsTmp.identifier == "device.serialNumber" ||
+            dsTmp.identifier == "device.model" ||
+            dsTmp.identifier == "device.software" ||
+            dsTmp.identifier == "device.operationalStatus" ||
+            dsTmp.identifier == "device.administrativeState" ||
+            dsTmp.identifier == "device.topology.path" ||
+            dsTmp.identifier == "device.trustedBoot"
+          ) {
+            finalSchema.properties[dsTmp.identifier] = dsTmp.schema;
+          }
+>>>>>>> 7847580293bc27f67bfc18fa3ef99a2b2cea276e
         });
 
         console.log(finalSchema);
@@ -240,7 +278,7 @@ export default {
 
       // Se extrae los datastremas
       const finalDatastreams = [];
-      
+
       datamodels.data.datamodels.forEach((datamodelTmp) => {
         datamodelTmp.categories.forEach((catTmp) => {
           catTmp.datastreams.forEach((dsTmp) => {
@@ -256,7 +294,6 @@ export default {
         });
       });
 
-
       console.log(finalDatastreams);
       this.datastreams = finalDatastreams;
     },
@@ -265,8 +302,6 @@ export default {
         path: "/listerpage",
       });
     },
-     
-    
   },
 };
 </script>

@@ -98,6 +98,10 @@ export default {
             delete localStorage.servidor
             delete localStorage.password
           }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 7847580293bc27f67bfc18fa3ef99a2b2cea276e
           this.setOgapi( {
             config: {
               user: response.data,
