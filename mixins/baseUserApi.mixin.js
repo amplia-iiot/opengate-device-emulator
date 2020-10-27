@@ -5,6 +5,11 @@ export default {
         },
         $api() {
             return this.$store.state.ogapi.api
+        },
+        textField() {
+            return this.$store.state.appbar.textField
+       
         }
+
     }
 }

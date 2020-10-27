@@ -9,6 +9,7 @@ import lister from '@/components/lister'
 export default ({
   components:{
     lister
-  }
+  },
+  layout: 'vdefault',
 })
 </script>

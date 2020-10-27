@@ -3,7 +3,8 @@
     <br />
     <v-btn>Send</v-btn>
     <v-form ref="form" v-model="valid">
-      <v-jsf v-if="systemSchema" v-model="model" :schema="systemSchema" :options="options" />
+      {{models["device.identifier"]}}
+      <v-jsf v-if="systemSchema" v-model="models" :schema="systemSchema" :options="options" />
     </v-form>
   </v-app>
 </template>
@@ -20,23 +21,17 @@ export default {
       type: Object,
       default: () => null
     },
-    
+    models: {
+      type: Object,
+      default: () => null
+      ,
+    }
   },
   data() {
     return {
       valid: false,
-      readOnly: true,
+     
       options: {},
-      only: true,
-      disabled1: false,
-      disabled2: true,
-       model: {
-        temperatura: "",
-        ram: "",
-        hdd: "",
-        bateria: "",
-        id: 1,
-      },
     };
   },
   
