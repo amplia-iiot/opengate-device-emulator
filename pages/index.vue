@@ -76,11 +76,11 @@ export default {
   },
   methods: {
     ...mapMutations({
-        configure: 'ogapi/setOgapi'
+        setOgapi: 'ogapi/setOgapi'
     }),
     async enviar() {
       
-      this.configure( {
+      this.setOgapi( {
         config: {
           servidor: this.servidor
         }
@@ -102,9 +102,9 @@ export default {
             delete localStorage.password
           }
 
-          this.configure( {
+          this.setOgapi( {
             config: {
-              apiKey: response.data.apiKey,
+              user: response.data,
               servidor: this.servidor
             }
           })
