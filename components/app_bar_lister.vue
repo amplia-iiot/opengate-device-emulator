@@ -4,8 +4,8 @@
     <v-app-bar color="primary" dark app >
   
     <template>
-      <v-container>
-          <v-toolbar color="primary" dense>
+     
+          
           <v-text-field
             label="Search device"
             clearable
@@ -37,8 +37,9 @@
           <v-btn color="red" text @click="routerdialog"> YES </v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog></v-toolbar>
-          </v-container>
+    </v-dialog>
+    
+          
           </template>
           </v-app-bar>
           </v-content>

@@ -68,11 +68,7 @@
         <v-card-text>
           <v-tabs-items v-model="tabActivo">
             <v-tab-item value="sistema">
-<<<<<<< HEAD
-              <sistema :system-schema="systemSchema" :models="models"/>
-=======
-              <sistema :system-schema="systemSchema" />
->>>>>>> 7847580293bc27f67bfc18fa3ef99a2b2cea276e
+              <sistema :system-schema="systemSchema" :model="model"/>
             </v-tab-item>
             <v-tab-item value="sensores">
               <sensores :sensors-schema="sensorsSchema" />
@@ -163,30 +159,11 @@ export default {
         };
 
         this.datastreams.forEach((dsTmp) => {
-<<<<<<< HEAD
          
             if(this.sistemSchema.includes(dsTmp.identifier)) {
               finalSchema.properties[dsTmp.identifier] = dsTmp.schema
               }
           
-=======
-          if (
-            dsTmp.identifier == "device.identifier" ||
-            dsTmp.identifier == "device.specificType" ||
-            dsTmp.identifier == "device.name" ||
-            dsTmp.identifier == "device.description" ||
-            dsTmp.identifier == "device.birthDate" ||
-            dsTmp.identifier == "device.serialNumber" ||
-            dsTmp.identifier == "device.model" ||
-            dsTmp.identifier == "device.software" ||
-            dsTmp.identifier == "device.operationalStatus" ||
-            dsTmp.identifier == "device.administrativeState" ||
-            dsTmp.identifier == "device.topology.path" ||
-            dsTmp.identifier == "device.trustedBoot"
-          ) {
-            finalSchema.properties[dsTmp.identifier] = dsTmp.schema;
-          }
->>>>>>> 7847580293bc27f67bfc18fa3ef99a2b2cea276e
         });
 
         console.log(finalSchema);
@@ -206,7 +183,8 @@ export default {
       deviceData: null,
       basicTypes: null,
       datastreams: null,
-      models: {},
+      model: {type:Object,
+      properties:{} },
       sistemSchema: [
         "device.identifier",
         "device.specificType",
@@ -236,12 +214,21 @@ export default {
         .newDeviceFinder()
         .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
       console.log(data);
-      if(data["provision.device.specificType"]){
-        const pen = data["provision.device.specificType"]._value._current.value}
-        const model = {
-        "device.identifier": this.pen
-      }
-        this.models = model
+      if(data.data["provision.device.specificType"]){
+       this.model["device.specificType"] = data.data["provision.device.specificType"]._value._current.value
+       } 
+       if(data.data["provision.device.identifier"]){
+       this.model["device.identifier"] = data.data["provision.device.identifier"]._value._current.value
+       } 
+       if(data.data["provision.device.name"]){
+       this.model["device.name"] = data.data["provision.device.name"]._value._current.value
+       } 
+       if(data.data["provision.device.operationalStatus"]){
+       this.model["device.operationalStatus"] = data.data["provision.device.operationalStatus"]._value._current.value
+       } if(data.data["provision.device.administrativeState"]){
+       this.model["device.administrativeState"] = data.data["provision.device.administrativeState"]._value._current.value
+       } 
+      
         console.log(this.models)
       
       // consulta de tipos disponibles en datastreams
