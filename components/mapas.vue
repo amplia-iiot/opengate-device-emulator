@@ -1,15 +1,15 @@
 <template>
   <div>
     <h4>Device Geolocation</h4>
-    <v-sheet class="pa-3">
-      <v-col cols="8" md="1">
+    <v-sheet class="pa-3" style="height: auto">
+      <v-col md="1">
         <v-text-field
           disable
           v-model="cordenadas"
           label="Cordenadas(Altitud/latitud)"
         ></v-text-field>
       </v-col>
-      <vl-map data-projection="EPSG:4326" style="height: 700px">
+      <vl-map data-projection="EPSG:4326" style="height: 66vh">
         <vl-view
           :zoom.sync="zoom"
           :center.sync="center"

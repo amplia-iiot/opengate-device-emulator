@@ -2,8 +2,30 @@
   <v-app>
     <br />
     <v-form ref="form" v-model="valid">
-      {{model}}
-      <v-jsf v-if="sensorsSchema" v-model="model" :schema="sensorsSchema" :options="options" />
+      {{ model }}
+      <v-autocomplete
+        v-model="model_"
+        clearable
+        multiple
+        :items="arrSensors"
+        label="sensors"
+      >
+        <template #selection="{ item }">
+          <v-chip
+            color="primary"
+            close
+            @click:close="deleteChip(item, model_)"
+            >{{ item }}</v-chip
+          >
+        </template>
+      </v-autocomplete>
+      {{ "hola " + listaPrueba }}
+      <v-jsf
+        v-if="sensorsSchema"
+        v-model="model"
+        :schema="sensorsSchema"
+        :options="options"
+      />
       <v-btn :disabled="disabled1" @click="botonEditar" class="btn btn-primary"
         >Editar</v-btn
       >
@@ -24,11 +46,18 @@ export default {
   props: {
     sensorsSchema: {
       type: Object,
-      default: () => null
+      default: () => null,
+    },
+    arrSensors: {
+      type: Array,
+    },
+    listaPrueba: {
+      type: Object,
     },
   },
   data() {
     return {
+      model_: [],
       valid: false,
       readOnly: true,
       model: {
@@ -38,7 +67,6 @@ export default {
         bateria: "",
         id: 1,
       },
-
       models: [
         {
           temperatura: "76ºC",
@@ -127,6 +155,14 @@ export default {
   },
 
   methods: {
+    deleteChip(itemNeedToRemove, array) {
+      for (let i = 0; i < array.length; i += 1) {
+        if (array[parseInt(i, 10)] === itemNeedToRemove) {
+          array.splice(i, 1);
+        }
+      }
+    },
+
     botonEditar: function () {
       (this.schema.properties.temperatura.readOnly = false),
         (this.schema.properties.ram.readOnly = false),
@@ -141,7 +177,7 @@ export default {
         (this.schema.properties.temperatura.readOnly = true),
         (this.schema.properties.ram.readOnly = true),
         (this.schema.properties.hdd.readOnly = true),
-        (this.schema.properties.bateria.readOnly = true)
+        (this.schema.properties.bateria.readOnly = true);
     },
   },
 };

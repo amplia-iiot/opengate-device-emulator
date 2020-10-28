@@ -1,46 +1,44 @@
 <template>
-  <div id="app">
-    <v-app id="inspire">
-      {{apiUsuario}}
-      <v-form
-        ref="form"
-        v-model="valid"
-        lazy-validation
+  <div id="app" >
+    <v-app id="inspire" style="background-color: #FF8433">
+      {{ apiUsuario }}
+      <v-card
+        elevation="24"
+        style="height: 70%; width: 90%; margin: 0 auto; margin-top: 5%"
       >
-        <v-autocomplete
-          style="color: red"
-          class="items"
-          v-model="servidor"
-          :items="items"
-          label="servidor"
-          required
-        ></v-autocomplete>
-        <v-text-field
-          v-model="name"
-          :counter="12"
-          label="Nombre"
-          required
-        ></v-text-field>
-        <v-text-field
-          v-model="password"
-          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-          :type="show1 ? 'text' : 'password'"
-          name="input-10-1"
-          label="Contraseña"
-          hint="Min 8 caracteres"
-          counter
-          @click:append="show1 = !show1"
-        ></v-text-field>
-
-        <v-checkbox
-          color="success"
-          v-model="checkbox"
-          label="¿Recordar en este equipo?"
-        ></v-checkbox>
-
-        <v-btn color="success" class="mr-4" @click="enviar"> Enviar </v-btn>
-        <v-btn color="error" class="mr-4" @click="reset"> Vaciar Campos </v-btn>
-      </v-form>
+        <v-form ref="form" v-model="valid" lazy-validation  style=" margin-top:10%; width: 90%; margin: 0 auto"> 
+          <v-autocomplete
+            style="color: red; "
+            class="items"
+            v-model="servidor"
+            :items="items"
+            label="servidor"
+            required
+          ></v-autocomplete>
+          <v-text-field
+            style=""
+            v-model="name"
+            :counter="12"
+            label="Nombre"
+            required
+          ></v-text-field>
+          <v-text-field
+            style=""
+            v-model="password"
+            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+            :type="show1 ? 'text' : 'password'"
+            name="input-10-1"
+            label="Contraseña"
+            hint="Min 8 caracteres"
+            counter
+            @click:append="show1 = !show1"
+          ></v-text-field>
+          <v-btn color="success" class="mr-4" @click="enviar"> Enviar </v-btn>
+          <v-btn color="error" class="mr-4" @click="reset">
+            Vaciar Campos
+          </v-btn>
+        </v-form>
+      </v-card>
     </v-app>
   </div>
 </template>
@@ -54,8 +52,7 @@ export default {
   layout:"login",
   data() {
     return {
-      name: "nombre",
-      pass_user: ["Angel11111111", "Chema22222222", "Diego33333333", "Monica44444444"],
+      name: "",
       valid: true,
       
       servidor: null,
@@ -88,7 +85,6 @@ export default {
       try {
         const response = await this.$api.newUserFinder().findByEmailAndPassword(this.name, this.password)
         if (response && response.data) {
-          alert("Bienvenido");
           if (this.checkbox == true) {
             localStorage.setItem("nombre", this.name)
             localStorage.setItem("servidor", this.servidor)
@@ -114,13 +110,7 @@ export default {
         delete localStorage.password
       
       }
-    
-      // if (this.pass_user.includes(this.name + this.password) && ((this.nombre + this.password) != "test00000000")) {
-      //   alert("Bienvenido");
-      //   this.$router.push("/listerpage"); /*Aqui deberia ir la ruta del buscador*/ 
-      // } else {
-      //   alert("Constraseña o Usuario Incorrectos!")
-      // }
+
       console.log(
         "Nombre " +
           this.name +
@@ -145,9 +135,7 @@ export default {
     }
   },
   watch: {
-    // name(newName, oldName) {
-    //   localStorage.nombre = newName;
-    // }
+
   },
 };
 </script>

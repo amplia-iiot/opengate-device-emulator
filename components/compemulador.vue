@@ -68,10 +68,14 @@
         <v-card-text>
           <v-tabs-items v-model="tabActivo">
             <v-tab-item value="sistema">
-              <sistema :system-schema="systemSchema" :model="model"/>
+              <sistema :system-schema="systemSchema" :model="model" />
             </v-tab-item>
             <v-tab-item value="sensores">
-              <sensores :sensors-schema="sensorsSchema" />
+              <sensores
+                :sensors-schema="sensorsSchema"
+                :arr-sensors= "sensors_"
+                :lista-prueba="sensorsSchema.properties"
+              />
             </v-tab-item>
             <v-tab-item value="configuracion">
               <configuracion />
@@ -198,7 +202,44 @@ export default {
         "device.administrativeState",
         "device.topology.path",
         "device.trustedBoot"
-      ]
+      ],
+  sensors_: [
+        "device.clock",
+        "device.counters.availabilityLastDay",
+        "device.counters.presence.accountingStartLastDay",
+        "device.counters.presence.consecutivePingNOK",
+        "device.counters.presence.pingNOKLastDay",
+        "device.counters.presence.pingOKLastDay",
+        "device.counters.receivedBytesLastDay",
+        "device.counters.receivedBytesLastMonth",
+        "device.counters.sentBytesLastDay",
+        "device.counters.sentBytesLastMonth",
+        "device.counters.totalBytesLastDay",
+        "device.counters.totalBytesLastMonth",
+        "device.cpu.status",
+        "device.cpu.total",
+        "device.cpu.usage",
+        "device.identification.conflict",
+        "device.identification.unknown",
+        "device.performance",
+        "device.powersupply.battery.charge",
+        "device.powersupply.battery.current",
+        "device.powersupply.battery.status",
+        "device.powersupply.battery.voltage",
+        "device.powersupply.outage",
+        "device.powersupply.source",
+        "device.powersupply.status",
+        "device.ram.total",
+        "device.ram.usage",
+        "device.sessionType",
+        "device.storage.disk.total",
+        "device.storage.disk.usage",
+        "device.storage.ramDisk.total",
+        "device.storage.ramDisk.usage",
+        "device.temperature.status",
+        "device.temperature.value",
+        "device.upTime",
+      ],    
     };
   },
   mounted() {
