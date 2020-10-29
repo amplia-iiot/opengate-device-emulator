@@ -58,7 +58,7 @@
 <script>
 import { mapMutations } from "vuex";
 import baremulator from "@/components/bar-emulator";
-import textField from "@/mixins/textfield.mixin.js";
+import textField from "@/mixins/textField.mixin.js";
 export default {
   components: {
     baremulator,

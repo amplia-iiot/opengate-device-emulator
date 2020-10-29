@@ -1,21 +1,8 @@
 <template>
-<<<<<<< Updated upstream
-  <div id="app" >
-    <v-app id="inspire" style="background-color: #FF8433">
-      {{ apiUsuario }}
-      <v-card
-        elevation="24"
-        style="height: 70%; width: 90%; margin: 0 auto; margin-top: 5%"
-=======
-  <div id="app">
-    <v-app id="inspire">
-      <v-form
-        ref="form"
-        v-model="valid"
-        lazy-validation
->>>>>>> Stashed changes
-      >
-        <v-form ref="form" v-model="valid" lazy-validation  style=" margin-top:10%; width: 90%; margin: 0 auto"> 
+  <v-app id="inspire">
+    <v-card elevation="24" style="max-width:50%;left:50%;transform:translate(-50%, -50%);top:50%;"> 
+      <v-card-text>
+        <v-form ref="form" v-model="valid" lazy-validation> 
           <v-autocomplete
             style="color: red; "
             class="items"
@@ -47,9 +34,9 @@
             Vaciar Campos
           </v-btn>
         </v-form>
-      </v-card>
-    </v-app>
-  </div>
+      </v-card-text>
+    </v-card>
+  </v-app>
 </template>
 
 <script>
@@ -156,4 +143,9 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.login-window {
+
+  max-width: 40%;
+}
+</style>

@@ -1,29 +1,22 @@
 <template>
-
-    
-        <v-card>
-          <v-list dense class="lista1">
-            <v-subheader>Devices</v-subheader>
-            <v-list-item-group color="primary">
-              <v-list-item v-for="value in devices" :key="value.id" @click="routeremulador(value)">
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ value.name }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    {{ value.id }}
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-icon>mdi-chevron-right</v-icon>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-         
-        </v-card>
-        
-    
+  <v-list dense>
+        <v-subheader>Devices</v-subheader>
+        <v-list-item-group color="primary">
+          <v-list-item v-for="value in devices" :key="value.id" @click="routeremulador(value)">
+            <v-list-item-content>
+              <v-list-item-title>
+                {{ value.name }}
+              </v-list-item-title>
+              <v-list-item-subtitle>
+                {{ value.id }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-list-item-action>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
 </template>
 <script>
 import VJsf from "@koumoul/vjsf/lib/VJsf.js";
@@ -31,7 +24,7 @@ import "@koumoul/vjsf/lib/VJsf.css";
 import "@koumoul/vjsf/lib/deps/third-party.js";
 
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
-import textField from '@/mixins/textfield.mixin.js'
+import textField from '@/mixins/textField.mixin.js'
 import { mapMutations } from "vuex";
 
 export default {
@@ -187,12 +180,5 @@ export default {
   position: absolute;
   top: 0px;
   right: 0px;
-}
-.lista1 {
-  float: left;
-  width: 100%;
-}
-.lista2 {
-  float: right;
 }
 </style>

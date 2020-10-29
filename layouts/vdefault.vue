@@ -1,18 +1,162 @@
 <template>
-  <div id="app">
     <v-app id="inspire">
-      <lister v-if="this.$store.state.appbar.currentPage == 'lister'"/>
-      <emulator v-else-if="this.$store.state.appbar.currentPage == 'emulador'"/>
-      <Nuxt />
+      <v-app-bar 
+        extended
+        app
+        color="primary"
+        dark
+        hide-on-scroll
+        elevate-on-scroll
+      >
+        <v-app-bar-nav-icon @click="routerlister" v-if="deviceId" >
+          <v-icon> mdi-chevron-left </v-icon>
+        </v-app-bar-nav-icon>
+        <v-toolbar-title>
+          {{ deviceId?'Device ' + deviceId + ' Emulator':'Select device to emulate' }}
+        </v-toolbar-title>
+        <v-spacer />
+        <v-dialog v-model="dialog" persistent>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="red"
+              dark
+              v-bind="attrs"
+              v-on="on"
+              depressed
+            >
+              Log out
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="headline"> ATTENTION </v-card-title>
+            <v-card-text>Are you sure?</v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="green darken-1" text @click="dialog = false">
+                No
+              </v-btn>
+              <v-btn color="red" text @click="routerdialog"> YES </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+        <template v-slot:extension>
+
+          <v-text-field v-if="!deviceId" 
+            label="Search device"
+            clearable
+            v-model="field"
+            @keyup.enter="search"
+            @click:append="search"
+            @click:clear="search"
+            single-line
+            solo
+            solo-inverted
+            hide-details
+            dense
+            append-icon="mdi-magnify"
+          />
+
+          <v-tabs v-if="deviceId" v-model="tabActivo" grow centered dense> 
+            <v-tab class="ma-0" href="#sistema"><v-icon>mdi-cellphone-link</v-icon> <span class="no-mobile">System</span></v-tab>
+            <v-tab class="ma-0" href="#sensores"><v-icon>mdi-list-status</v-icon> <span class="no-mobile">Sensors</span></v-tab>
+            <v-tab class="ma-0" href="#configuracion"><v-icon>mdi-cog</v-icon> <span class="no-mobile">Operations</span></v-tab>
+            <v-tab class="ma-0" href="#mapas"><v-icon>mdi-map-marker-radius</v-icon> <span class="no-mobile">Map</span></v-tab>
+          </v-tabs>
+        </template>
+      </v-app-bar>
+
+      <!-- <lister v-if="this.$store.state.appbar.currentPage == 'lister'"/>
+      <emulator v-else-if="this.$store.state.appbar.currentPage == 'emulador'"/> -->
+      <v-content>
+        <Nuxt />
+      </v-content>
     </v-app>
-  </div>
 </template>
 <script>
+import { mapMutations } from "vuex";
 import lister from "@/components/app_bar_lister";
 import emulator from "@/components/bar-emulator";
+import textField from "@/mixins/textField.mixin.js";
+
 export default {
   components: {
     lister, emulator
   },
+  data() {
+    return {
+      deviceapi: [],
+      todo: true,
+      devices: [],
+      field: null,
+      dialog: false,
+      valid: false,
+      tabActivo: "sistema",
+    };
+  },
+  methods: {
+    ...mapMutations({
+      sendText: "appbar/setFilter",
+      setTab: "appbar/setTab"
+    }),
+    routerdialog() {
+      this.$router.push({ path: "/" });
+    },
+    routerlister(id) {
+      this.$router.push({
+        path: "/listerpage",
+      });
+    },
+    search() {
+      this.sendText({
+        text: this.field,
+      });
+    }
+  },
+  computed: {
+    deviceId() {
+      return this.$route.query.id;
+    },
+    render(){
+      if(this.$store.state.appbar.currentPage === 'lister'){
+        return true
+      } else {
+        return false
+      }
+    }
+  },
+  watch: {
+    tabActivo:function(){
+      this.setTab({
+        tab: this.tabActivo,
+      });
+    }
+  }
 };
 </script>
+
+<style scoped>
+.menu,
+.mobile {
+  display: none;
+}
+
+.no-mobile {
+  display: block;
+}
+
+@media only screen and (max-width: 768px) {
+  .nav_item {
+    display: none;
+  }
+
+  .menu,
+  .mobile {
+    display: block;
+  }
+
+  .no-mobile {
+    display: none;
+  }
+}
+</style>
