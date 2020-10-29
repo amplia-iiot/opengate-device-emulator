@@ -1,69 +1,42 @@
 <template>
-  <div id="app">
-    <v-app id="inspire">
-      <v-app-bar extended color="primary" dark>
-        <!-- <template v-slot:img="{ props }">
-          <v-img
-            v-bind="props"
-            gradient="to top right, rgba(100,115,201,.7), rgba(25,32,72,.7)"
-          ></v-img>
-        </template> -->
-        <v-app-bar-nav-icon class="ma-2" @click="routerlister">
-          <v-icon> mdi-arrow-left </v-icon>
-        </v-app-bar-nav-icon>
-
-        <v-toolbar-title class="tittle"
-          >Device {{ deviceId }} - Device Emulator</v-toolbar-title
-        >
-
-        <v-spacer></v-spacer>
-
-        <v-btn icon>
-          <v-icon>mdi-bell</v-icon>
-        </v-btn>
-
-        <template v-slot:extension>
-          <div class="menu">
-            <v-menu offset-y align-with-title>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn color="primary" dark v-bind="attrs" v-on="on">
-                  Emulation
-                </v-btn>
-              </template>
-
-              <v-list>
+  <div>
+      <v-navigation-drawer
+        v-model="drawer"
+        absolute
+        temporary
+      >
+      <v-list>
+              <v-list-item-group
+            v-model="group"
+            active-class="deep-purple--text text--accent-4"
+          >
                 <v-list-item>
-                  <v-list-item-title @click="tabActivo = 'sistema'"
+                  <v-list-item-title @click="tabActivo = 'sistema' 
+                  drawer=false"
                     >System</v-list-item-title
                   >
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-title @click="tabActivo = 'sensores'"
+                  <v-list-item-title @click="tabActivo = 'sensores' 
+                  drawer=false"
                     >Sensors</v-list-item-title
                   >
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-title @click="tabActivo = 'configuracion'"
+                  <v-list-item-title @click="tabActivo = 'configuracion' 
+                  drawer=false"
                     >Operations</v-list-item-title
                   >
                 </v-list-item>
                 <v-list-item>
-                  <v-list-item-title @click="tabActivo = 'mapas'"
+                  <v-list-item-title @click="tabActivo = 'mapas' 
+                  drawer=false"
                     >Map</v-list-item-title
                   >
                 </v-list-item>
+              </v-list-item-group>
               </v-list>
-            </v-menu>
-          </div>
-
-          <v-tabs align-with-title class="nav_item" v-model="tabActivo">
-            <v-tab href="#sistema">System</v-tab>
-            <v-tab href="#sensores">Sensors</v-tab>
-            <v-tab href="#configuracion">Operations</v-tab>
-            <v-tab href="#mapas">Map</v-tab>
-          </v-tabs>
-        </template>
-      </v-app-bar>
+      </v-navigation-drawer>
       <v-card>
         <v-card-text>
           <v-tabs-items v-model="tabActivo">
@@ -86,8 +59,7 @@
           </v-tabs-items>
         </v-card-text>
       </v-card>
-    </v-app>
-  </div>
+      </div>
 </template>
 
 <script>
@@ -96,15 +68,17 @@ import sensores from "@/components/sensores";
 import configuracion from "@/components/configuracion";
 import mapas from "@/components/mapas";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
+import { mapMutations } from "vuex";
+
 
 export default {
-  mixins: [baseUserApiMixin],
   components: {
     sistema,
     sensores,
     configuracion,
     mapas,
   },
+  mixins: [baseUserApiMixin],
   computed: {
     deviceId() {
       return this.$route.query.id;
@@ -184,10 +158,13 @@ export default {
   data() {
     return {
       tabActivo: "sistema",
+      drawer: false,
+      group: null,
       deviceData: null,
       basicTypes: null,
       datastreams: null,
       model: {type:Object,
+      tab: this.$store.state.appbar.tabActivo,
       properties:{} },
       sistemSchema: [
         "device.identifier",
@@ -245,10 +222,18 @@ export default {
   mounted() {
     console.log("device id: " + this.deviceId);
     console.log("device org: " + this.deviceOrganization);
-
+    
     this.findDevice();
+   
+      this.setPage({
+      page: "emulador"
+    })
   },
+
   methods: {
+    ...mapMutations({
+      setPage: "appbar/setPage",
+    }),
     async findDevice() {
       // consulta de datos de dispositivo
       const data = await this.$api
@@ -325,12 +310,20 @@ export default {
       console.log(finalDatastreams);
       this.datastreams = finalDatastreams;
     },
-    routerlister(id) {
-      this.$router.push({
-        path: "/listerpage",
-      });
-    },
+    
+    
+
+    
   },
+  watch: {
+     tab: function(){
+        this.tabActivo = this.tab
+      },
+      getDrawer: function(){
+        this.drawer = this.getDrawer
+      }
+    },
+    
 };
 </script>
 

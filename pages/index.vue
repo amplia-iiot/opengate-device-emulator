@@ -1,10 +1,19 @@
 <template>
+<<<<<<< Updated upstream
   <div id="app" >
     <v-app id="inspire" style="background-color: #FF8433">
       {{ apiUsuario }}
       <v-card
         elevation="24"
         style="height: 70%; width: 90%; margin: 0 auto; margin-top: 5%"
+=======
+  <div id="app">
+    <v-app id="inspire">
+      <v-form
+        ref="form"
+        v-model="valid"
+        lazy-validation
+>>>>>>> Stashed changes
       >
         <v-form ref="form" v-model="valid" lazy-validation  style=" margin-top:10%; width: 90%; margin: 0 auto"> 
           <v-autocomplete
@@ -71,9 +80,11 @@ export default {
       
     };
   },
+  
   methods: {
     ...mapMutations({
-        setOgapi: 'ogapi/setOgapi'
+        setOgapi: 'ogapi/setOgapi',
+        setPage: "appbar/setPage",
     }),
     async enviar() {
       
@@ -133,7 +144,12 @@ export default {
       this.password = localStorage.password
       this.servidor = localStorage.servidor
     }
+   
+    this.setPage({
+      page: "lister"
+    })
   },
+  
   watch: {
 
   },

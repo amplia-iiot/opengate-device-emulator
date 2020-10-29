@@ -1,17 +1,18 @@
 <template>
-<div>
-    <v-app>
-<appbar/>
- <Nuxt/>
+  <div id="app">
+    <v-app id="inspire">
+      <lister v-if="this.$store.state.appbar.currentPage == 'lister'"/>
+      <emulator v-else-if="this.$store.state.appbar.currentPage == 'emulador'"/>
+      <Nuxt />
     </v-app>
- </div>
-     
+  </div>
 </template>
 <script>
-import appbar from '@/components/app_bar_lister'
+import lister from "@/components/app_bar_lister";
+import emulator from "@/components/bar-emulator";
 export default {
-     components:{
-         appbar
-},
-}
+  components: {
+    lister, emulator
+  },
+};
 </script>

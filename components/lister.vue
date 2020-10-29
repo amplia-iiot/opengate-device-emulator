@@ -32,6 +32,7 @@ import "@koumoul/vjsf/lib/deps/third-party.js";
 
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 import textField from '@/mixins/textfield.mixin.js'
+import { mapMutations } from "vuex";
 
 export default {
   components: {
@@ -49,6 +50,9 @@ export default {
     };
   },
   methods: {
+     ...mapMutations({
+      setPage: "appbar/setPage",
+    }),
     routeremulador(deviceData) {
       this.$router.push({ path: "/emulador", query: { id: deviceData.id, organization: deviceData.organization } });
     },
@@ -110,8 +114,14 @@ export default {
     },
   },
   mounted() {
-    this.search()
+    this.search(),
+      this.setPage({
+      page: "lister"
+    })
   },
+ 
+ 
+  
   watch:{
     textField: function(){
        this.devices = [];

@@ -10,6 +10,6 @@ export default ({
   components:{
     compemulador
   },
-   layout: 'login',
+ layout: 'vdefault',
 })
 </script>
