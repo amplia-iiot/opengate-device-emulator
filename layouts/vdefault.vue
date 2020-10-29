@@ -36,9 +36,11 @@
 
           <v-dialog v-model="dialog" persistent>
             <template v-slot:activator="{ on, attrs }" align-center>
+              <div class="text-center">
               <v-btn color="red" dark v-bind="attrs" v-on="on" depressed>
                 Log out
               </v-btn>
+              </div>
             </template>
             <v-card>
               <v-card-title class="headline"> ATTENTION </v-card-title>
