@@ -2,7 +2,8 @@ export const state = () => ({
     textField :null,
     currentPage :null,
     tabActive: null,
-    drawer: null
+    drawer: null,
+    user: null
   })
   
 export const mutations = {
@@ -23,5 +24,8 @@ export const mutations = {
     },
     setDrawer(state,{drawerCondition}){
     state.drawer = drawerCondition
+    },
+    setUser(state, {email}) {
+        state.user = email
     }
 }

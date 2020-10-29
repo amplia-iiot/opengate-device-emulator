@@ -72,6 +72,7 @@ export default {
     ...mapMutations({
         setOgapi: 'ogapi/setOgapi',
         setPage: "appbar/setPage",
+        setUser: 'appbar/setUser'
     }),
     async enviar() {
       
@@ -119,6 +120,9 @@ export default {
           " Recordar: " +
           this.checkbox
       )
+      this.setUser({
+        email: this.name
+      })
     },
     reset() {
       this.$refs.form.reset();
