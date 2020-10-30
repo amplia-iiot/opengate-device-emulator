@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h4>Device Geolocation</h4>
+  <div class="pa-0 ma-0">
+    <!-- <h4>Device Geolocation</h4>
     <v-sheet class="pa-3" style="height: auto">
       <v-col md="1">
         <v-text-field
@@ -8,8 +8,8 @@
           v-model="cordenadas"
           label="Cordenadas(Altitud/latitud)"
         ></v-text-field>
-      </v-col>
-      <vl-map data-projection="EPSG:4326" style="height: 66vh">
+      </v-col> -->
+      <vl-map data-projection="EPSG:4326" style="height: calc(100vh - 140px)">
         <vl-view
           :zoom.sync="zoom"
           :center.sync="center"
@@ -24,7 +24,7 @@
           <vl-geom-point :coordinates="[-3.688173, 40.453206]"></vl-geom-point>
         </vl-feature>
       </vl-map>
-    </v-sheet>
+    <!-- </v-sheet> -->
   </div>
 </template>
 <script>
