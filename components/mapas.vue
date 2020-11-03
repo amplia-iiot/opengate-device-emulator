@@ -27,6 +27,7 @@
     <l-map style="height: calc(100vh - 140px); width:100%" :zoom="zoom" :center="center">
       <l-tile-layer :url="url"></l-tile-layer>
       <l-marker :lat-lng="markerLatLng">
+        <l-popup>Hello!</l-popup>
       </l-marker>
     </l-map>
 
@@ -34,24 +35,18 @@
   </div>
 </template>
 <script>
-import { LMap, LTileLayer, LMarker } from "vue2-leaflet";
+import {LMap, LTileLayer, LMarker, LPopup} from "vue2-leaflet"
+import 'leaflet/dist/leaflet.css'
 
-import VueLayers from "vuelayers";
-import "vuelayers/lib/style.css";
-import { Icon } from "leaflet";
+// import VueLayers from "vuelayers";
+// import "vuelayers/lib/style.css";
 
-delete Icon.Default.prototype._getIconUrl;
-Icon.Default.mergeOptions({
-  iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-  iconUrl: require("leaflet/dist/images/marker-icon.png"),
-  shadowUrl: require("leaflet/dist/images/marker-shadow.png"),
-});
 export default {
   components: {
     LMap,
     LTileLayer,
     LMarker,
-    VueLayers,
+    LPopup
   },
   name: "mapas",
   inject: {
@@ -59,18 +54,15 @@ export default {
       default: { isDark: false },
     },
   },
+  methods: {
+   
+  },
   data() {
     return {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       zoom: 15,
-      center: [-3.688173, 40.453206],
-      markerLatLng: [-3.688173, 40.453206],
-      cordenadas:
-        "" /*       zoom: 15,
-      center: [-3.688173, 40.453206], 
-      rotation: 0,*/,
-      /*       center: "",
-       */ cordenadas: "-3.688173, 40.453206",
+      center: [40.453206, -3.688173],
+      markerLatLng: [40.453206, -3.688173],
       id_device: this.$route.query.id,
       date: null,
       trip: {
