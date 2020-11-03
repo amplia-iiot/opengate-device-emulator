@@ -29,10 +29,19 @@
           <v-app-bar-nav-icon v-bind="attrs" v-on="on" />
         </template>
         <v-card>
-          <v-card-title>User:</v-card-title>
-          <v-card-subtitle>
-            {{ this.$store.state.appbar.user }}</v-card-subtitle
-          >
+          <v-list-item>
+          <v-list-item-icon>
+            <v-icon color="indigo">
+              mdi-email
+            </v-icon>
+          </v-list-item-icon>
+  
+          <v-list-item-content>
+            <v-list-item-title>{{ this.$store.state.appbar.user }}</v-list-item-title>
+            <v-list-item-subtitle>User</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+            
 
           <v-dialog v-model="dialog" persistent>
             <template v-slot:activator="{ on, attrs }" align-center>

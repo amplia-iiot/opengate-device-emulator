@@ -1,6 +1,5 @@
 <template>
   <v-list dense>
-        <v-subheader>Devices</v-subheader>
         <v-list-item-group color="primary">
           <v-list-item v-for="value in devices" :key="value.id" @click="routeremulador(value)">
             <v-list-item-content>
