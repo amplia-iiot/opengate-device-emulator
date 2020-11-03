@@ -28,6 +28,7 @@
             hint="Min 8 caracteres"
             counter
             @click:append="show1 = !show1"
+            @keyup.enter="enviar"
           ></v-text-field>
           <v-btn color="success" class="mr-4" @click="enviar"> Enviar </v-btn>
           <v-btn color="error" class="mr-4" @click="reset">

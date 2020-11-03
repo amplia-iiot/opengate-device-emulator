@@ -1,6 +1,20 @@
 <template>
   <v-app>
+    <v-btn 
+      @click="sendInfo"
+      :disabled="!valid"
+      fab
+      fixed
+      bottom
+      right
+      color="accent"
+    >
+      <v-icon>
+        mdi-send
+      </v-icon>
+    </v-btn>
     <br />
+
     <v-form ref="form" v-model="valid">
       {{ model }}
       <v-autocomplete
@@ -19,7 +33,9 @@
           >
         </template>
       </v-autocomplete>
-      {{ "hola " + listaPrueba }}
+      <hr />
+      <!--       {{ "hola " + listaPrueba }}
+ -->
       <v-jsf
         v-if="sensorsSchema"
         v-model="model"
@@ -45,14 +61,14 @@ export default {
   },
   props: {
     sensorsSchema: {
-      type: Object,
+      type: Array,
       default: () => null,
     },
     arrSensors: {
       type: Array,
     },
     listaPrueba: {
-      type: Object,
+      type: Array,
     },
   },
   data() {
@@ -60,6 +76,11 @@ export default {
       model_: [],
       valid: false,
       readOnly: true,
+      model__: {
+        type: Object,
+        tab: this.$store.state.appbar.tabActivo,
+        properties: {},
+      },
       model: {
         temperatura: "",
         ram: "",
