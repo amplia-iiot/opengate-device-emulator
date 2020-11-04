@@ -58,24 +58,32 @@ export default {
     };
   },
   methods: {
-    async sendInfo() {
+    sendInfo() {
+      this.sendInfoApi()
+    },
+    async sendInfoApi() {
       try {
         let mb = this.$api
           .deviceMessageBuilder()
-          .withDataStreamVersion("" + new Date().getTime());
+          .withDataStreamVersion("" + new Date().getTime())
+        
+        // Se pasan los datos del modelo al builder
         for(const prop in this.innerModel){
           console.log(this.model[prop])
           console.log(this.innerModel[prop])
           if (this.innerModel[prop]!=null) {
-            let datapointsBuilder = this.$api.datapointsBuilder().withValue(this.innerModel[prop]);
-            let datastreamBuilder = this.$api.datastreamBuilder().withId(prop);
-            mb.withId(this.innerModel["device.identifier"]).withDataStream(datastreamBuilder.withDatapoint(datapointsBuilder));
-             const result = await mb.create();
+            let datapointsBuilder = this.$api.datapointsBuilder().withValue(this.innerModel[prop])
+            let datastreamBuilder = this.$api.datastreamBuilder().withId(prop)
+            mb.withDataStream(datastreamBuilder.withDatapoint(datapointsBuilder))
           }
-        };
-        
+        }
 
-        // Esto hay que hacerlo por cada uno de los elementos del modelo
+        // se pasa el id del dispositivo a actualizar
+        mb.withId(this.innerModel["device.identifier"])
+
+        // se lanza la petición
+        const result = await mb.create()
+
       } catch (errorApi) {
         console.error(errorApi);
       }

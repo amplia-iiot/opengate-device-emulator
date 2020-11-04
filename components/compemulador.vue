@@ -171,35 +171,16 @@ export default {
         "device.specificType",
         "device.name",
         "device.description",
-        "device.birthDate",
         "device.serialNumber",
-        "device.model",
-        "device.software",
         "device.operationalStatus",
         "device.administrativeState",
-        "device.topology.path",
-        "device.trustedBoot"
       ],
       finalSistemSchema:[],
-  sensors_: [
+      sensors_: [
         "device.clock",
-        "device.counters.availabilityLastDay",
-        "device.counters.presence.accountingStartLastDay",
-        "device.counters.presence.consecutivePingNOK",
-        "device.counters.presence.pingNOKLastDay",
-        "device.counters.presence.pingOKLastDay",
-        "device.counters.receivedBytesLastDay",
-        "device.counters.receivedBytesLastMonth",
-        "device.counters.sentBytesLastDay",
-        "device.counters.sentBytesLastMonth",
-        "device.counters.totalBytesLastDay",
-        "device.counters.totalBytesLastMonth",
         "device.cpu.status",
         "device.cpu.total",
         "device.cpu.usage",
-        "device.identification.conflict",
-        "device.identification.unknown",
-        "device.performance",
         "device.powersupply.battery.charge",
         "device.powersupply.battery.current",
         "device.powersupply.battery.status",
@@ -215,8 +196,7 @@ export default {
         "device.storage.ramDisk.total",
         "device.storage.ramDisk.usage",
         "device.temperature.status",
-        "device.temperature.value",
-        "device.upTime",
+        "device.temperature.value"
       ],    
     };
   },
@@ -240,25 +220,23 @@ export default {
       const data = await this.$api
         .newDeviceFinder()
         .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
+      
       console.log(data);
       this.finalSistemSchema = []
+      
       this.sistemSchema.forEach((element)=>{
         if(data.data[element]){
           this.model[element] = data.data[element]._value._current.value
           this.finalSistemSchema.push(element)
-        }
-        else if(data.data["provision."+element]){
-           this.model["provision."+element] = data.data["provision."+element]._value._current.value
-            this.finalSistemSchema.push("provision."+element)
-        }
-        else {
+        } else if(data.data["provision."+element]){
+          this.model[element] = data.data["provision."+element]._value._current.value
+          this.finalSistemSchema.push(element)
+        } else {
           this.finalSistemSchema.push(element)
         }
-
       })
      
-      
-        console.log(this.models)
+      console.log(this.models)
       
       // consulta de tipos disponibles en datastreams
       const basicTypes = await this.$api

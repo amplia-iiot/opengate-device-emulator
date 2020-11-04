@@ -1,22 +1,23 @@
 <template>
   <v-list dense>
-        <v-list-item-group color="primary">
-          <v-list-item v-for="value in this.devices" :key="value.id" @click="routeremulador(value)">
-            <v-list-item-content>
-              <v-list-item-title>
-                {{ value.name }}
-              </v-list-item-title>
-              <v-list-item-subtitle>
-                {{ value.id }}
-              </v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-icon>mdi-chevron-right</v-icon>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
+    <v-list-item-group color="primary">
+      <v-list-item v-for="value in this.devices" :key="value.id" @click="routeremulador(value)">
+        <v-list-item-content>
+          <v-list-item-title>
+            {{ value.name }}
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            {{ value.id }}
+          </v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-icon>mdi-chevron-right</v-icon>
+        </v-list-item-action>
+      </v-list-item>
+    </v-list-item-group>
+  </v-list>
 </template>
+
 <script>
 import VJsf from "@koumoul/vjsf/lib/VJsf.js";
 import "@koumoul/vjsf/lib/VJsf.css";
@@ -70,22 +71,23 @@ export default {
         .execute()
         .then((response) => {
           console.log(response)
-          const api = response.data.entities;
-          console.log(api)
-          this.devices = [];
-          debugger
-          api.forEach((element)=> {
-            let device = {
-              id: element["provision.device.identifier"]._value._current.value,
-              organization:element["provision.administration.organization"]._value._current.value,
-            };
+          const deviceapi = response.data.entities
+          this.devices = []
+          deviceapi.forEach((element) => {
+            if (element["provision.device.identifier"]) {
+              let device = {
+                id: element["provision.device.identifier"]._value._current.value,
+                organization: element["provision.administration.organization"]._value._current.value,
+              };
 
-            if (element["provision.device.name"]) {
-              device.name = element["provision.device.name"]._value._current.value
+              if (element["provision.device.name"]) {
+                device.name = element["provision.device.name"]._value._current.value
+              }
+
+              this.devices.push(device)
             }
-
-            this.devices.push(device)
-          })
+            
+          });
         })
     },
   },
@@ -95,70 +97,16 @@ export default {
       page: "lister"
     })
   },
- 
- 
-  
   watch:{
-    textField: function(){
-       this.devices = [];
-
-      let searcherBuilder = this.$api.entitiesSearchBuilder().flattened().limit(50, 1)
-
-      const filter = {
-        and: [
-          {
-            eq: {
-              resourceType: "entity.device",
-            }
-          }
-        ]
+    textField: {
+      handler(newVal){
+        this.search(newVal)
       }
-
-      if (this.textField) {
-        filter.and.push({
-            or: [
-              {
-                like: {
-                  "provision.device.identifier": this.textField,
-                }
-              },
-              {
-                like: {
-                  "provision.device.name": this.textField,
-                }
-              }
-            ]
-          })
-      }
-
-      const response = searcherBuilder
-        .filter(filter)
-        .build()
-        .execute()
-        .then((response) => {
-          this.deviceapi = response.data.entities;
-          this.devices = [];
-          this.deviceapi.forEach((element) => {
-            let device = {
-              id: element["provision.device.identifier"]._value._current.value,
-              organization: element["provision.administration.organization"]._value._current.value,
-            };
-            console.log(device.id)
-
-            if (element["provision.device.name"]) {
-              device.name = element["provision.device.name"]._value._current.value
-            }
-
-            this.devices.push(device)
-          });
-        })
-    },
     }
-  
-  
- 
+  }
 };
 </script>
+
 <style scoped>
 .boton {
   position: absolute;
