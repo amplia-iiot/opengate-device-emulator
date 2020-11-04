@@ -1,7 +1,7 @@
 <template>
   <v-list dense>
         <v-list-item-group color="primary">
-          <v-list-item v-for="value in devices" :key="value.id" @click="routeremulador(value)">
+          <v-list-item v-for="value in this.devices" :key="value.id" @click="routeremulador(value)">
             <v-list-item-content>
               <v-list-item-title>
                 {{ value.name }}
@@ -33,7 +33,6 @@ export default {
   mixins: [baseUserApiMixin],
   data() {
     return {
-      deviceapi: [],
       todo: true,
       devices: [],
       field: null,
@@ -65,35 +64,20 @@ export default {
           }
         ]
       }
-
-      if (this.field) {
-        filter.and.push({
-            or: [
-              {
-                like: {
-                  "provision.device.identifier": this.field,
-                }
-              },
-              {
-                like: {
-                  "provision.device.name": this.field,
-                }
-              }
-            ]
-          })
-      }
-
       const response = searcherBuilder
         .filter(filter)
         .build()
         .execute()
         .then((response) => {
-          this.deviceapi = response.data.entities;
+          console.log(response)
+          const api = response.data.entities;
+          console.log(api)
           this.devices = [];
-          this.deviceapi.forEach((element) => {
+          debugger
+          api.forEach((element)=> {
             let device = {
               id: element["provision.device.identifier"]._value._current.value,
-              organization: element["provision.administration.organization"]._value._current.value,
+              organization:element["provision.administration.organization"]._value._current.value,
             };
 
             if (element["provision.device.name"]) {
@@ -101,7 +85,7 @@ export default {
             }
 
             this.devices.push(device)
-          });
+          })
         })
     },
   },
@@ -159,6 +143,7 @@ export default {
               id: element["provision.device.identifier"]._value._current.value,
               organization: element["provision.administration.organization"]._value._current.value,
             };
+            console.log(device.id)
 
             if (element["provision.device.name"]) {
               device.name = element["provision.device.name"]._value._current.value

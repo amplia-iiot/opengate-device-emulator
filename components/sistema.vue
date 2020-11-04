@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-btn 
+    <v-btn
       @click="sendInfo"
       :disabled="!valid"
       fab
@@ -9,12 +9,15 @@
       right
       color="accent"
     >
-      <v-icon>
-        mdi-send
-      </v-icon>
+      <v-icon> mdi-send </v-icon>
     </v-btn>
     <v-form v-model="valid">
-      <v-jsf v-if="systemSchema" v-model="innerModel" :schema="systemSchema" :options="options" />
+      <v-jsf
+        v-if="systemSchema"
+        v-model="innerModel"
+        :schema="systemSchema"
+        :options="options"
+      />
     </v-form>
   </div>
 </template>
@@ -33,45 +36,50 @@ export default {
   props: {
     systemSchema: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     model: {
       type: Object,
-      default: () => null
-    }
+      default: () => null,
+    },
   },
   watch: {
     model: {
       handler(newVal, oldVal) {
-        this.innerModel = newVal
-      }
-    }
+        this.innerModel = newVal;
+      },
+    },
   },
   data() {
     return {
       valid: false,
       options: {},
-      innerModel: this.model
+      innerModel: this.model,
     };
   },
   methods: {
     async sendInfo() {
       try {
-        datastreamBuilder.withDatapoint(datapointsBuilder);
+        let mb = this.$api
+          .deviceMessageBuilder()
+          .withDataStreamVersion("" + new Date().getTime());
+        for(const prop in this.innerModel){
+          console.log(this.model[prop])
+          console.log(this.innerModel[prop])
+          if (this.innerModel[prop]!=null) {
+            let datapointsBuilder = this.$api.datapointsBuilder().withValue(this.innerModel[prop]);
+            let datastreamBuilder = this.$api.datastreamBuilder().withId(prop);
+            mb.withId(this.innerModel["device.identifier"]).withDataStream(datastreamBuilder.withDatapoint(datapointsBuilder));
+             const result = await mb.create();
+          }
+        };
         
-        let mb = this.$api.deviceMessageBuilder().withDataStreamVersion('' + (new Date().getTime()))
 
         // Esto hay que hacerlo por cada uno de los elementos del modelo
-        let datapointsBuilder = this.$api.datapointsBuilder().withValue(this.innerModel['device.name']);
-        let datastreamBuilder = this.$api.datastreamBuilder().withId('device.name')
-        mb.withId(this.innerModel['device.identifier']).withDataStream(datastreamBuilder)
-
-        const result = await mb.create()
-      } catch(errorApi) {
-        console.error(errorApi)
+      } catch (errorApi) {
+        console.error(errorApi);
       }
-      
-    }
+    },
   },
 };
 </script>

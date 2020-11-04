@@ -138,7 +138,7 @@ export default {
 
         this.datastreams.forEach((dsTmp) => {
          
-            if(this.sistemSchema.includes(dsTmp.identifier)) {
+            if(this.finalSistemSchema.includes(dsTmp.identifier)) {
               finalSchema.properties[dsTmp.identifier] = dsTmp.schema
               }
           
@@ -180,6 +180,7 @@ export default {
         "device.topology.path",
         "device.trustedBoot"
       ],
+      finalSistemSchema:[],
   sensors_: [
         "device.clock",
         "device.counters.availabilityLastDay",
@@ -240,20 +241,22 @@ export default {
         .newDeviceFinder()
         .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
       console.log(data);
-      if(data.data["provision.device.specificType"]){
-       this.model["device.specificType"] = data.data["provision.device.specificType"]._value._current.value
-       } 
-       if(data.data["provision.device.identifier"]){
-       this.model["device.identifier"] = data.data["provision.device.identifier"]._value._current.value
-       } 
-       if(data.data["provision.device.name"]){
-       this.model["device.name"] = data.data["provision.device.name"]._value._current.value
-       } 
-       if(data.data["provision.device.operationalStatus"]){
-       this.model["device.operationalStatus"] = data.data["provision.device.operationalStatus"]._value._current.value
-       } if(data.data["provision.device.administrativeState"]){
-       this.model["device.administrativeState"] = data.data["provision.device.administrativeState"]._value._current.value
-       } 
+      this.finalSistemSchema = []
+      this.sistemSchema.forEach((element)=>{
+        if(data.data[element]){
+          this.model[element] = data.data[element]._value._current.value
+          this.finalSistemSchema.push(element)
+        }
+        else if(data.data["provision."+element]){
+           this.model["provision."+element] = data.data["provision."+element]._value._current.value
+            this.finalSistemSchema.push("provision."+element)
+        }
+        else {
+          this.finalSistemSchema.push(element)
+        }
+
+      })
+     
       
         console.log(this.models)
       
