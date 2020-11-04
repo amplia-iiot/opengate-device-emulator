@@ -14,58 +14,70 @@
       <v-toolbar-title>
         {{
           deviceId
-            ? "Device " + deviceId + " Emulator"
+            ? "" + deviceId + " Emulator"
             : "Select device to emulate"
         }}
       </v-toolbar-title>
       <v-spacer />
-      <v-menu
-        v-model="menu"
-        :close-on-content-click="false"
-        :nudge-width="200"
-        offset-y
-        class="logout"
-      >
-        <template v-slot:activator="{ on, attrs }" >
-          <v-app-bar-nav-icon v-bind="attrs" v-on="on" />
-        </template>
-        <v-card >
-          <v-list-item>
-          <v-list-item-icon>
-            <v-icon color="indigo">
-              mdi-email
-            </v-icon>
-          </v-list-item-icon>
-  
-          <v-list-item-content>
-            <v-list-item-title>{{ this.$store.state.appbar.user }}</v-list-item-title>
-            <v-list-item-subtitle>User</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-            
+      <v-toolbar-items>
+        <v-btn text>
+          <v-badge content="3" color="error">
+            <v-icon color="success">mdi-lan-connect</v-icon>
+          </v-badge>
+        </v-btn>
+        <!-- <v-btn text>
+          <v-icon color="error">mdi-lan-disconnect</v-icon>
+        </v-btn> -->
+        <v-divider inset vertical />
+        <v-menu
+          v-model="menu"
+          :close-on-content-click="false"
+           offset-y
+          class="logout"
+        >
+          <template v-slot:activator="{ on }" >
+            <v-btn text v-on="on">
+              <v-icon>mdi-menu</v-icon>
+            </v-btn>
+          </template>
+          <v-card >
+            <v-list-item>
+            <v-list-item-icon>
+              <v-icon color="indigo">
+                mdi-email
+              </v-icon>
+            </v-list-item-icon>
+    
+            <v-list-item-content>
+              <v-list-item-title>{{ this.$store.state.appbar.user }}</v-list-item-title>
+              <v-list-item-subtitle>User</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+              
 
-          <v-dialog v-model="dialog" persistent>
-            <template v-slot:activator="{ on, attrs }" align-center>
-              <div class="text-center">
-              <v-btn color="red" dark v-bind="attrs" v-on="on" depressed>
-                Log out
-              </v-btn>
-              </div>
-            </template>
-            <v-card>
-              <v-card-title class="headline"> ATTENTION </v-card-title>
-              <v-card-text>Are you sure?</v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="green darken-1" text @click="dialog = false">
-                  No
+            <v-dialog v-model="dialog" persistent>
+              <template v-slot:activator="{ on, attrs }" align-center>
+                <div class="text-center">
+                <v-btn color="red" dark v-bind="attrs" v-on="on" depressed>
+                  Log out
                 </v-btn>
-                <v-btn color="red" text @click="routerdialog"> YES </v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-card>
-      </v-menu>
+                </div>
+              </template>
+              <v-card>
+                <v-card-title class="headline"> ATTENTION </v-card-title>
+                <v-card-text>Are you sure?</v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" text @click="dialog = false">
+                    No
+                  </v-btn>
+                  <v-btn color="red" text @click="routerdialog"> YES </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-card>
+        </v-menu>
+      </v-toolbar-items>
 
       <template v-slot:extension>
         <v-text-field
@@ -151,6 +163,7 @@ export default {
       this.$router.push({ path: "/" });
     },
     routerlister(id) {
+      this.tabActivo = 'sistema'
       this.$router.push({
         path: "/listerpage",
       });

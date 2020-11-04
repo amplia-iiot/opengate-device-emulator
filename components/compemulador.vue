@@ -1,28 +1,24 @@
 <template>
-  <div>
-      <v-card>
-        <v-card-text>
-          <v-tabs-items v-model="tabActivo">
-            <v-tab-item value="sistema">
-              <sistema :system-schema="systemSchema" :model="model" />
-            </v-tab-item>
-            <v-tab-item value="sensores">
-              <sensores
-                :sensors-schema="sensorsSchema"
-                :arr-sensors= "sensors_"
-                :lista-prueba="sensorsSchema.properties"
-              />
-            </v-tab-item>
-            <v-tab-item value="configuracion">
-              <configuracion />
-            </v-tab-item>
-            <v-tab-item value="mapas">
-              <mapas />
-            </v-tab-item>
-          </v-tabs-items>
-        </v-card-text>
-      </v-card>
-      </div>
+  <div style="padding: 10px;">
+    <v-tabs-items v-model="tabActivo">
+      <v-tab-item value="sistema">
+        <sistema :system-schema="systemSchema" :model="model" />
+      </v-tab-item>
+      <v-tab-item value="sensores">
+        <sensores
+          :sensors-schema="sensorsSchema"
+          :arr-sensors= "sensors_"
+          :lista-prueba="sensorsSchema.properties"
+        />
+      </v-tab-item>
+      <v-tab-item value="configuracion">
+        <configuracion />
+      </v-tab-item>
+      <v-tab-item value="mapas">
+        <mapas />
+      </v-tab-item>
+    </v-tabs-items>
+  </div>
 </template>
 
 <script>
@@ -260,14 +256,13 @@ export default {
     
   },
   watch: {
-     tab: function(){
-        this.tabActivo = this.tab
-      },
-      getDrawer: function(){
-        this.drawer = this.getDrawer
-      }
+    tab: function(){
+      this.tabActivo = this.tab
     },
-    
+    getDrawer: function(){
+      this.drawer = this.getDrawer
+    }
+  }
 };
 </script>
 

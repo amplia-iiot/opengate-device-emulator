@@ -1,21 +1,25 @@
 <template>
-  <v-app>
-    <br />
-    <v-form>
-      <v-form ref="form" v-model="valid">
+    <div>
         <v-autocomplete
-          style="color: red"
-          :items="items"
-          label="Operation to make:"
-          required
-          v-model="model"
+          :items="availableOperations"
+          label="Operation to configure"
+          v-model="selectedOperation"
+          @change="operationChanged"
         ></v-autocomplete>
-        <codemirror :options="cmOptions" v-model="code" />
-        <v-btn @click="send" class="send"> Send </v-btn>
-        <v-btn @click="reset" class="reset"> Reset </v-btn>
-      </v-form>
-    </v-form>
-  </v-app>
+        <div v-if="currentWorkingOperation">
+          <v-card>
+            <v-card-text>
+          <p>function {{selectedOperation}}(operaData) {</p>
+          <codemirror :options="cmOptions" v-model="currentWorkingOperation.code" />
+          <p>}</p>
+            </v-card-text>
+          </v-card>
+          <hr>
+          <v-switch v-model="currentWorkingOperation.enabled" />
+          <v-btn @click="saveOperation"> Save </v-btn>
+          <v-btn @click="deleteOperation"> Delete </v-btn>
+        </div>
+    </div>
 </template> 
 <script>
 import "codemirror/mode/javascript/javascript.js";
@@ -26,15 +30,32 @@ import 'codemirror/lib/codemirror.css';
 import VJsf from "@koumoul/vjsf/lib/VJsf.js";
 import "@koumoul/vjsf/lib/VJsf.css";
 import "@koumoul/vjsf/lib/deps/third-party.js";
+
+import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
+
 export default {
   components: {
     VJsf,
     codemirror,
   },
+  mixins: [baseUserApiMixin],
+  computed: {
+    deviceId() {
+      return this.$route.query.id
+    }
+  },
+  async mounted() {
+    const operationsCatalog = await this.$api.rawSearchBuilder().from('/catalog/operations').build().execute()
 
+    if (operationsCatalog.statusCode === 200) {
+      const defaultOperations = operationsCatalog.data.operations.map(operation => operation.name)
+
+      this.availableOperations = [...defaultOperations]
+    }
+  },
   data() {
     return {
-      code: "",
+      availableOperations:null,
       cmOptions: {
         tabSize: 1,
         styleActiveLine: true,
@@ -44,32 +65,44 @@ export default {
         lineWrapping: true,
         theme: "default",
       },
-      model: null,
-      items: [
-        "REBOOT_EQUIPMENT",
-        "POWER_OFF_EQUIPMENT",
-        "POWER_ON_EQUIPMENT",
-        "REFRESH_LOCATION",
-        "REFRESH_INFO",
-        "REFRESH_PRESENCE",
-        "STATUS_DIAGNOSTIC",
-      ],
-      valid: false,
-      readOnly: true,
-      code: "if(...){....}else{....}",
-      only: true,
-      disabled1: false,
-      disabled2: true,
+      selectedOperation: null,
+      code: "",
+      operationsConfig: {
+        "DEV_SPOOL_12" : {
+          "ADMINISTRATIVE_STATUS_CHANGE": {
+            code: 'codigo de ejemplo',
+            enabled: true
+          }
+        }
+      },
+      currentWorkingOperation: null
     };
   },
-  
-  
-
   methods: {
-    send() {
-      alert("Operation send with your javascript thank you!");
+    operationChanged(newOpera) {
+      if (newOpera) {
+        // se verifica que existe el dispositivo
+        if (!this.operationsConfig[this.deviceId]) {
+          this.operationsConfig[this.deviceId] = {}
+        }
+
+        if (!this.operationsConfig[this.deviceId][newOpera]) {
+          this.operationsConfig[this.deviceId][newOpera] = {
+            code: '',
+            enabled: false,
+          }
+        }
+
+        // se guarda una copia para trabajar con ella
+        this.currentWorkingOperation = {...this.operationsConfig[this.deviceId][newOpera]}
+      } else {
+        this.currentWorkingOperation = null
+      }
     },
-    reset() {
+    saveOperation() {
+      alert("Operation save with your javascript thank you!");
+    },
+    deleteOperation() {
       this.code = "";
     },
   },
