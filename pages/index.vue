@@ -14,9 +14,7 @@
           <v-text-field
             style=""
             v-model="name"
-            :counter="12"
             label="Nombre"
-            required
           ></v-text-field>
           <v-text-field
             style=""
@@ -30,6 +28,10 @@
             @click:append="show1 = !show1"
             @keyup.enter="enviar"
           ></v-text-field>
+          <v-checkbox
+        v-model="checkbox"
+        :label="`Recordar datos`"
+      ></v-checkbox>
           <v-btn color="success" class="mr-4" @click="enviar"> Enviar </v-btn>
           <v-btn color="error" class="mr-4" @click="reset">
             Vaciar Campos
@@ -86,13 +88,15 @@ export default {
         const response = await this.$api.newUserFinder().findByEmailAndPassword(this.name, this.password)
         if (response && response.data) {
           if (this.checkbox == true) {
-            localStorage.setItem("nombre", this.name)
-            localStorage.setItem("servidor", this.servidor)
-            localStorage.setItem("contraseña", this.password)
+            localStorage.name = this.name
+            localStorage.servidor = this.servidor
+            localStorage.password = this.password
+            localStorage.checkbox = true
           } else{
             delete localStorage.nombre
             delete localStorage.servidor
             delete localStorage.password
+            delete localStorage.checkbox
           }
           this.setOgapi( {
             config: {
@@ -135,7 +139,9 @@ export default {
       this.name = localStorage.nombre
       this.password = localStorage.password
       this.servidor = localStorage.servidor
+      this.checkbox = localStorage.checkbox
     }
+    console.log(localStorage.checkbox)
    
     this.setPage({
       page: "lister"

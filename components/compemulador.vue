@@ -28,6 +28,7 @@ import configuracion from "@/components/configuracion";
 import mapas from "@/components/mapas";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 import { mapMutations } from "vuex";
+import textField from '@/mixins/textField.mixin.js'
 
 
 export default {
@@ -37,7 +38,7 @@ export default {
     configuracion,
     mapas,
   },
-  mixins: [baseUserApiMixin],
+  mixins: [baseUserApiMixin,textField],
   computed: {
     deviceId() {
       return this.$route.query.id;
@@ -259,9 +260,6 @@ export default {
     tab: function(){
       this.tabActivo = this.tab
     },
-    getDrawer: function(){
-      this.drawer = this.getDrawer
-    }
   }
 };
 </script>

@@ -31,7 +31,7 @@ export default {
   components: {
     VJsf,
   },
-  mixins: [baseUserApiMixin],
+  mixins: [baseUserApiMixin,textField],
   data() {
     return {
       todo: true,
@@ -64,6 +64,23 @@ export default {
             }
           }
         ]
+      }
+      if (deviceFilter) {
+        filter.and.push({
+            or: [
+              {
+                like: {
+                  "provision.device.identifier": deviceFilter,
+                }
+              },
+              {
+                like: {
+                  "provision.device.name": deviceFilter,
+                  "provision.device.name": deviceFilter,
+                }
+              }
+            ]
+          })
       }
       const response = searcherBuilder
         .filter(filter)
