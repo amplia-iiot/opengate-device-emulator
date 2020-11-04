@@ -87,16 +87,14 @@ export default {
       try {
         const response = await this.$api.newUserFinder().findByEmailAndPassword(this.name, this.password)
         if (response && response.data) {
-          if (this.checkbox == true) {
+          if (this.checkbox) {
             localStorage.name = this.name
             localStorage.servidor = this.servidor
             localStorage.password = this.password
-            localStorage.checkbox = true
           } else{
-            delete localStorage.nombre
+            delete localStorage.name
             delete localStorage.servidor
             delete localStorage.password
-            delete localStorage.checkbox
           }
           this.setOgapi( {
             config: {
@@ -135,13 +133,13 @@ export default {
   },
   mounted() {
     if(this.$store.state.ogapi.apiKey) this.$store.state.ogapi.apiKey= null
-    if (localStorage && localStorage.nombre) {
-      this.name = localStorage.nombre
+    if (localStorage && localStorage.name) {
+      this.name = localStorage.name
       this.password = localStorage.password
       this.servidor = localStorage.servidor
-      this.checkbox = localStorage.checkbox
+      
     }
-    console.log(localStorage.checkbox)
+    
    
     this.setPage({
       page: "lister"
