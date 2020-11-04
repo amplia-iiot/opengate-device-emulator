@@ -24,11 +24,12 @@
         :close-on-content-click="false"
         :nudge-width="200"
         offset-y
+        class="logout"
       >
-        <template v-slot:activator="{ on, attrs }">
+        <template v-slot:activator="{ on, attrs }" >
           <v-app-bar-nav-icon v-bind="attrs" v-on="on" />
         </template>
-        <v-card>
+        <v-card >
           <v-list-item>
           <v-list-item-icon>
             <v-icon color="indigo">
@@ -205,5 +206,8 @@ export default {
   .no-mobile {
     display: none;
   }
+}
+.logout{
+  z-index: 9999;
 }
 </style>

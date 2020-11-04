@@ -1,42 +1,5 @@
 <template>
   <div>
-      <v-navigation-drawer
-        v-model="drawer"
-        absolute
-        temporary
-      >
-      <v-list>
-              <v-list-item-group
-            v-model="group"
-            active-class="deep-purple--text text--accent-4"
-          >
-                <v-list-item>
-                  <v-list-item-title @click="tabActivo = 'sistema' 
-                  drawer=false"
-                    >System</v-list-item-title
-                  >
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title @click="tabActivo = 'sensores' 
-                  drawer=false"
-                    >Sensors</v-list-item-title
-                  >
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title @click="tabActivo = 'configuracion' 
-                  drawer=false"
-                    >Operations</v-list-item-title
-                  >
-                </v-list-item>
-                <v-list-item>
-                  <v-list-item-title @click="tabActivo = 'mapas' 
-                  drawer=false"
-                    >Map</v-list-item-title
-                  >
-                </v-list-item>
-              </v-list-item-group>
-              </v-list>
-      </v-navigation-drawer>
       <v-card>
         <v-card-text>
           <v-tabs-items v-model="tabActivo">
