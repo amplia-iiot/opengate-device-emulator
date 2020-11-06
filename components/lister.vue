@@ -109,10 +109,13 @@ export default {
     },
   },
   mounted() {
-    this.search(),
-      this.setPage({
-      page: "lister"
-    })
+    if(this.$api){
+     this.search()
+    }
+    else {
+      this.$router.push("/")
+    }
+    
   },
   watch:{
     textField: {

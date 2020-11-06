@@ -130,6 +130,7 @@ export default {
             setTab: "appbar/setTab",
         }),
         routerdialog() {
+          localStorage.checkbox = false
             this.$router.push({
                 path: "/"
             });
