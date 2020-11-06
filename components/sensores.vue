@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-btn 
+    <v-btn
       @click="sendInfo"
       :disabled="!valid"
       fab
@@ -9,16 +9,14 @@
       right
       color="accent"
     >
-      <v-icon>
-        mdi-send
-      </v-icon>
+      <v-icon> mdi-send </v-icon>
     </v-btn>
     <br />
 
     <v-form ref="form" v-model="valid">
       {{ model }}
       <v-autocomplete
-        v-model="model_"
+        v-model="innerModel"
         clearable
         multiple
         :items="arrSensors"
@@ -28,7 +26,7 @@
           <v-chip
             color="primary"
             close
-            @click:close="deleteChip(item, model_)"
+            @click:close="deleteChip(item, innerModel)"
             >{{ item }}</v-chip
           >
         </template>
@@ -38,16 +36,16 @@
  -->
       <v-jsf
         v-if="sensorsSchema"
-        v-model="model"
+        v-model="innerModel"
         :schema="sensorsSchema"
         :options="options"
       />
-      <v-btn :disabled="disabled1" @click="botonEditar" class="btn btn-primary"
+<!--       <v-btn :disabled="disabled1" @click="botonEditar" class="btn btn-primary"
         >Editar</v-btn
       >
       <v-btn :disabled="disabled2" @click="botonCambiar" class="btn btn-danger"
         >Cambiar</v-btn
-      >
+      > -->
     </v-form>
   </v-app>
 </template>
@@ -61,71 +59,31 @@ export default {
   },
   props: {
     sensorsSchema: {
-      type: Array,
+      type: Object,
       default: () => null,
     },
     arrSensors: {
       type: Array,
     },
-    listaPrueba: {
+    model: {
+      type: Object,
+      default: () => null,
+    },
+    /*     listaPrueba: {
       type: Array,
+    }, */
+  },
+  watch: {
+    model: {
+      handler(newVal, oldVal) {
+        this.innerModel = newVal;
+      },
     },
   },
   data() {
     return {
-      model_: [],
       valid: false,
       readOnly: true,
-      model__: {
-        type: Object,
-        tab: this.$store.state.appbar.tabActivo,
-        properties: {},
-      },
-      model: {
-        temperatura: "",
-        ram: "",
-        hdd: "",
-        bateria: "",
-        id: 1,
-      },
-      models: [
-        {
-          temperatura: "76ºC",
-          ram: "2,4GB",
-          hdd: "45GB",
-          bateria: "43%",
-          id: 1234,
-        },
-        {
-          temperatura: "90ºC",
-          ram: "1,4GB",
-          hdd: "366GB",
-          bateria: "92%",
-          id: 4567,
-        },
-        {
-          temperatura: "45ºC",
-          ram: "0,4GB",
-          hdd: "12GB",
-          bateria: "12%",
-          id: 8901,
-        },
-        {
-          temperatura: "34ºC",
-          ram: "4,4GB",
-          hdd: "87GB",
-          bateria: "77%",
-          id: 2345,
-        },
-        {
-          temperatura: "105ºC",
-          ram: "1GB",
-          hdd: "1GB",
-          bateria: "12%",
-          id: 6789,
-        },
-      ],
-
       schema: {
         type: "object",
         properties: {
@@ -157,13 +115,15 @@ export default {
         },
       },
       options: {},
+      innerModel: this.model,
+
 
       only: true,
       disabled1: false,
       disabled2: true,
     };
   },
-  created: function () {
+/*   created: function () {
     this.models.forEach((element) => {
       if (element.id == this.$route.query.id) {
         this.model.temperatura = element.temperatura;
@@ -173,9 +133,42 @@ export default {
         this.model.id = element.id;
       }
     });
-  },
+  }, */
 
   methods: {
+    sendInfo() {
+      this.sendInfoApi();
+    },
+    async sendInfoApi() {
+      try {
+        let mb = this.$api
+          .deviceMessageBuilder()
+          .withDataStreamVersion("" + new Date().getTime())
+        
+        // Se pasan los datos del modelo al builder
+        for(const prop in this.innerModel){
+          console.log(this.model[prop])
+          console.log(this.innerModel[prop])
+          if (this.innerModel[prop]!=null) {
+            let datapointsBuilder = this.$api.datapointsBuilder().withValue(this.innerModel[prop])
+            let datastreamBuilder = this.$api.datastreamBuilder().withId(prop)
+            mb.withDataStream(datastreamBuilder.withDatapoint(datapointsBuilder))
+          }
+        }
+
+        // se pasa el id del dispositivo a actualizar
+        mb.withId(this.innerModel["device.identifier"])
+
+        // se lanza la petición
+        const result = await mb.create()
+
+      } catch (errorApi) {
+        console.error(errorApi);
+      }
+    },
+
+
+/* deleteChip, elimina las chips creadas */
     deleteChip(itemNeedToRemove, array) {
       for (let i = 0; i < array.length; i += 1) {
         if (array[parseInt(i, 10)] === itemNeedToRemove) {
@@ -184,7 +177,7 @@ export default {
       }
     },
 
-    botonEditar: function () {
+/*     botonEditar: function () {
       (this.schema.properties.temperatura.readOnly = false),
         (this.schema.properties.ram.readOnly = false),
         (this.schema.properties.hdd.readOnly = false),
@@ -199,7 +192,7 @@ export default {
         (this.schema.properties.ram.readOnly = true),
         (this.schema.properties.hdd.readOnly = true),
         (this.schema.properties.bateria.readOnly = true);
-    },
+    }, */
   },
 };
 </script>

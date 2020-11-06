@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 10px;">
+  <div style="padding: 10px">
     <v-tabs-items v-model="tabActivo">
       <v-tab-item value="sistema">
         <sistema :system-schema="systemSchema" :model="model" />
@@ -7,7 +7,7 @@
       <v-tab-item value="sensores">
         <sensores
           :sensors-schema="sensorsSchema"
-          :arr-sensors= "sensors_"
+          :arr-sensors="sensors_"
           :lista-prueba="sensorsSchema.properties"
         />
       </v-tab-item>
@@ -72,7 +72,45 @@ export default {
             dsTmp.identifier != "device.operationalStatus" &&
             dsTmp.identifier != "device.administrativeState" &&
             dsTmp.identifier != "device.topology.path" &&
-            dsTmp.identifier != "device.trustedBoot"
+            dsTmp.identifier != "device.trustedBoot" &&
+
+            dsTmp.identifier != "device.clock" &&
+            dsTmp.identifier != "device.powersupply.battery.voltage" &&
+            dsTmp.identifier != "device.powersupply.battery.current" &&
+            dsTmp.identifier != "device.powersupply.outage" &&
+            dsTmp.identifier != "device.powersupply.source" &&
+            dsTmp.identifier != "device.sessionType" &&
+            dsTmp.identifier != "device.clock" &&
+
+
+            dsTmp.identifier != "device.counters.availabilityLastDa" &&
+            dsTmp.identifier != "device.counters.presence.accountingStartLastDay" &&
+            dsTmp.identifier != "device.counters.presence.consecutivePingNOK" &&
+            dsTmp.identifier != "device.counters.presence.pingNOKLastDay" &&
+            dsTmp.identifier != "device.counters.presence.pingOKLastDay" &&
+            dsTmp.identifier != "device.counters.receivedBytesLastDay" &&
+            dsTmp.identifier != "device.counters.receivedBytesLastMonth" &&
+            dsTmp.identifier != "device.counters.sentBytesLastDay" &&
+            dsTmp.identifier != "device.counters.sentBytesLastMonth" &&
+            dsTmp.identifier != "device.counters.totalBytesLastDay" &&
+            dsTmp.identifier != "device.counters.totalBytesLastMont" &&
+            dsTmp.identifier != "device.identification.conflict" &&
+            dsTmp.identifier != "device.identification.unknown" &&
+            dsTmp.identifier != "device.performance" &&
+            dsTmp.identifier != "device.recModificationDate"
+/*             y: {__ob__: Observer}
+
+
+: {…}
+device.storage.disk.total: {__ob__: Observer}
+device.storage.disk.usage: {__ob__: Observer}
+device.storage.ramDisk.total: {__ob__: Observer}
+device.storage.ramDisk.usage: {__ob__: Observer}
+device.temperature.status: {__ob__: Observer}
+device.temperature.value: {__ob__: Observer}
+device.upTime: {__ob__: Observer} */
+            
+
           ) {
             finalSchema.properties[dsTmp.identifier] = dsTmp.schema;
           }
