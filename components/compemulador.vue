@@ -2,7 +2,8 @@
   <div style="padding: 10px">
     <v-tabs-items v-model="tabActivo">
       <v-tab-item value="sistema">
-        <sistema :system-schema="systemSchema" :model="model" />
+        <sistema :model="model" :basic-types="basicTypes"
+          :datastreams="datastreams" />
       </v-tab-item>
       <v-tab-item value="sensores">
         <sensores
@@ -45,32 +46,7 @@ export default {
     deviceOrganization() {
       return this.$route.query.organization;
     },
-    systemSchema() {
-      if (this.basicTypes && this.datastreams && this.datastreams.length > 0) {
-        const finalSchema = {
-          type: "object",
-          properties: {},
-          definitions: this.basicTypes.definitions,
-        };
-
-        this.datastreams.forEach((dsTmp) => {
-         
-            if(this.finalSystemSchema.includes(dsTmp.identifier)) {
-              finalSchema.properties[dsTmp.identifier] = dsTmp.schema
-              }
-          
-        });
-
-        console.log(finalSchema);
-
-        return finalSchema;
-      } else {
-        return {
-          type: "object",
-          properties: {},
-        };
-      }
-    },
+    
   },
   data() {
     return {
@@ -90,7 +66,6 @@ export default {
         "device.operationalStatus",
         "device.administrativeState",
       ],
-      finalSystemSchema:[],
       
     };
   },
@@ -121,13 +96,9 @@ export default {
       this.systemDatastreams.forEach((element)=>{
         if(data.data[element]){
           this.model[element] = data.data[element]._value._current.value
-          this.finalSystemSchema.push(element)
         } else if(data.data["provision."+element]){
           this.model[element] = data.data["provision."+element]._value._current.value
-          this.finalSystemSchema.push(element)
-        } else {
-          this.finalSystemSchema.push(element)
-        }
+        } 
       })
      
       console.log(this.models)

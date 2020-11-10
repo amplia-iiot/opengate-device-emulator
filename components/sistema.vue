@@ -35,9 +35,13 @@ export default {
   },
   mixins: [baseUserApiMixin],
   props: {
-    systemSchema: {
+     basicTypes: {
       type: Object,
-      default: () => null
+      default: () => null,
+    },
+    datastreams: {
+      type: Array,
+      default: () => []
     },
     model: {
       type: Object,
@@ -60,10 +64,24 @@ export default {
     return {
       valid: false,
       options: {},
-      innerModel: this.model?{...this.model}:{}
+      innerModel: this.model?{...this.model}:{},
+      systemDatastreams: [
+        "device.identifier",
+        "device.specificType",
+        "device.name",
+        "device.description",
+        "device.serialNumber",
+        "device.operationalStatus",
+        "device.administrativeState",
+      ],
+      finalSystemSchema:[],
+      model : {}
     };
   },
   methods: {
+      deviceId() {
+      return this.$route.query.id;
+    },
     sendInfo() {
       this.sendInfoApi()
     },
@@ -94,6 +112,46 @@ export default {
         console.error(errorApi);
       }
     },
+    systemSchemaMethod(){
+      this.finalSystemSchema = []
+      this.model = {}
+      this.systemDatastreams.forEach((element)=>{
+        
+          this.finalSystemSchema.push(element)
+        
+      })
+    }
   },
+  computed:{
+    systemSchema() {
+      if (this.basicTypes && this.datastreams && this.datastreams.length > 0) {
+        const finalSchema = {
+          type: "object",
+          properties: {},
+          definitions: this.basicTypes.definitions,
+        };
+
+        this.datastreams.forEach((dsTmp) => {
+         
+            if(this.finalSystemSchema.includes(dsTmp.identifier)) {
+              finalSchema.properties[dsTmp.identifier] = dsTmp.schema
+              }
+          
+        });
+
+        console.log(finalSchema);
+
+        return finalSchema;
+      } else {
+        return {
+          type: "object",
+          properties: {},
+        };
+      }
+    },
+  },
+  mounted(){
+    this.systemSchemaMethod()
+  }
 };
 </script>
