@@ -37,7 +37,7 @@
                         </v-list-item-icon>
 
                         <v-list-item-content>
-                            <v-list-item-title>{{ this.$store.state.appbar.user }}</v-list-item-title>
+                            <v-list-item-title>{{ localStorage.name }}</v-list-item-title>
                             <v-list-item-subtitle>User</v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
