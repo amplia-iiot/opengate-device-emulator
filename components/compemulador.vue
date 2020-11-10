@@ -6,9 +6,8 @@
       </v-tab-item>
       <v-tab-item value="sensores">
         <sensores
-          :sensors-schema="sensorsSchema"
-          :arr-sensors="sensors_"
-          :lista-prueba="sensorsSchema.properties"
+          :basic-types="basicTypes"
+          :datastreams="datastreams"
         />
       </v-tab-item>
       <v-tab-item value="configuracion">
@@ -46,86 +45,6 @@ export default {
     deviceOrganization() {
       return this.$route.query.organization;
     },
-    sensorsSchema() {
-      if (this.basicTypes && this.datastreams && this.datastreams.length > 0) {
-        const finalSchema = {
-          type: "object",
-          properties: {},
-          definitions: this.basicTypes.definitions,
-        };
-
-        this.datastreams.forEach((dsTmp) => {
-          if (
-            !dsTmp.identifier.startsWith("provision.") &&
-            !dsTmp.identifier.includes("communicationModules[]") &&
-            dsTmp.identifier != "device.identifier" &&
-            dsTmp.identifier != "device.identification" &&
-            dsTmp.identifier != "entity.areas" &&
-            dsTmp.identifier != "entity.location" &&
-            dsTmp.identifier != "device.specificType" &&
-            dsTmp.identifier != "device.name" &&
-            dsTmp.identifier != "device.description" &&
-            dsTmp.identifier != "device.birthDate" &&
-            dsTmp.identifier != "device.serialNumber" &&
-            dsTmp.identifier != "device.model" &&
-            dsTmp.identifier != "device.software" &&
-            dsTmp.identifier != "device.operationalStatus" &&
-            dsTmp.identifier != "device.administrativeState" &&
-            dsTmp.identifier != "device.topology.path" &&
-            dsTmp.identifier != "device.trustedBoot" &&
-
-            dsTmp.identifier != "device.clock" &&
-            dsTmp.identifier != "device.powersupply.battery.voltage" &&
-            dsTmp.identifier != "device.powersupply.battery.current" &&
-            dsTmp.identifier != "device.powersupply.outage" &&
-            dsTmp.identifier != "device.powersupply.source" &&
-            dsTmp.identifier != "device.sessionType" &&
-            dsTmp.identifier != "device.clock" &&
-
-
-            dsTmp.identifier != "device.counters.availabilityLastDa" &&
-            dsTmp.identifier != "device.counters.presence.accountingStartLastDay" &&
-            dsTmp.identifier != "device.counters.presence.consecutivePingNOK" &&
-            dsTmp.identifier != "device.counters.presence.pingNOKLastDay" &&
-            dsTmp.identifier != "device.counters.presence.pingOKLastDay" &&
-            dsTmp.identifier != "device.counters.receivedBytesLastDay" &&
-            dsTmp.identifier != "device.counters.receivedBytesLastMonth" &&
-            dsTmp.identifier != "device.counters.sentBytesLastDay" &&
-            dsTmp.identifier != "device.counters.sentBytesLastMonth" &&
-            dsTmp.identifier != "device.counters.totalBytesLastDay" &&
-            dsTmp.identifier != "device.counters.totalBytesLastMont" &&
-            dsTmp.identifier != "device.identification.conflict" &&
-            dsTmp.identifier != "device.identification.unknown" &&
-            dsTmp.identifier != "device.performance" &&
-            dsTmp.identifier != "device.recModificationDate"
-/*             y: {__ob__: Observer}
-
-
-: {…}
-device.storage.disk.total: {__ob__: Observer}
-device.storage.disk.usage: {__ob__: Observer}
-device.storage.ramDisk.total: {__ob__: Observer}
-device.storage.ramDisk.usage: {__ob__: Observer}
-device.temperature.status: {__ob__: Observer}
-device.temperature.value: {__ob__: Observer}
-device.upTime: {__ob__: Observer} */
-            
-
-          ) {
-            finalSchema.properties[dsTmp.identifier] = dsTmp.schema;
-          }
-        });
-
-        console.log(finalSchema);
-
-        return finalSchema;
-      } else {
-        return {
-          type: "object",
-          properties: {},
-        };
-      }
-    },
     systemSchema() {
       if (this.basicTypes && this.datastreams && this.datastreams.length > 0) {
         const finalSchema = {
@@ -136,7 +55,7 @@ device.upTime: {__ob__: Observer} */
 
         this.datastreams.forEach((dsTmp) => {
          
-            if(this.finalSistemSchema.includes(dsTmp.identifier)) {
+            if(this.finalSystemSchema.includes(dsTmp.identifier)) {
               finalSchema.properties[dsTmp.identifier] = dsTmp.schema
               }
           
@@ -161,10 +80,8 @@ device.upTime: {__ob__: Observer} */
       deviceData: null,
       basicTypes: null,
       datastreams: null,
-      model: {type:Object,
-      tab: this.$store.state.appbar.tabActivo,
-      properties:{} },
-      sistemSchema: [
+      model: {},
+     systemDatastreams: [
         "device.identifier",
         "device.specificType",
         "device.name",
@@ -173,29 +90,8 @@ device.upTime: {__ob__: Observer} */
         "device.operationalStatus",
         "device.administrativeState",
       ],
-      finalSistemSchema:[],
-      sensors_: [
-        "device.clock",
-        "device.cpu.status",
-        "device.cpu.total",
-        "device.cpu.usage",
-        "device.powersupply.battery.charge",
-        "device.powersupply.battery.current",
-        "device.powersupply.battery.status",
-        "device.powersupply.battery.voltage",
-        "device.powersupply.outage",
-        "device.powersupply.source",
-        "device.powersupply.status",
-        "device.ram.total",
-        "device.ram.usage",
-        "device.sessionType",
-        "device.storage.disk.total",
-        "device.storage.disk.usage",
-        "device.storage.ramDisk.total",
-        "device.storage.ramDisk.usage",
-        "device.temperature.status",
-        "device.temperature.value"
-      ],    
+      finalSystemSchema:[],
+      
     };
   },
   mounted() {
@@ -220,17 +116,17 @@ device.upTime: {__ob__: Observer} */
         .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
       
       console.log(data);
-      this.finalSistemSchema = []
-      
-      this.sistemSchema.forEach((element)=>{
+      this.finalSystemSchema = []
+      this.model = {}
+      this.systemDatastreams.forEach((element)=>{
         if(data.data[element]){
           this.model[element] = data.data[element]._value._current.value
-          this.finalSistemSchema.push(element)
+          this.finalSystemSchema.push(element)
         } else if(data.data["provision."+element]){
           this.model[element] = data.data["provision."+element]._value._current.value
-          this.finalSistemSchema.push(element)
+          this.finalSystemSchema.push(element)
         } else {
-          this.finalSistemSchema.push(element)
+          this.finalSystemSchema.push(element)
         }
       })
      
