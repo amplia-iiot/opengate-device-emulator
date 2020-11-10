@@ -1,5 +1,5 @@
 <template>
-<v-app id="inspire">
+    <v-app id="inspire">
     <v-app-bar extended app color="primary" dark hide-on-scroll elevate-on-scroll>
         <v-app-bar-nav-icon @click="routerlister" v-if="deviceId">
             <v-icon> mdi-chevron-left </v-icon>
@@ -99,17 +99,16 @@
 </template>
 
 <script>
-import {
-    mapMutations
-} from "vuex";
-import lister from "@/components/app_bar_lister";
-import emulator from "@/components/bar-emulator";
-import textField from "@/mixins/textField.mixin.js";
-import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
+import {mapMutations} from "vuex"
+import lister from "@/components/app_bar_lister"
+import emulator from "@/components/bar-emulator"
+import textField from "@/mixins/textField.mixin.js"
+import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js"
+
 export default {
     components: {
         lister,
-        emulator,
+        emulator
     },
     mixins: [baseUserApiMixin],
     data() {
@@ -122,6 +121,7 @@ export default {
             valid: false,
             tabActivo: "sistema",
             menu: false,
+            mqttClient: null
         };
     },
     methods: {
@@ -144,7 +144,7 @@ export default {
             this.sendText({
                 text: this.field,
             });
-        },
+        }
     },
     computed: {
         deviceId() {
@@ -168,11 +168,85 @@ export default {
 
     },
     watch: {
-        tabActivo: function () {
-            this.setTab({
-                tab: this.tabActivo,
-            });
+        tabActivo: {
+            handler(newVal, oldVal) {
+                this.setTab({
+                    tab: this.tabActivo,
+                });
+            }
         },
+        deviceId(newVal, oldVal) {
+            if (newVal && newVal !== oldVal) {
+                try {
+                      // this.mqttClient = mqtt.connect('mqtt://api.opengate.es:1883',
+                    //     {
+                    //         clientId: newVal,
+                    //         username: newVal,
+                    //         password: this.userData.apiKey
+                    //     })
+// 
+                    // this.mqttClient.on('connect', () => {
+                        // console.log('connected')
+                        // debugger
+                        // this.mqttClient.subscribe('odm/request/'+ newVal, {}, (err) => {
+                            // if (!err) {
+                                // console.log('hola')
+                            // }
+                        // })
+                    // })
+                    
+                    // client.on('message', function (topic, message) {
+                    // // message is Buffer
+                    // console.log(message.toString())
+                    // client.end()
+                    // })
+
+
+                    debugger
+                    this.mqttClient = new WebSocket('ws://api.opengate.es/south/v80/sessions/' + newVal + '?X-ApiKey=' + this.userData.apiKey)
+
+                    this.mqttClient.onmessage = function(event) {
+                        debugger
+                        console.log(event);
+                    }
+
+                    this.mqttClient.onopen = function(event) {
+                        console.log(event)
+                        console.log("Successfully connected to the echo websocket server...")
+                    }
+
+                    // this.mqttClient = new Paho.Client('mqtt://api.opengate.es', 1883, '', newVal);
+                    //document.write("connecting to "+ host);
+                    // var options = {
+                    //     userName: newVal,
+                    //     password: this.userData.apiKey,
+                    //     onConnected = () => {
+                    //         console.log('conectao')
+                    //     }
+                    // }
+
+                    // this.mqttClient.onConnectionLost = () => {
+                    //     console.log('desconectao')
+                    // };
+                    // this.mqttClient.onMessageArrived = (msg) => {
+                    //     console.log(msg)
+                    // };
+
+                    // this.mqttClient.connect(options);
+                }catch(connError) {
+                    this.mqttClient = null
+                    console.error(connError)
+                }
+                
+            } else {
+                // if (this.mqttClient && this.mqttClient.disconnect) {
+                //     this.mqttClient.disconnect()
+                // }
+                if (this.mqttClient && this.mqttClient.close) {
+                    this.mqttClient.close()
+                }
+            }
+        }
     },
 };
 </script>
