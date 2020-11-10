@@ -133,6 +133,9 @@ export default {
                             servidor: this.servidor
                         }
                     })
+                    this.setUser({
+                email: localStorage.name
+            })
                     this.$nextTick(()=>this.$router.push("/listerpage")) /*Aqui deberia ir la ruta del buscador*/
                 }
             } catch (errPeticion) {
