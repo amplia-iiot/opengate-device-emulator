@@ -29,6 +29,7 @@ import "@koumoul/vjsf/lib/deps/third-party.js";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 
 export default {
+  name: 'sistema',
   components: {
     VJsf,
   },
@@ -36,25 +37,30 @@ export default {
   props: {
     systemSchema: {
       type: Object,
-      default: () => null,
+      default: () => null
     },
     model: {
       type: Object,
-      default: () => null,
+      default: () => null
     },
   },
   watch: {
     model: {
       handler(newVal, oldVal) {
-        this.innerModel = newVal;
+        if (newVal) {          
+          this.innerModel = { ...newVal }
+        } else {
+          this.innerModel = {}
+        }
       },
-    },
+      deep: true
+    }
   },
   data() {
     return {
       valid: false,
       options: {},
-      innerModel: this.model,
+      innerModel: this.model?{...this.model}:{}
     };
   },
   methods: {
