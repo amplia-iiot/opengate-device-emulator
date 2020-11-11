@@ -52,7 +52,6 @@ export default {
         ...mapMutations({
             setOgapi: 'ogapi/setOgapi',
             setOgapiKey: 'ogapi/setOgapiKey',
-            setPage: "appbar/setPage",
             setUser: 'appbar/setUser'
         }),
         async enviar() {

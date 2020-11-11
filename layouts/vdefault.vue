@@ -102,15 +102,9 @@
 import {
     mapMutations
 } from "vuex";
-import lister from "@/components/app_bar_lister";
-import emulator from "@/components/bar-emulator";
 import textField from "@/mixins/textField.mixin.js";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 export default {
-    components: {
-        lister,
-        emulator,
-    },
     mixins: [baseUserApiMixin],
     data() {
         return {

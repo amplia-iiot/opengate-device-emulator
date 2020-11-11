@@ -39,6 +39,10 @@ export default {
       type: Object,
       default: () => null,
     },
+    model: {
+      type: Object,
+      default: () => null,
+    },
     datastreams: {
       type: Array,
       default: () => []
@@ -47,8 +51,22 @@ export default {
   watch: {
     model: {
       handler(newVal, oldVal) {
-        if (newVal) {          
-          this.innerModel = { ...newVal }
+        if (newVal) { 
+          this.finalSystemSchema = []
+          this.systemDatastreams.forEach((element)=>{
+          if(this.model[element]){
+            this.innerModel[element]= this.model[element]._value._current.value
+            this.finalSystemSchema.push(element)
+          }
+          else if(this.model["provision."+element]){
+            this.innerModel[element] =this.model["provision."+element]._value._current.value
+            this.finalSystemSchema.push(element)
+          }
+          else {
+            this.finalSystemSchema.push(element)
+          }
+        
+      })         
         } else {
           this.innerModel = {}
         }
@@ -71,7 +89,6 @@ export default {
         "device.administrativeState",
       ],
       finalSystemSchema:[],
-      model : {}
     };
   },
   methods: {
@@ -105,27 +122,7 @@ export default {
         console.error(errorApi);
       }
     },
-    async systemSchemaMethod(){
-      const data = await this.$api
-        .newDeviceFinder()
-        .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
-      this.finalSystemSchema = []
-      this.model = {}
-      this.systemDatastreams.forEach((element)=>{
-         if(data.data[element]){
-          this.model[element] = data.data[element]._value._current.value
-          this.finalSystemSchema.push(element)
-         }
-         else if(data.data["provision."+element]){
-          this.model[element] = data.data["provision."+element]._value._current.value
-          this.finalSystemSchema.push(element)
-        }
-        else {
-          this.finalSystemSchema.push(element)
-        }
-        
-      })
-    }
+    
   },
   computed:{
     systemSchema() {
@@ -161,8 +158,5 @@ export default {
       return this.$route.query.organization;
     },
   },
-  mounted(){
-    this.systemSchemaMethod()
-  }
 };
 </script>

@@ -3,7 +3,7 @@
     <v-tabs-items v-model="tabActivo">
       <v-tab-item value="sistema">
         <sistema :basic-types="basicTypes"
-          :datastreams="datastreams" />
+          :datastreams="datastreams" :model="model"/>
       </v-tab-item>
       <v-tab-item value="sensores">
         <sensores
@@ -56,7 +56,7 @@ export default {
       deviceData: null,
       basicTypes: null,
       datastreams: null,
-      
+      model : {}
       
     };
   },
@@ -66,21 +66,17 @@ export default {
     
     this.findDevice();
    
-      this.setPage({
-      page: "emulador"
-    })
+      
   },
 
   methods: {
-    ...mapMutations({
-      setPage: "appbar/setPage",
-    }),
+    
     async findDevice() {
       // consulta de datos de dispositivo
       const data = await this.$api
         .newDeviceFinder()
         .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
-      this.deviceData = data
+      this.model = data.data
       console.log(data);
       
      
