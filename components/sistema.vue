@@ -43,10 +43,6 @@ export default {
       type: Array,
       default: () => []
     },
-    model: {
-      type: Object,
-      default: () => null
-    },
   },
   watch: {
     model: {
@@ -79,9 +75,6 @@ export default {
     };
   },
   methods: {
-      deviceId() {
-      return this.$route.query.id;
-    },
     sendInfo() {
       this.sendInfoApi()
     },
@@ -112,12 +105,24 @@ export default {
         console.error(errorApi);
       }
     },
-    systemSchemaMethod(){
+    async systemSchemaMethod(){
+      const data = await this.$api
+        .newDeviceFinder()
+        .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
       this.finalSystemSchema = []
       this.model = {}
       this.systemDatastreams.forEach((element)=>{
-        
+         if(data.data[element]){
+          this.model[element] = data.data[element]._value._current.value
           this.finalSystemSchema.push(element)
+         }
+         else if(data.data["provision."+element]){
+          this.model[element] = data.data["provision."+element]._value._current.value
+          this.finalSystemSchema.push(element)
+        }
+        else {
+          this.finalSystemSchema.push(element)
+        }
         
       })
     }
@@ -148,6 +153,12 @@ export default {
           properties: {},
         };
       }
+    },
+     deviceId() {
+      return this.$route.query.id;
+    },
+    deviceOrganization() {
+      return this.$route.query.organization;
     },
   },
   mounted(){

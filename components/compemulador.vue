@@ -2,7 +2,7 @@
   <div style="padding: 10px">
     <v-tabs-items v-model="tabActivo">
       <v-tab-item value="sistema">
-        <sistema :model="model" :basic-types="basicTypes"
+        <sistema :basic-types="basicTypes"
           :datastreams="datastreams" />
       </v-tab-item>
       <v-tab-item value="sensores">
@@ -56,16 +56,7 @@ export default {
       deviceData: null,
       basicTypes: null,
       datastreams: null,
-      model: {},
-     systemDatastreams: [
-        "device.identifier",
-        "device.specificType",
-        "device.name",
-        "device.description",
-        "device.serialNumber",
-        "device.operationalStatus",
-        "device.administrativeState",
-      ],
+      
       
     };
   },
@@ -89,17 +80,9 @@ export default {
       const data = await this.$api
         .newDeviceFinder()
         .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
-      
+      this.deviceData = data
       console.log(data);
-      this.finalSystemSchema = []
-      this.model = {}
-      this.systemDatastreams.forEach((element)=>{
-        if(data.data[element]){
-          this.model[element] = data.data[element]._value._current.value
-        } else if(data.data["provision."+element]){
-          this.model[element] = data.data["provision."+element]._value._current.value
-        } 
-      })
+      
      
       console.log(this.models)
       
