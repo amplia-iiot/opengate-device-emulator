@@ -15,7 +15,7 @@
         <configuracion />
       </v-tab-item>
       <v-tab-item value="mapas">
-        <mapas />
+        <mapas :model="model"/>
       </v-tab-item>
     </v-tabs-items>
   </div>
