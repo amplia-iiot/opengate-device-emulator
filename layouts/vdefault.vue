@@ -1,6 +1,6 @@
 <template>
 <v-app id="inspire">
-    <v-app-bar extended app color="primary" dark hide-on-scroll elevate-on-scroll>
+    <v-app-bar extended app color="primary" dark elevate-on-scroll>
         <v-app-bar-nav-icon @click="routerlister" v-if="deviceId">
             <v-icon> mdi-chevron-left </v-icon>
         </v-app-bar-nav-icon>

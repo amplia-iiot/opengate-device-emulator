@@ -70,15 +70,10 @@ export default {
   },
 
   methods: {
-<<<<<<< HEAD
     ...mapMutations({
-      setPage: "appbar/setPage",
       setTab: "appbar/setTab",
 
     }),
-=======
-    
->>>>>>> EMU-12
     async findDevice() {
       // consulta de datos de dispositivo
       const data = await this.$api
@@ -142,11 +137,7 @@ export default {
 
       console.log(finalDatastreams);
       this.datastreams = finalDatastreams;
-    },
-    
-    
-
-    
+    }
   },
   watch: {
     tab: function(){
