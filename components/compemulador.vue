@@ -108,6 +108,8 @@ export default {
   methods: {
     ...mapMutations({
       setPage: "appbar/setPage",
+      setTab: "appbar/setTab",
+
     }),
     async findDevice() {
       // consulta de datos de dispositivo
@@ -194,6 +196,12 @@ export default {
     tab: function(){
       this.tabActivo = this.tab
     },
+     tabActivo: function () {
+      this.setTab({
+         tab: this.tabActivo,
+      });
+    },
+  
   }
 };
 </script>
