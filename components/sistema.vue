@@ -35,20 +35,38 @@ export default {
   },
   mixins: [baseUserApiMixin],
   props: {
-    systemSchema: {
+     basicTypes: {
       type: Object,
-      default: () => null
+      default: () => null,
     },
     model: {
       type: Object,
-      default: () => null
+      default: () => null,
+    },
+    datastreams: {
+      type: Array,
+      default: () => []
     },
   },
   watch: {
     model: {
       handler(newVal, oldVal) {
-        if (newVal) {          
-          this.innerModel = { ...newVal }
+        if (newVal) { 
+          this.finalSystemSchema = []
+          this.systemDatastreams.forEach((element)=>{
+          if(this.model[element]){
+            this.innerModel[element]= this.model[element]._value._current.value
+            this.finalSystemSchema.push(element)
+          }
+          else if(this.model["provision."+element]){
+            this.innerModel[element] =this.model["provision."+element]._value._current.value
+            this.finalSystemSchema.push(element)
+          }
+          else {
+            this.finalSystemSchema.push(element)
+          }
+        
+      })         
         } else {
           this.innerModel = {}
         }
@@ -60,7 +78,17 @@ export default {
     return {
       valid: false,
       options: {},
-      innerModel: this.model?{...this.model}:{}
+      innerModel: this.model?{...this.model}:{},
+      systemDatastreams: [
+        "device.identifier",
+        "device.specificType",
+        "device.name",
+        "device.description",
+        "device.serialNumber",
+        "device.operationalStatus",
+        "device.administrativeState",
+      ],
+      finalSystemSchema:[],
     };
   },
   methods: {
@@ -93,6 +121,41 @@ export default {
       } catch (errorApi) {
         console.error(errorApi);
       }
+    },
+    
+  },
+  computed:{
+    systemSchema() {
+      if (this.basicTypes && this.datastreams && this.datastreams.length > 0) {
+        const finalSchema = {
+          type: "object",
+          properties: {},
+          definitions: this.basicTypes.definitions,
+        };
+
+        this.datastreams.forEach((dsTmp) => {
+         
+            if(this.finalSystemSchema.includes(dsTmp.identifier)) {
+              finalSchema.properties[dsTmp.identifier] = dsTmp.schema
+              }
+          
+        });
+
+        console.log(finalSchema);
+
+        return finalSchema;
+      } else {
+        return {
+          type: "object",
+          properties: {},
+        };
+      }
+    },
+     deviceId() {
+      return this.$route.query.id;
+    },
+    deviceOrganization() {
+      return this.$route.query.organization;
     },
   },
 };

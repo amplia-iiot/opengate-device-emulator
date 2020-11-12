@@ -1,31 +1,26 @@
 export const state = () => ({
-    textField :null,
-    currentPage :null,
+    textField: null,
     tabActive: null,
-    drawer: null,
     user: null
-  })
-  
+})
+
 export const mutations = {
-    setFilter(state, {text}) {
-        if(state.textField){
+    setFilter(state, {
+        text
+    }) {
+        if (state.textField) {
             state.textField = null
         }
         state.textField = text
     },
-    setPage(state, {page}){
-         if(state.currentPage){
-            state.currentPage= null
-        }
-    state.currentPage = page
+    setTab(state, {
+        tab
+    }) {
+        state.tabActive = tab
     },
-    setTab(state,{tab}){
-    state.tabActive = tab
-    },
-    setDrawer(state,{drawerCondition}){
-    state.drawer = drawerCondition
-    },
-    setUser(state, {email}) {
+    setUser(state, {
+        email
+    }) {
         state.user = email
     }
 }
