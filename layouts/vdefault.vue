@@ -105,7 +105,7 @@ import {
 import textField from "@/mixins/textField.mixin.js";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 export default {
-    mixins: [baseUserApiMixin],
+    mixins: [baseUserApiMixin, textField],
     data() {
         return {
             deviceapi: [],
@@ -168,6 +168,9 @@ export default {
                 tab: this.tabActivo,
             });
         },
+        tab: function(){
+            this.tabActivo = this.tab
+        }
     },
 };
 </script>

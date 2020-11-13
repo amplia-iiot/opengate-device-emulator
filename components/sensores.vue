@@ -118,20 +118,21 @@ export default {
     model: {
       handler(newVal, oldVal) {
         if (newVal) {
-          this.finalSensorsSchema = []
+          console.log()
+          this.selectedSensors = []
           this.arrSensors.forEach((element) => {
             if (this.model[element]) {
               this.innerModel[element] = this.model[
                 element
               ]._value._current.value
-              this.finalSensorsSchema.push(element);
+              this.selectedSensors.push(element);
             } else if (this.model["provision." + element]) {
               this.innerModel[element] = this.model[
                 "provision." + element
               ]._value._current.value
-              this.finalSensorsSchema.push(element)
+              this.selectedSensors.push(element)
             } else {
-              this.finalSensorsSchema.push(element)
+              this.selectedSensors.push(element)
             }
           })
         } else {
