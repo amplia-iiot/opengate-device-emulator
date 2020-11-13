@@ -37,21 +37,16 @@ export default {
   css: [],
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
-  plugins: [{
-    /*       src: '@/plugins/vuelayers.js',
-          ssr: false */
-    src: '@plugins/leaflet.js',
-    ssr: false
-  }, ],
+  plugins: [],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
   components: true,
 
   // Modules for dev and build (recommended) (https://go.nuxtjs.dev/config-modules)
-  buildModules: [
-    // https://go.nuxtjs.dev/vuetify
-    '@nuxtjs/vuetify',
-  ],
+  // buildModules: [
+  //   // https://go.nuxtjs.dev/vuetify
+  //   '@nuxtjs/vuetify',
+  // ],
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
@@ -61,6 +56,31 @@ export default {
     '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/content
     '@nuxt/content',
+    'nuxt-leaflet',
+    [
+      '@nuxtjs/vuetify',
+      {
+        treeShake: false,
+        theme: {
+          light: true,
+          themes: {
+            light: {
+              primary: '#ffa72f',
+              secondary: '#20AE74',
+              accent: '#E38605',
+            },
+            dark: {
+              primary: '#ffa72f',
+              secondary: '#20AE74',
+              accent: '#E38605',
+            }
+          },
+          options: {
+            customProperties: true
+          }
+        }
+      }
+    ],
   ],
 
   // Axios module configuration (https://go.nuxtjs.dev/config-axios)
@@ -68,26 +88,6 @@ export default {
 
   // Content module configuration (https://go.nuxtjs.dev/config-content)
   content: {},
-
-  // Vuetify module configuration (https://go.nuxtjs.dev/config-vuetify)
-  vuetify: {
-    customVariables: ['~/assets/variables.scss'],
-    theme: {
-      dark: false,
-      themes: {
-        dark: {
-          primary: '#ffa72f',
-          accent: '#E38605',
-          secondary: '#20AE74'
-        },
-        light: {
-          primary: '#ffa72f',
-          accent: '#E38605',
-          secondary: '#20AE74'
-        }
-      }
-    }
-  },
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)
   build: {},

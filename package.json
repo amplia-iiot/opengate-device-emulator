@@ -17,6 +17,7 @@
     "leaflet": "^1.7.1",
     "mqtt": "~4.1.0",
     "nuxt": "^2.14.6",
+    "nuxt-leaflet": "^0.0.22",
     "opengate-js": "amplia-iiot/opengate-js#10.2.0",
     "vue": "^2.6.12",
     "vue-codemirror": "^4.0.6",

@@ -6,23 +6,19 @@
        <v-btn :disabled="btnSend" @click="send">Send new location</v-btn>
       </l-control>
       <l-control
-        :position="'bottomleft'"
-       
+        :position="'bottomleft'" 
       >
-      <v-card>
-        <v-card-text>{{logLat}}</v-card-text>
+        <v-card>
+          {{logLat}}
         </v-card>
       </l-control>
-      <l-marker v-for="marker in markers" :lat-lng="marker" v-bind:key="marker.lat"></l-marker>
+      <l-marker v-for="marker in markers" :lat-lng="marker" :key="marker.lat"></l-marker>
     </l-map>
 
     <!-- </v-sheet> -->
   </div>
 </template>
 <script>
-import {LMap, LTileLayer, LMarker, LPopup, LControl} from "vue2-leaflet"
-import 'leaflet/dist/leaflet.css'
-import iconShadow from'leaflet/dist/images/marker-shadow.png'
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js"
 
 // import VueLayers from "vuelayers";
@@ -36,13 +32,6 @@ export default {
       default: () => null,
     }
   },
-  components: {
-    LMap,
-    LTileLayer,
-    LMarker,
-    LPopup,
-    LControl
-  },
   name: "mapas",
   inject: {
     theme: {
@@ -52,11 +41,11 @@ export default {
   data() {
     return {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      zoom:5,
+      zoom: 5,
       btnSend: true,
       center: [0,0],
       markers: [
-        (0,0)
+        [0,0]
       ],
       logLat:"LatLng(0, 44.34082)",
       id_device: this.$route.query.id,
@@ -83,8 +72,7 @@ export default {
   },
   methods: {
     addMarker(event) {
-      this.markers.push(event.latlng)
-      this.markers.splice(0, 1)
+      this.markers.splice(0, 1, event.latlng)
       this.center=event.latlng
       this.logLat=this.markers[0]
       console.log(event.latlng)

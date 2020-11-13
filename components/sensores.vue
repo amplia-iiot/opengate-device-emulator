@@ -117,30 +117,10 @@ export default {
   watch: {
     model: {
       handler(newVal, oldVal) {
-        if (newVal) {
-          console.log()
-          this.selectedSensors = []
-          this.arrSensors.forEach((element) => {
-            if (this.model[element]) {
-              this.innerModel[element] = this.model[
-                element
-              ]._value._current.value
-              this.selectedSensors.push(element);
-            } else if (this.model["provision." + element]) {
-              this.innerModel[element] = this.model[
-                "provision." + element
-              ]._value._current.value
-              this.selectedSensors.push(element)
-            } else {
-              this.selectedSensors.push(element)
-            }
-          })
-        } else {
-          this.innerModel = {}
-        }
+        this.mapModelInfo(newVal)
       },
-      deep: true,
-    },
+      deep: true
+    }
   },
   data() {
     return {
@@ -148,13 +128,34 @@ export default {
       readOnly: true,
       selectedSensors: [],
       options: {},
-      innerModel: this.model?{...this.model}:{},
+      innerModel: {},
       only: true,
-      finalSensorsSchema: [],
+      finalSensorsSchema: []
     };
   },
-
+  mounted() {
+    this.mapModelInfo(this.model)
+  },
   methods: {
+    mapModelInfo(modelData) {
+      this.innerModel = {}
+      if (modelData) {
+        this.selectedSensors = []
+        this.arrSensors.forEach((element) => {
+          if (modelData[element]) {
+            this.innerModel[element] = modelData[
+              element
+            ]._value._current.value
+            this.selectedSensors.push(element);
+          } else if (modelData["provision." + element]) {
+            this.innerModel[element] = modelData[
+              "provision." + element
+            ]._value._current.value
+            this.selectedSensors.push(element)
+          }
+        })
+      }
+    },
     sendInfo() {
       this.sendInfoApi()
     },

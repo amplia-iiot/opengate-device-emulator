@@ -14,13 +14,11 @@
         <v-spacer />
         <v-toolbar-items>
             <v-btn text>
-                <v-badge content="3" color="error">
-                    <v-icon color="success">mdi-lan-connect</v-icon>
-                </v-badge>
+                <!-- <v-badge content="0" color="error"> -->
+                    <v-icon v-if="isEmulatorConnected" color="success">mdi-lan-connect</v-icon>
+                    <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
+                <!-- </v-badge> -->
             </v-btn>
-            <!-- <v-btn text>
-          <v-icon color="error">mdi-lan-disconnect</v-icon>
-        </v-btn> -->
             <v-divider inset vertical />
             <v-menu v-model="menu" :close-on-content-click="false" offset-y class="logout">
                 <template v-slot:activator="{ on }">
@@ -116,7 +114,8 @@ export default {
             valid: false,
             tabActivo: "sistema",
             menu: false,
-            mqttClient: null
+            mqttClient: null,
+            socketKeepAlive: null
         };
     },
     methods: {
@@ -143,6 +142,9 @@ export default {
         }
     },
     computed: {
+        isEmulatorConnected() {
+            return this.deviceId && this.socketKeepAlive
+        },
         deviceId() {
             return this.$route.query.id;
         },
@@ -174,7 +176,7 @@ export default {
         deviceId(newVal, oldVal) {
             if (newVal && newVal !== oldVal) {
                 try {
-                      // this.mqttClient = mqtt.connect('mqtt://api.opengate.es:1883',
+                      // this.mqttClient = mqtt.connect('mqtt://preproapi.opengate.es:1883',
                     //     {
                     //         clientId: newVal,
                     //         username: newVal,
@@ -198,20 +200,28 @@ export default {
                     // })
 
 
-                    debugger
-                    this.mqttClient = new WebSocket('ws://api.opengate.es/south/v80/sessions/' + newVal + '?X-ApiKey=' + this.userData.apiKey)
+                    this.mqttClient = new WebSocket('ws://preproapi.opengate.es/south/v80/sessions/' + newVal + '?X-ApiKey=' + this.apiUsuario.apiKey)
 
-                    this.mqttClient.onmessage = function(event) {
-                        debugger
+                    this.mqttClient.onmessage = (event) => {
                         console.log(event);
                     }
 
-                    this.mqttClient.onopen = function(event) {
+                    const mqttCopy = this.mqttClient
+                    this.mqttClient.onopen = (event) => {
                         console.log(event)
                         console.log("Successfully connected to the echo websocket server...")
+
+                        this.socketKeepAlive = setInterval(() => {
+                            if (mqttCopy) {
+                                mqttCopy.send('Keep alive!!!')
+                            }
+                        }, 10000)
                     }
 
-                    // this.mqttClient = new Paho.Client('mqtt://api.opengate.es', 1883, '', newVal);
+                    this.mqttClient.onclose = (event) => {
+                        console.warn('Conexión cerrada')
+                    }
+                    // this.mqttClient = new Paho.Client('mqtt://preproapi.opengate.es', 1883, '', newVal);
                     //document.write("connecting to "+ host);
                     // var options = {
                     //     userName: newVal,
@@ -231,6 +241,8 @@ export default {
                     // this.mqttClient.connect(options);
                 }catch(connError) {
                     this.mqttClient = null
+                    clearInterval(this.socketKeepAlive)
+                    this.socketKeepAlive = null
                     console.error(connError)
                 }
                 
@@ -241,6 +253,9 @@ export default {
                 if (this.mqttClient && this.mqttClient.close) {
                     this.mqttClient.close()
                 }
+
+                clearInterval(this.socketKeepAlive)
+                this.socketKeepAlive = null 
             }
         },
         tab: function(){

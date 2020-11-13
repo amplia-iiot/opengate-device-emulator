@@ -14,10 +14,10 @@ export const mutations = {
         state.user = config.user
         state.api = new window.OpenGateAPI({
             apiKey: config.user ? config.user.apiKey : null,
-            url: (config.serverUrl || 'https://api.opengate.es') + '/north/v80',
+            url: (config.serverUrl || 'https://preproapi.opengate.es') + '/north/v80',
             timeout: 120000,
             south: {
-                url: (config.serverUrl || 'https://api.opengate.es') + '/south/v80'
+                url: (config.serverUrl || 'https://preproapi.opengate.es') + '/south/v80'
             }
         })
     },
@@ -28,22 +28,21 @@ export const mutations = {
         // MQTT uri -> http://mqtt.opengate.es
         state.api = new window.OpenGateAPI({
             apiKey: config.key,
-            url: (config.serverUrl || 'https://api.opengate.es') + '/north/v80',
+            url: (config.serverUrl || 'https://preproapi.opengate.es') + '/north/v80',
             timeout: 120000,
             south: {
-                url: (config.serverUrl || 'https://api.opengate.es') + '/south/v80'
+                url: (config.serverUrl || 'https://preproapi.opengate.es') + '/south/v80'
             }
         })
     },
-
     removeApiKey(state) {
         state.user = null
         state.api = new window.OpenGateAPI({
             apiKey: null,
-            url: (config.serverUrl || 'https://api.opengate.es') + '/north/v80',
+            url: (config.serverUrl || 'https://preproapi.opengate.es') + '/north/v80',
             timeout: 120000,
             south: {
-                url: (config.serverUrl || 'https://api.opengate.es') + '/south/v80'
+                url: (config.serverUrl || 'https://preproapi.opengate.es') + '/south/v80'
             }
         })
     }

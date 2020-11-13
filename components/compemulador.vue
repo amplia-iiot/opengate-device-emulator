@@ -3,12 +3,14 @@
     <v-tabs-items v-model="tabActivo">
       <v-tab-item value="sistema">
         <sistema :basic-types="basicTypes"
-          :datastreams="datastreams" :model="model"/>
+          :datastreams="datastreams"
+          :model="model"/>
       </v-tab-item>
       <v-tab-item value="sensores">
         <sensores
           :basic-types="basicTypes"
           :datastreams="datastreams"
+          :model="model"
         />
       </v-tab-item>
       <v-tab-item value="configuracion">
