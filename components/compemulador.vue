@@ -2,7 +2,8 @@
   <div style="padding: 10px">
     <v-tabs-items v-model="tabActivo">
       <v-tab-item value="sistema">
-        <sistema :system-schema="systemSchema" :model="model" />
+        <sistema :basic-types="basicTypes"
+          :datastreams="datastreams" :model="model"/>
       </v-tab-item>
       <v-tab-item value="sensores">
         <sensores
@@ -14,7 +15,7 @@
         <configuracion />
       </v-tab-item>
       <v-tab-item value="mapas">
-        <mapas />
+        <mapas :model="model"/>
       </v-tab-item>
     </v-tabs-items>
   </div>
@@ -45,32 +46,7 @@ export default {
     deviceOrganization() {
       return this.$route.query.organization;
     },
-    systemSchema() {
-      if (this.basicTypes && this.datastreams && this.datastreams.length > 0) {
-        const finalSchema = {
-          type: "object",
-          properties: {},
-          definitions: this.basicTypes.definitions,
-        };
-
-        this.datastreams.forEach((dsTmp) => {
-         
-            if(this.finalSystemSchema.includes(dsTmp.identifier)) {
-              finalSchema.properties[dsTmp.identifier] = dsTmp.schema
-              }
-          
-        });
-
-        console.log(finalSchema);
-
-        return finalSchema;
-      } else {
-        return {
-          type: "object",
-          properties: {},
-        };
-      }
-    },
+    
   },
   data() {
     return {
@@ -80,17 +56,7 @@ export default {
       deviceData: null,
       basicTypes: null,
       datastreams: null,
-      model: {},
-     systemDatastreams: [
-        "device.identifier",
-        "device.specificType",
-        "device.name",
-        "device.description",
-        "device.serialNumber",
-        "device.operationalStatus",
-        "device.administrativeState",
-      ],
-      finalSystemSchema:[],
+      model : {}
       
     };
   },
@@ -100,35 +66,22 @@ export default {
     
     this.findDevice();
    
-      this.setPage({
-      page: "emulador"
-    })
+      
   },
 
   methods: {
     ...mapMutations({
-      setPage: "appbar/setPage",
+      setTab: "appbar/setTab",
+
     }),
     async findDevice() {
       // consulta de datos de dispositivo
       const data = await this.$api
         .newDeviceFinder()
         .findByOrganizationAndId(this.deviceOrganization, this.deviceId, true);
-      
+      this.model = data.data
       console.log(data);
-      this.finalSystemSchema = []
-      this.model = {}
-      this.systemDatastreams.forEach((element)=>{
-        if(data.data[element]){
-          this.model[element] = data.data[element]._value._current.value
-          this.finalSystemSchema.push(element)
-        } else if(data.data["provision."+element]){
-          this.model[element] = data.data["provision."+element]._value._current.value
-          this.finalSystemSchema.push(element)
-        } else {
-          this.finalSystemSchema.push(element)
-        }
-      })
+      
      
       console.log(this.models)
       
@@ -184,16 +137,18 @@ export default {
 
       console.log(finalDatastreams);
       this.datastreams = finalDatastreams;
-    },
-    
-    
-
-    
+    }
   },
   watch: {
     tab: function(){
       this.tabActivo = this.tab
     },
+     tabActivo: function () {
+      this.setTab({
+         tab: this.tabActivo,
+      });
+    },
+  
   }
 };
 </script>

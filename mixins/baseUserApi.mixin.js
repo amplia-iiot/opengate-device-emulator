@@ -1,6 +1,6 @@
 export default {
     computed: {
-        userData() {
+        apiUsuario() {
             return this.$store.state.ogapi.user
         },
         $api() {

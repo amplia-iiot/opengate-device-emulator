@@ -1,6 +1,6 @@
 <template>
-    <v-app id="inspire">
-    <v-app-bar extended app color="primary" dark hide-on-scroll elevate-on-scroll>
+<v-app id="inspire">
+    <v-app-bar extended app color="primary" dark elevate-on-scroll>
         <v-app-bar-nav-icon @click="routerlister" v-if="deviceId">
             <v-icon> mdi-chevron-left </v-icon>
         </v-app-bar-nav-icon>
@@ -99,18 +99,13 @@
 </template>
 
 <script>
-import {mapMutations} from "vuex"
-import lister from "@/components/app_bar_lister"
-import emulator from "@/components/bar-emulator"
-import textField from "@/mixins/textField.mixin.js"
-import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js"
-
+import {
+    mapMutations
+} from "vuex";
+import textField from "@/mixins/textField.mixin.js";
+import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 export default {
-    components: {
-        lister,
-        emulator
-    },
-    mixins: [baseUserApiMixin],
+    mixins: [baseUserApiMixin, textField],
     data() {
         return {
             deviceapi: [],
@@ -130,6 +125,7 @@ export default {
             setTab: "appbar/setTab",
         }),
         routerdialog() {
+          localStorage.checkbox = false
             this.$router.push({
                 path: "/"
             });
@@ -246,6 +242,9 @@ export default {
                     this.mqttClient.close()
                 }
             }
+        },
+        tab: function(){
+            this.tabActivo = this.tab
         }
     },
 };

@@ -42,9 +42,7 @@ export default {
     };
   },
   methods: {
-     ...mapMutations({
-      setPage: "appbar/setPage",
-    }),
+     
     routeremulador(deviceData) {
       this.$router.push({ path: "/emulador", query: { id: deviceData.id, organization: deviceData.organization } });
     },
@@ -109,10 +107,13 @@ export default {
     },
   },
   mounted() {
-    this.search(),
-      this.setPage({
-      page: "lister"
-    })
+    if(this.$api){
+     this.search()
+    }
+    else {
+      this.$router.push("/")
+    }
+    
   },
   watch:{
     textField: {

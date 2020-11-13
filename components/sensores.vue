@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <div>
     <v-btn
       @click="sendInfo"
       :disabled="!valid"
@@ -29,7 +29,7 @@
         :options="options"
       />
     </v-form>
-  </v-app>
+  </div>
 </template>
 <script>
 import VJsf from "@koumoul/vjsf/lib/VJsf.js";
@@ -39,30 +39,28 @@ import "@koumoul/vjsf/lib/deps/third-party.js";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 
 export default {
+  name: 'sensores',
   mixins: [baseUserApiMixin],
   components: {
     VJsf,
   },
   props: {
-    // model: {
-    //   type: Object,
-    //   default: () => null,
-    // },
+    model: {
+      type: Object,
+      default: () => null,
+    },
     basicTypes: {
       type: Object,
       default: () => null,
     },
     datastreams: {
       type: Array,
-      default: () => []
-    }
-    /*     listaPrueba: {
-      type: Array,
-    }, */
+      default: () => [],
+    },
   },
   computed: {
     deviceId() {
-      return this.$route.query.id;
+      return this.$route.query.id
     },
     arrSensors() {
       return [
@@ -80,11 +78,17 @@ export default {
         "device.storage.ramDisk.total",
         "device.storage.ramDisk.usage",
         "device.temperature.status",
-        "device.temperature.value"
-      ]  
+        "device.temperature.value",
+      ];
     },
     sensorsSchema() {
-      if (this.basicTypes && this.datastreams && this.datastreams.length > 0 && this.selectedSensors && this.selectedSensors.length > 0) {
+      if (
+        this.basicTypes &&
+        this.datastreams &&
+        this.datastreams.length > 0 &&
+        this.selectedSensors &&
+        this.selectedSensors.length > 0
+      ) {
         const finalSchema = {
           type: "object",
           properties: {},
@@ -92,13 +96,12 @@ export default {
         }
 
         const finalDatastreams = this.datastreams.filter((dsTmp) => {
-          return this.selectedSensors.includes(dsTmp.identifier)
+          return this.selectedSensors.includes(dsTmp.identifier);
         })
 
         finalDatastreams.forEach((dsTmp) => {
           finalSchema.properties[dsTmp.identifier] = dsTmp.schema;
         })
-          
 
         console.log(finalSchema);
 
@@ -112,12 +115,32 @@ export default {
     },
   },
   watch: {
-    // model: {
-    //   handler(newVal, oldVal) {
-    //     if (newVal)
-    //     this.innerModel = newVal;
-    //   },
-    // },
+    model: {
+      handler(newVal, oldVal) {
+        if (newVal) {
+          console.log()
+          this.selectedSensors = []
+          this.arrSensors.forEach((element) => {
+            if (this.model[element]) {
+              this.innerModel[element] = this.model[
+                element
+              ]._value._current.value
+              this.selectedSensors.push(element);
+            } else if (this.model["provision." + element]) {
+              this.innerModel[element] = this.model[
+                "provision." + element
+              ]._value._current.value
+              this.selectedSensors.push(element)
+            } else {
+              this.selectedSensors.push(element)
+            }
+          })
+        } else {
+          this.innerModel = {}
+        }
+      },
+      deep: true,
+    },
   },
   data() {
     return {
@@ -125,64 +148,45 @@ export default {
       readOnly: true,
       selectedSensors: [],
       options: {},
-      innerModel: {},
+      innerModel: this.model?{...this.model}:{},
       only: true,
-      disabled1: false,
-      disabled2: true,
+      finalSensorsSchema: [],
     };
   },
 
   methods: {
     sendInfo() {
-      this.sendInfoApi();
+      this.sendInfoApi()
     },
     async sendInfoApi() {
       try {
         let mb = this.$api
           .deviceMessageBuilder()
-          .withDataStreamVersion("" + new Date().getTime())
-        
+          .withDataStreamVersion("" + new Date().getTime());
+
         // Se pasan los datos del modelo al builder
-        for(const prop in this.innerModel){
-          console.log(this.innerModel[prop])
-          if (this.innerModel[prop]!=null) {
-            let datapointsBuilder = this.$api.datapointsBuilder().withValue(this.innerModel[prop])
-            let datastreamBuilder = this.$api.datastreamBuilder().withId(prop)
-            mb.withDataStream(datastreamBuilder.withDatapoint(datapointsBuilder))
+        for (const prop in this.innerModel) {
+          console.log(this.innerModel[prop]);
+          if (this.innerModel[prop] != null) {
+            let datapointsBuilder = this.$api
+              .datapointsBuilder()
+              .withValue(this.innerModel[prop]);
+            let datastreamBuilder = this.$api.datastreamBuilder().withId(prop);
+            mb.withDataStream(
+              datastreamBuilder.withDatapoint(datapointsBuilder)
+            )
           }
         }
 
         // se pasa el id del dispositivo a actualizar
-        mb.withId(this.deviceId)
+        mb.withId(this.deviceId);
 
         // se lanza la petición
-        const result = await mb.create()
-
+        const result = await mb.create();
       } catch (errorApi) {
         console.error(errorApi);
       }
     },
-
-
-/* deleteChip, elimina las chips creadas */
-
-
-/*     botonEditar: function () {
-      (this.schema.properties.temperatura.readOnly = false),
-        (this.schema.properties.ram.readOnly = false),
-        (this.schema.properties.hdd.readOnly = false),
-        (this.schema.properties.bateria.readOnly = false),
-        (this.disabled2 = false),
-        (this.disabled1 = true);
-    },
-    botonCambiar: function () {
-      (this.disabled2 = true),
-        (this.disabled1 = false),
-        (this.schema.properties.temperatura.readOnly = true),
-        (this.schema.properties.ram.readOnly = true),
-        (this.schema.properties.hdd.readOnly = true),
-        (this.schema.properties.bateria.readOnly = true);
-    }, */
   },
 };
 </script>
