@@ -200,7 +200,7 @@ export default {
                     // })
 
 
-                    this.mqttClient = new WebSocket('ws://preproapi.opengate.es/south/v80/sessions/' + newVal + '?X-ApiKey=' + this.apiUsuario.apiKey)
+                    this.mqttClient = new WebSocket('ws://api.opengate.es/south/v80/sessions/' + newVal + '?X-ApiKey=' + this.apiUsuario.apiKey)
 
                     this.mqttClient.onmessage = (event) => {
                         console.log(event);

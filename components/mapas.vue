@@ -2,9 +2,6 @@
   <div class="pa-0 ma-0">
     <l-map style="height: calc(100vh - 140px); width:100%" :zoom="zoom" :center="center"  @click="addMarker">
       <l-tile-layer :url="url"></l-tile-layer>
-      <l-control class="example-custom-control">
-       <v-btn :disabled="btnSend" @click="send">Send new location</v-btn>
-      </l-control>
       <l-control
         :position="'bottomleft'" 
       >
@@ -47,7 +44,7 @@ export default {
       markers: [
         [0,0]
       ],
-      logLat:"LatLng(0, 44.34082)",
+      logLat:"LatLng(0, 0)",
       id_device: this.$route.query.id,
       date: null,
       trip: {
@@ -76,7 +73,7 @@ export default {
       this.center=event.latlng
       this.logLat=this.markers[0]
       console.log(event.latlng)
-      this.btnSend = false
+      this.send()
     },
      async send(){
      try {
@@ -95,7 +92,7 @@ export default {
 
         // se lanza la petición
         const result = await mb.create()
-
+        
       } catch (errorApi) {
         console.error(errorApi);
       }
