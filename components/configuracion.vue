@@ -10,12 +10,12 @@
           <v-card>
             <v-card-text>
           <p>function {{selectedOperation}}(operaData) {</p>
-          <codemirror :options="cmOptions" v-model="currentWorkingOperation.code" />
+          <codemirror :options="cmOptions" v-model="currentWorkingOperation[deviceId][selectedOperation].code" />
           <p>}</p>
             </v-card-text>
           </v-card>
           <hr>
-          <v-switch v-model="currentWorkingOperation.enabled" />
+          <v-switch v-model="currentWorkingOperation[deviceId][selectedOperation].enabled" />
           <v-btn @click="saveOperation"> Save </v-btn>
           <v-btn @click="deleteOperation"> Delete </v-btn>
         </div>
@@ -52,6 +52,14 @@ export default {
 
       this.availableOperations = [...defaultOperations]
     }
+    if(!localStorage.operationsConfig){
+      localStorage.operationsConfig =  JSON.stringify({})
+      this.jsonLocal = JSON.parse(localStorage.operationsConfig)
+    }
+    else {
+      this.jsonLocal = JSON.parse(localStorage.operationsConfig)
+    }
+
   },
   data() {
     return {
@@ -67,43 +75,38 @@ export default {
       },
       selectedOperation: null,
       code: "",
-      operationsConfig: {
-        "DEV_SPOOL_12" : {
-          "ADMINISTRATIVE_STATUS_CHANGE": {
-            code: 'codigo de ejemplo',
-            enabled: true
-          }
-        }
-      },
-      currentWorkingOperation: null
-    };
+      currentWorkingOperation: null,
+      jsonLocal: null
+    }
   },
   methods: {
     operationChanged(newOpera) {
       if (newOpera) {
-        // se verifica que existe el dispositivo
-        if (!this.operationsConfig[this.deviceId]) {
-          this.operationsConfig[this.deviceId] = {}
+        if (!this.jsonLocal[this.deviceId]) {
+          this.jsonLocal[this.deviceId] = {}
         }
 
-        if (!this.operationsConfig[this.deviceId][newOpera]) {
-          this.operationsConfig[this.deviceId][newOpera] = {
+        if (!this.jsonLocal[this.deviceId][newOpera]) {
+         this.jsonLocal[this.deviceId][newOpera] = {
             code: '',
             enabled: false
           }
         }
 
         // se guarda una copia para trabajar con ella
-        this.currentWorkingOperation = {...this.operationsConfig[this.deviceId][newOpera]}
+        this.currentWorkingOperation = this.jsonLocal
       } else {
         this.currentWorkingOperation = null
       }
     },
     saveOperation() {
+      localStorage.operationsConfig = JSON.stringify(this.currentWorkingOperation)
       alert("Operation save with your javascript thank you!");
     },
     deleteOperation() {
       this.code = "";
+      this.currentWorkingOperation[this.deviceId][this.selectedOperation].code = ""
+      localStorage.operationsConfig = JSON.stringify(this.currentWorkingOperation)
     },
   },
 };

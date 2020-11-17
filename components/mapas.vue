@@ -57,8 +57,9 @@ export default {
   },
   mounted(){
     if(this.model['entity.location']){
-      this.center= this.model['entity.location']._value._current.value.position.coordinates
-      this.markers[0] = this.model['entity.location']._value._current.value.position.coordinates
+      this.markers[0][1] = this.model['entity.location']._value._current.value.position.coordinates[0]
+      this.markers[0][0] = this.model['entity.location']._value._current.value.position.coordinates[1]
+      this.center = this.markers[0]
       this.logLat="LatLng("+this.markers[0][0]+", "+this.markers[0][1]+")"
     }
   },
