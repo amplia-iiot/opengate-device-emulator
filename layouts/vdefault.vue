@@ -204,6 +204,27 @@ export default {
 
                     this.mqttClient.onmessage = (event) => {
                         console.log(event);
+
+                        let operaConfigs = {
+                            'REBOOT_EQUIPMENT': { 
+                                code: 'console.log(operaData);',
+                                enabled: true
+                            }
+                        }
+
+                        if (event.data) {
+                            const eventObj = JSON.parse(event.data)
+
+                            if (operaConfigs[eventObj.operation.request.name] && operaConfigs[eventObj.operation.request.name].enabled) {
+                                let functionCode = '(function(operaData) {console.log(operaData);' + operaConfigs[eventObj.operation.request.name].code + '})'
+
+                                const functionObj = eval(functionCode)
+
+                                functionObj(eventObj.operation.request)
+                            } else {
+                                console.error('no soportada la operación ' + eventObj.operation.request.name)
+                            }
+                        }
                     }
 
                     const mqttCopy = this.mqttClient

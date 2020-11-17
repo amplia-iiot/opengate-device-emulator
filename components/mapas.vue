@@ -83,7 +83,7 @@ export default {
         
         // Se pasan los datos del modelo al builder
        
-            let datapointsBuilder = this.$api.datapointsBuilder().withValue(JSON.stringify([this.markers[0].lat, this.markers[0].lng]))
+            let datapointsBuilder = this.$api.datapointsBuilder().withValue(JSON.stringify([this.markers[0].lng, this.markers[0].lat]))
             let datastreamBuilder = this.$api.datastreamBuilder().withId("entity.location")
             mb.withDataStream(datastreamBuilder.withDatapoint(datapointsBuilder))
          

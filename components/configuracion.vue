@@ -89,7 +89,7 @@ export default {
         if (!this.operationsConfig[this.deviceId][newOpera]) {
           this.operationsConfig[this.deviceId][newOpera] = {
             code: '',
-            enabled: false,
+            enabled: false
           }
         }
 
