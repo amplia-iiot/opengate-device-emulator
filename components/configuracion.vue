@@ -52,13 +52,6 @@ export default {
 
       this.availableOperations = [...defaultOperations]
     }
-    if(!localStorage.operationsConfig){
-      localStorage.operationsConfig =  JSON.stringify({})
-      this.jsonLocal = JSON.parse(localStorage.operationsConfig)
-    }
-    else {
-      this.jsonLocal = JSON.parse(localStorage.operationsConfig)
-    }
 
   },
   data() {
@@ -74,14 +67,18 @@ export default {
         theme: "default",
       },
       selectedOperation: null,
-      code: "",
       jsonLocal: null,
-      jsonLocal: null
     }
   },
   methods: {
     operationChanged(newOpera) {
       if (newOpera) {
+        if(!localStorage.operationsConfig){
+      localStorage.operationsConfig =  JSON.stringify({})
+    }
+    else {
+      this.jsonLocal = JSON.parse(localStorage.operationsConfig)
+    }
         if (!this.jsonLocal[this.deviceId]) {
           this.jsonLocal[this.deviceId] = {}
         }
@@ -104,7 +101,6 @@ export default {
     },
     deleteOperation() {
       this.code = "";
-      this.jsonLocal[this.deviceId][this.selectedOperation].code = ""
       localStorage.operationsConfig = JSON.stringify(this.jsonLocal)
     },
   },
