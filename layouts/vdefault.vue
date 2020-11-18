@@ -143,6 +143,16 @@ export default {
       menu: false,
       mqttClient: null,
       socketKeepAlive: null,
+      operationResponse: {
+        operation:{
+          response:{
+            id:"",
+            timestamp:"",
+            name:"",
+            resultcode:""
+          }
+        }
+      }
     };
   },
   methods: {
@@ -242,12 +252,18 @@ export default {
             let operaConfigs = JSON.parse(localStorage.operationsConfig);
             if (event.data) {
               const eventObj = JSON.parse(event.data);
-
+              this.operationResponse.operation.response.name = eventObj.operation.request.name
+              this.operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
+              this.operationResponse.operation.response.parameters = eventObj.operation.request.parameters
+              this.operationResponse.operation.response.id = eventObj.operation.request.id
               if (
                 operaConfigs[this.deviceId][eventObj.operation.request.name] &&
                 operaConfigs[this.deviceId][eventObj.operation.request.name]
                   .enabled
               ) {
+                
+                this.operationResponse.operation.response.resultCode = "SUCCESSFUL"
+                
                 let functionCode =
                   "(function(operaData) {console.log(operaData);" +
                   operaConfigs[this.deviceId][eventObj.operation.request.name]
@@ -257,10 +273,14 @@ export default {
                 const functionObj = eval(functionCode);
 
                 functionObj(eventObj.operation.request);
-              } else {
+              } else if(operaConfigs[this.deviceId][eventObj.operation.request.name]) {
+                this.operationResponse.operation.response.resultCode = "NOT_SUPPORTED"
                 console.error(
                   "no soportada la operación " + eventObj.operation.request.name
-                );
+                )
+              }
+              else{
+                this.operationResponse.operation.response.resultCode = "CANCELLED"
               }
             }
           };
@@ -271,7 +291,10 @@ export default {
             console.log(
               "Successfully connected to the echo websocket server..."
             );
-
+            
+              console.log(this.operationResponse)
+              mqttCopy.send(this.operationResponse)
+            
             this.socketKeepAlive = setInterval(() => {
               if (mqttCopy) {
                 mqttCopy.send("Keep alive!!!");
