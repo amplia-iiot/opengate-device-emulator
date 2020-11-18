@@ -6,16 +6,16 @@
           v-model="selectedOperation"
           @change="operationChanged"
         ></v-autocomplete>
-        <div v-if="currentWorkingOperation">
+        <div v-if="jsonLocal">
           <v-card>
             <v-card-text>
           <p>function {{selectedOperation}}(operaData) {</p>
-          <codemirror :options="cmOptions" v-model="currentWorkingOperation[deviceId][selectedOperation].code" />
+          <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperation].code" />
           <p>}</p>
             </v-card-text>
           </v-card>
           <hr>
-          <v-switch v-model="currentWorkingOperation[deviceId][selectedOperation].enabled" />
+          <v-switch v-model="jsonLocal[deviceId][selectedOperation].enabled" />
           <v-btn @click="saveOperation"> Save </v-btn>
           <v-btn @click="deleteOperation"> Delete </v-btn>
         </div>
@@ -75,7 +75,7 @@ export default {
       },
       selectedOperation: null,
       code: "",
-      currentWorkingOperation: null,
+      jsonLocal: null,
       jsonLocal: null
     }
   },
@@ -94,19 +94,18 @@ export default {
         }
 
         // se guarda una copia para trabajar con ella
-        this.currentWorkingOperation = this.jsonLocal
       } else {
-        this.currentWorkingOperation = null
+        this.jsonLocal = null
       }
     },
     saveOperation() {
-      localStorage.operationsConfig = JSON.stringify(this.currentWorkingOperation)
+      localStorage.operationsConfig = JSON.stringify(this.jsonLocal)
       alert("Operation save with your javascript thank you!");
     },
     deleteOperation() {
       this.code = "";
-      this.currentWorkingOperation[this.deviceId][this.selectedOperation].code = ""
-      localStorage.operationsConfig = JSON.stringify(this.currentWorkingOperation)
+      this.jsonLocal[this.deviceId][this.selectedOperation].code = ""
+      localStorage.operationsConfig = JSON.stringify(this.jsonLocal)
     },
   },
 };
