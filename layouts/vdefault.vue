@@ -11,14 +11,65 @@
       </v-toolbar-title>
       <v-spacer />
       <v-toolbar-items>
-        <v-btn text>
-          <v-badge :content="contOperations" :value="contOperations" color="error">
-            <v-icon v-if="isEmulatorConnected" color="success"
-              >mdi-lan-connect</v-icon
-            >
-            <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
-          </v-badge>
-        </v-btn>
+        <v-dialog v-model="dialog" width="500">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn text v-bind="attrs" v-on="on">
+              <v-badge
+                :content="contOperations"
+                :value="contOperations"
+                color="error"
+              >
+                <v-icon v-if="isEmulatorConnected" color="success"
+                  >mdi-lan-connect</v-icon
+                >
+                <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
+              </v-badge>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-card-title class="headline grey lighten-2">
+              Events
+            </v-card-title>
+
+            <v-card-text>
+              <v-list>
+                <v-list-item
+                  v-for="(item, i) in items"
+                  :key="i"
+                  @click="() => {}"
+                >
+                  <v-list-item-title>{{
+                    item.name + " " + item.date
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+              <v-list>
+                <v-list-item
+                  v-for="(event, i) in events"
+                  :key="i"
+                  @click="() => {}"
+                >
+                  <v-list-item-title>{{
+                    event
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list>
+              {{ this.mqttClient }}
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="dialog = false">
+                <v-icon dark left>
+                  mdi-arrow-left
+                </v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
         <v-divider inset vertical />
         <v-menu
           v-model="menu"
@@ -132,6 +183,21 @@ export default {
   mixins: [baseUserApiMixin, textField],
   data() {
     return {
+      dialog: false,
+      items: [
+        {
+          name: "Reboot_Equipment",
+          date: "18/11",
+        },
+        {
+          name: "Refresh_info",
+          date: "18/11",
+        },
+        {
+          name: "",
+          date: "18/11",
+        },
+      ],
       contOperations: 0,
       deviceapi: [],
       todo: true,
@@ -233,16 +299,17 @@ export default {
 
           this.mqttClient.onmessage = (event) => {
             console.log(event);
-            this.contOperations++
+            this.contOperations++;
 
             if (localStorage && localStorage.operationsConfig) {
               let operaConfigs = JSON.parse(localStorage.operationsConfig);
               if (event.data) {
-                
                 const eventObj = JSON.parse(event.data);
 
                 if (
-                  operaConfigs[this.deviceId][eventObj.operation.request.name] &&
+                  operaConfigs[this.deviceId][
+                    eventObj.operation.request.name
+                  ] &&
                   operaConfigs[this.deviceId][eventObj.operation.request.name]
                     .enabled
                 ) {
@@ -257,7 +324,8 @@ export default {
                   functionObj(eventObj.operation.request);
                 } else {
                   console.error(
-                    "no soportada la operación " + eventObj.operation.request.name
+                    "no soportada la operación " +
+                      eventObj.operation.request.name
                   );
                 }
               }
@@ -271,7 +339,7 @@ export default {
               "Successfully connected to the echo websocket server..."
             );
 
-            this.contOperations++
+            this.contOperations++;
 
             this.socketKeepAlive = setInterval(() => {
               if (mqttCopy) {
