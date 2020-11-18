@@ -12,7 +12,7 @@
       <v-spacer />
       <v-toolbar-items>
         <v-btn text>
-          <v-badge :content="contOperations" color="error">
+          <v-badge :content="contOperations" :value="contOperations" color="error">
             <v-icon v-if="isEmulatorConnected" color="success"
               >mdi-lan-connect</v-icon
             >
@@ -132,7 +132,7 @@ export default {
   mixins: [baseUserApiMixin, textField],
   data() {
     return {
-      contOperations: 1,
+      contOperations: 0,
       deviceapi: [],
       todo: true,
       devices: [],
@@ -169,11 +169,6 @@ export default {
     },
   },
   computed: {
-    operationCount(){
-        if(this.event){
-            contOperations++;
-        }
-    },
     isEmulatorConnected() {
       return this.deviceId && this.socketKeepAlive;
     },
@@ -238,29 +233,33 @@ export default {
 
           this.mqttClient.onmessage = (event) => {
             console.log(event);
+            this.contOperations++
 
-            let operaConfigs = JSON.parse(localStorage.operationsConfig);
-            if (event.data) {
-              const eventObj = JSON.parse(event.data);
+            if (localStorage && localStorage.operationsConfig) {
+              let operaConfigs = JSON.parse(localStorage.operationsConfig);
+              if (event.data) {
+                
+                const eventObj = JSON.parse(event.data);
 
-              if (
-                operaConfigs[this.deviceId][eventObj.operation.request.name] &&
-                operaConfigs[this.deviceId][eventObj.operation.request.name]
-                  .enabled
-              ) {
-                let functionCode =
-                  "(function(operaData) {console.log(operaData);" +
+                if (
+                  operaConfigs[this.deviceId][eventObj.operation.request.name] &&
                   operaConfigs[this.deviceId][eventObj.operation.request.name]
-                    .code +
-                  "})";
+                    .enabled
+                ) {
+                  let functionCode =
+                    "(function(operaData) {console.log(operaData);" +
+                    operaConfigs[this.deviceId][eventObj.operation.request.name]
+                      .code +
+                    "})";
 
-                const functionObj = eval(functionCode);
+                  const functionObj = eval(functionCode);
 
-                functionObj(eventObj.operation.request);
-              } else {
-                console.error(
-                  "no soportada la operación " + eventObj.operation.request.name
-                );
+                  functionObj(eventObj.operation.request);
+                } else {
+                  console.error(
+                    "no soportada la operación " + eventObj.operation.request.name
+                  );
+                }
               }
             }
           };
@@ -271,6 +270,8 @@ export default {
             console.log(
               "Successfully connected to the echo websocket server..."
             );
+
+            this.contOperations++
 
             this.socketKeepAlive = setInterval(() => {
               if (mqttCopy) {
