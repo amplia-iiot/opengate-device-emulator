@@ -232,9 +232,6 @@ export default {
                             let operaConfigs = JSON.parse(localStorage.operationsConfig);
                             if (event.data) {
                                 const eventObj = JSON.parse(event.data);
-                                if (!localStorage.operationsConfig) {
-                                    localStorage.operationsConfig = JSON.stringify({})
-                                }
                                 if (
                                     operaConfigs[this.deviceId][eventObj.operation.request.name] &&
                                     operaConfigs[this.deviceId][eventObj.operation.request.name]
@@ -263,6 +260,8 @@ export default {
 
                                 }
                             }
+                        } else {
+                            this.saveRequest("NOT_SUPPORTED", eventObj)
                         }
                     };
 
