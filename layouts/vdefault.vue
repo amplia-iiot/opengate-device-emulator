@@ -34,7 +34,7 @@
 
             <v-card-text>
               <!-- Con datos fijos -->
-              <v-list>
+<!--               <v-list>
                 <v-list-item
                   v-for="(item, i) in items"
                   :key="i"
@@ -44,21 +44,10 @@
                     item.name + " " + item.date
                   }}</v-list-item-title>
                 </v-list-item>
-              </v-list>
+              </v-list> -->
 
               <!-- Con datos del evento -->
-              <v-list>
-                <v-list-item
-                  v-for="(event, i) in eventObj"
-                  :key="i"
-                  @click="() => {}"
-                >
-                  <v-list-item-title>
-                    {{ this.eventObj }}
-                    </v-list-item-title>
-                </v-list-item>
-              </v-list>
-              {{ this.eventObj + "hola"}}
+              {{ this.operationEvent + "hola" }}
             </v-card-text>
 
             <v-divider></v-divider>
@@ -81,7 +70,7 @@
           offset-y
           class="logout"
         >
-          <template v-slot:activator="{ on }">
+          <template v-slot:activatorr="{ on }">
             <v-btn text v-on="on">
               <v-icon>mdi-menu</v-icon>
             </v-btn>
@@ -187,6 +176,9 @@ export default {
   mixins: [baseUserApiMixin, textField],
   data() {
     return {
+      operationEvent:"",
+      propEvent:[],
+      eventAux:"",
       dialog: false,
       items: [
         {
@@ -212,6 +204,7 @@ export default {
       menu: false,
       mqttClient: null,
       socketKeepAlive: null,
+      eventMenu : {}
     };
   },
   methods: {
@@ -251,6 +244,10 @@ export default {
         return false;
       }
     },
+  },
+  mounted(){
+     this.eventAux = localStorage.eventName
+
   },
   created() {
     if (!this.$api) {
@@ -301,6 +298,7 @@ export default {
           );
 
           this.mqttClient.onmessage = (event) => {
+
             console.log(event);
             this.contOperations++;
 
@@ -308,6 +306,7 @@ export default {
               let operaConfigs = JSON.parse(localStorage.operationsConfig);
               if (event.data) {
                 const eventObj = JSON.parse(event.data);
+                localStorage.eventName += eventObj.operation.request.name+ ","+this.deviceId+":"
 
                 if (
                   operaConfigs[this.deviceId][
@@ -391,9 +390,19 @@ export default {
       }
     },
     tab: function() {
-      this.tabActivo = this.tab;
+      this.tabActivo = this.tab
     },
-  },
+    eventAux: function() {
+      if(localStorage.eventName){
+        this.operationEvent = localStorage.eventName
+        this.propEvent = localStorage.eventName
+      }
+
+
+  }
+
+ },
+
 };
 </script>
 
