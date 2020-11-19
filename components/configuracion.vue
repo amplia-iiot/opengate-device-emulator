@@ -74,11 +74,12 @@ export default {
     operationChanged(newOpera) {
       if (newOpera) {
         if(!localStorage.operationsConfig){
-      localStorage.operationsConfig =  JSON.stringify({})
-    }
-    else {
-      this.jsonLocal = JSON.parse(localStorage.operationsConfig)
-    }
+          localStorage.operationsConfig =  JSON.stringify({})
+        }
+        else {
+          this.jsonLocal = JSON.parse(localStorage.operationsConfig)
+        }
+        
         if (!this.jsonLocal[this.deviceId]) {
           this.jsonLocal[this.deviceId] = {}
         }

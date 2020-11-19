@@ -12,7 +12,7 @@
         <v-spacer />
         <v-toolbar-items>
             <v-btn text>
-                <v-badge :content="contOperations" color="error">
+                <v-badge :content="contOperations" :value="contOperations" color="error">
                     <v-icon v-if="isEmulatorConnected" color="success">mdi-lan-connect</v-icon>
                     <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
                 </v-badge>
@@ -34,8 +34,8 @@
 
                         <v-list-item-content>
                             <v-list-item-title>{{
-                  this.$store.state.appbar.user
-                }}</v-list-item-title>
+                                        this.$store.state.appbar.user
+                                        }}</v-list-item-title>
                             <v-list-item-subtitle>User</v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
@@ -106,7 +106,7 @@ export default {
     mixins: [baseUserApiMixin, textField],
     data() {
         return {
-            contOperations: 1,
+            contOperations: 0,
             deviceapi: [],
             todo: true,
             devices: [],
@@ -116,11 +116,10 @@ export default {
             tabActivo: "sistema",
             menu: false,
             mqttClient: null,
-            socketKeepAlive: null,
+            socketConnected: null,
             operationResponse: {
                 operation: {
-                    response: {
-                    }
+                    response: {}
                 }
             },
             send: false
@@ -163,7 +162,7 @@ export default {
             }
         },
         isEmulatorConnected() {
-            return this.deviceId && this.socketKeepAlive;
+            return this.deviceId && this.socketConnected;
         },
         deviceId() {
             return this.$route.query.id;
@@ -227,67 +226,61 @@ export default {
                     this.mqttClient.onmessage = (event) => {
                         console.log(event);
 
-                        let operaConfigs = JSON.parse(localStorage.operationsConfig);
-                        if (event.data) {
-                            const eventObj = JSON.parse(event.data);
-                            if (!localStorage.operationsConfig) {
-                                localStorage.operationsConfig = JSON.stringify({})
-                            }
-                            if (
-                                operaConfigs[this.deviceId][eventObj.operation.request.name] &&
-                                operaConfigs[this.deviceId][eventObj.operation.request.name]
-                                .enabled
-                            ) {
-                                this.saveRequest("SUCCESSFUL", eventObj)
-                                this.mqttClient.send(JSON.stringify(this.operationResponse))
-                                let functionCode =
-                                    "(function(operaData) {console.log(operaData);" +
+                        this.contOperations++
+
+                        if (localStorage && localStorage.operationsConfig) {
+                            let operaConfigs = JSON.parse(localStorage.operationsConfig);
+                            if (event.data) {
+                                const eventObj = JSON.parse(event.data);
+                                if (!localStorage.operationsConfig) {
+                                    localStorage.operationsConfig = JSON.stringify({})
+                                }
+                                if (
+                                    operaConfigs[this.deviceId][eventObj.operation.request.name] &&
                                     operaConfigs[this.deviceId][eventObj.operation.request.name]
-                                    .code +
-                                    "})";
+                                    .enabled
+                                ) {
+                                    this.saveRequest("SUCCESSFUL", eventObj)
+                                    this.mqttClient.send(JSON.stringify(this.operationResponse))
+                                    let functionCode =
+                                        "(function(operaData) {console.log(operaData);" +
+                                        operaConfigs[this.deviceId][eventObj.operation.request.name]
+                                        .code +
+                                        "})";
 
-                                const functionObj = eval(functionCode);
+                                    const functionObj = eval(functionCode);
 
-                                functionObj(eventObj.operation.request);
-                            } else if (operaConfigs[this.deviceId][eventObj.operation.request.name]) {
-                                this.saveRequest("NOT_SUPPORTED", eventObj)
-                                this.mqttClient.send(JSON.stringify(this.operationResponse))
-                                console.error(
-                                    "no soportada la operación " + eventObj.operation.request.name
-                                )
-                            } else {
-                                this.saveRequest("CANCELLED", eventObj)
-                                this.mqttClient.send(JSON.stringify(this.operationResponse))
+                                    functionObj(eventObj.operation.request);
+                                } else if (operaConfigs[this.deviceId][eventObj.operation.request.name]) {
+                                    this.saveRequest("NOT_SUPPORTED", eventObj)
+                                    this.mqttClient.send(JSON.stringify(this.operationResponse))
+                                    console.error(
+                                        "no soportada la operación " + eventObj.operation.request.name
+                                    )
+                                } else {
+                                    this.saveRequest("CANCELLED", eventObj)
+                                    this.mqttClient.send(JSON.stringify(this.operationResponse))
 
+                                }
                             }
                         }
                     };
+
                     const mqttCopy = this.mqttClient;
                     this.mqttClient.onopen = (event) => {
                         console.log(event)
-                        console.log(
-                            "Successfully connected to the echo websocket server..."
-                        );
-
-                        this.socketKeepAlive = setInterval(() => {
-                            if (mqttCopy) {
-                                mqttCopy.send("Keep alive!!!")
-                            }
-                        }, 10000)
-                    };
+                        console.log("Successfully connected to the echo websocket server...");
+                        this.contOperations++;
+                        this.socketConnected = true
+                    }
 
                     this.mqttClient.onclose = (event) => {
-                        console.warn("Conexión cerrada")
+                        this.contOperations++
+
+                        if (this.socketConnected) {
+                            // reiniciar conexión
+                        }
                     }
-                    // this.mqttClient = new Paho.Client('mqtt://preproapi.opengate.es', 1883, '', newVal);
-                    //document.write("connecting to "+ host);
-                    // var options = {
-                    //     userName: newVal,
-                    //     password: this.userData.apiKey,
-                    //     onConnected = () => {
-                    //         console.log('conectao')
-                    //     }
-                    // }
 
                     // this.mqttClient.onConnectionLost = () => {
                     //     console.log('desconectao')
@@ -299,20 +292,17 @@ export default {
                     // this.mqttClient.connect(options);
                 } catch (connError) {
                     this.mqttClient = null;
-                    clearInterval(this.socketKeepAlive);
-                    this.socketKeepAlive = null;
+                    this.socketConnected = false
                     console.error(connError);
                 }
             } else {
                 // if (this.mqttClient && this.mqttClient.disconnect) {
                 //     this.mqttClient.disconnect()
                 // }
+                this.socketConnected = false
                 if (this.mqttClient && this.mqttClient.close) {
                     this.mqttClient.close();
                 }
-
-                clearInterval(this.socketKeepAlive);
-                this.socketKeepAlive = null;
             }
         },
         tab: function () {
