@@ -165,11 +165,6 @@ export default {
             menu: false,
             mqttClient: null,
             socketConnected: null,
-            operationResponse: {
-                operation: {
-                    response: {}
-                }
-            },
             send: false
         };
     },
@@ -195,12 +190,18 @@ export default {
                 text: this.field,
             });
         },
-        saveRequest(string, eventObj) {
-            this.operationResponse.operation.response.name = eventObj.operation.request.name
-            this.operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
-            this.operationResponse.operation.response.parameters = eventObj.operation.request.parameters
-            this.operationResponse.operation.response.id = eventObj.operation.request.id
-            this.operationResponse.operation.response.resultCode = string
+        sendResponse(resultCode, event) {
+             let operationResponse= {
+                operation :{
+                    response:{}
+                }
+            }
+            operationResponse.operation.response.timestamp = event.operation.request.timestamp
+            operationResponse.operation.response.name = event.operation.request.name
+            operationResponse.operation.response.parameters = event.operation.request.parameters
+            operationResponse.operation.response.id = event.operation.request.id
+            operationResponse.operation.response.resultCode = resultCode
+            this.mqttClient.send(JSON.stringify(operationResponse))
         }
     },
     computed: {
@@ -286,36 +287,52 @@ export default {
                                 const eventObj = JSON.parse(event.data);
                                 localStorage.eventName += eventObj.operation.request.name+ ","+this.deviceId+":"
                                 this.eventAux = localStorage.eventName                            
+                                if(operaConfigs[this.deviceId]){
+
+                                
                                 if (
                                     operaConfigs[this.deviceId][eventObj.operation.request.name] &&
                                     operaConfigs[this.deviceId][eventObj.operation.request.name]
                                     .enabled
                                 ) {
-                                    this.saveRequest("SUCCESSFUL", eventObj)
-                                    this.mqttClient.send(JSON.stringify(this.operationResponse))
                                     let functionCode =
                                         "(function(operaData) {console.log(operaData);" +
                                         operaConfigs[this.deviceId][eventObj.operation.request.name]
                                         .code +
                                         "})";
 
-                                    const functionObj = eval(functionCode);
+                                    const functionObj = eval(functionCode)
 
-                                    functionObj(eventObj.operation.request);
+                                    try{
+                                        functionObj(eventObj.operation.request)
+                                        this.sendResponse("SUCCESSFUL", eventObj)
+                                    }
+                                    catch(error){
+                                        console.erro(error)
+                                    }
+
                                 } else if (operaConfigs[this.deviceId][eventObj.operation.request.name]) {
-                                    this.saveRequest("NOT_SUPPORTED", eventObj)
-                                    this.mqttClient.send(JSON.stringify(this.operationResponse))
+                                    this.sendResponse("NOT_SUPPORTED", eventObj)
                                     console.error(
                                         "no soportada la operación " + eventObj.operation.request.name
                                     )
                                 } else {
-                                    this.saveRequest("CANCELLED", eventObj)
-                                    this.mqttClient.send(JSON.stringify(this.operationResponse))
+                                    this.sendResponse("CANCELLED", eventObj)
+                                    console.error(failure)
+                                    
 
+                                }
+                                }
+                                else{
+                                     this.sendResponse("NOT_SUPPORTED", eventObj)
+                                    console.error("NOT_SUPPORTED")
                                 }
                             }
                         } else {
-                            this.saveRequest("NOT_SUPPORTED", eventObj)
+                             if (event.data) {
+                                const eventObj = JSON.parse(event.data)
+                            this.sendResponse("NOT_SUPPORTED", eventObj)
+                             }
                         }
                     };
 
