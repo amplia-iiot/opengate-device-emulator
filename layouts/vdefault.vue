@@ -36,18 +36,18 @@
               <!-- Con datos fijos -->
 <!--               <v-list>
                 <v-list-item
-                  v-for="(item, i) in items"
+                  v-for="(item, i) in eventAux"
                   :key="i"
                   @click="() => {}"
                 >
                   <v-list-item-title>{{
-                    item.name + " " + item.date
+                    item
                   }}</v-list-item-title>
                 </v-list-item>
               </v-list> -->
 
               <!-- Con datos del evento -->
-              {{ this.operationEvent + "hola" }}
+              {{ this.eventAux}}
             </v-card-text>
 
             <v-divider></v-divider>
@@ -180,20 +180,7 @@ export default {
       propEvent:[],
       eventAux:"",
       dialog: false,
-      items: [
-        {
-          name: "Reboot_Equipment",
-          date: "18/11",
-        },
-        {
-          name: "Refresh_info",
-          date: "18/11",
-        },
-        {
-          name: "",
-          date: "18/11",
-        },
-      ],
+      items: [ ],
       contOperations: 0,
       deviceapi: [],
       todo: true,
@@ -231,6 +218,7 @@ export default {
     },
   },
   computed: {
+    
     isEmulatorConnected() {
       return this.deviceId && this.socketKeepAlive;
     },
@@ -246,8 +234,8 @@ export default {
     },
   },
   mounted(){
-     this.eventAux = localStorage.eventName
-
+/*      this.eventAux = localStorage.eventName
+ */
   },
   created() {
     if (!this.$api) {
@@ -307,6 +295,7 @@ export default {
               if (event.data) {
                 const eventObj = JSON.parse(event.data);
                 localStorage.eventName += eventObj.operation.request.name+ ","+this.deviceId+":"
+                this.eventAux = localStorage.eventName
 
                 if (
                   operaConfigs[this.deviceId][
@@ -394,8 +383,9 @@ export default {
     },
     eventAux: function() {
       if(localStorage.eventName){
-        this.operationEvent = localStorage.eventName
-        this.propEvent = localStorage.eventName
+        this.operationEvent = localStorage.eventName.split(",")
+
+        this.propEvent = this.operationEvent
       }
 
 
