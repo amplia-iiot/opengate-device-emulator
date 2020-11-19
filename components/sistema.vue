@@ -4,7 +4,7 @@
         <v-icon> mdi-send </v-icon>
     </v-btn>
     <v-form v-model="valid">
-        <v-jsf v-if="systemSchema" v-model="innerModel" :schema="systemSchema" :options="options" />
+        <v-jsf v-if="systemSchema" v-model="innerModel" :schema="systemSchema" :options="options" @change="inputSystem"/>
     </v-form>
 </div>
 </template>
@@ -59,32 +59,8 @@ export default {
                 }
             },
             deep: true
-        },
-        innerModel: {
-          
-            handler() {
-                
-                    this.systemDatastreams.forEach((element)=> {
-                      if (this.model[element]) {
-                        if (this.innerModel[element] != this.model[element]._value._current.value) {
-                          console.log(this.innerModel[element])
-                            this.disabled = false
-                        }
-                      }
-                      else if(this.model["provision." + element]){
-                        if(this.innerModel[element] != this.model["provision." +element]._value._current.value ) {
-                           console.log(this.innerModel[element])
-                            this.disabled = false
-                        }
-                      }
-                    })
-                   
-                
-                
-            },
-          
-            deep:true
         }
+        
     },
     data() {
         return {
@@ -107,6 +83,27 @@ export default {
         };
     },
     methods: {
+        inputSystem(){
+             this.systemDatastreams.forEach((element)=> {
+                      if (this.model[element]) {
+                        if (this.innerModel[element] != this.model[element]._value._current.value) {
+                          console.log(this.innerModel[element])
+                            this.disabled = false
+                        }
+                      }
+                      else if(this.model["provision." + element]){
+                        if(this.innerModel[element] != this.model["provision." +element]._value._current.value ) {
+                           console.log(this.innerModel[element])
+                            this.disabled = false
+                        }
+                      }
+                      else{
+                          if(this.innerModel[element] != "" ){
+                              this.disabled = false
+                          }
+                      }
+                    })
+        },
         sendInfo() {
             this.sendInfoApi()
         },

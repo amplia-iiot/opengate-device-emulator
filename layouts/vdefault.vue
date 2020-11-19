@@ -120,10 +120,6 @@ export default {
             operationResponse: {
                 operation: {
                     response: {
-                        id: "",
-                        timestamp: "",
-                        name: "",
-                        resultcode: ""
                     }
                 }
             },
