@@ -26,12 +26,14 @@
               </v-badge>
             </v-btn>
           </template>
+          <!-- Comiezo del DIALOG -->
           <v-card>
             <v-card-title class="headline grey lighten-2">
               Events
             </v-card-title>
 
             <v-card-text>
+              <!-- Con datos fijos -->
               <v-list>
                 <v-list-item
                   v-for="(item, i) in items"
@@ -43,18 +45,20 @@
                   }}</v-list-item-title>
                 </v-list-item>
               </v-list>
+
+              <!-- Con datos del evento -->
               <v-list>
                 <v-list-item
-                  v-for="(event, i) in events"
+                  v-for="(event, i) in eventObj"
                   :key="i"
                   @click="() => {}"
                 >
-                  <v-list-item-title>{{
-                    event
-                  }}</v-list-item-title>
+                  <v-list-item-title>
+                    {{ this.eventObj }}
+                    </v-list-item-title>
                 </v-list-item>
               </v-list>
-              {{ this.mqttClient }}
+              {{ this.eventObj + "hola"}}
             </v-card-text>
 
             <v-divider></v-divider>
@@ -203,7 +207,6 @@ export default {
       todo: true,
       devices: [],
       field: null,
-      dialog: false,
       valid: false,
       tabActivo: "sistema",
       menu: false,
