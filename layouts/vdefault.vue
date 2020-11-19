@@ -11,12 +11,57 @@
         </v-toolbar-title>
         <v-spacer />
         <v-toolbar-items>
-            <v-btn :color="isEmulatorConnected?'success':''" :text="!isEmulatorConnected">
-                <v-badge :content="contOperations" :value="contOperations" color="error" overlap>
-                    <v-icon v-if="isEmulatorConnected" >mdi-lan-connect</v-icon>
-                    <v-icon v-else >mdi-lan-disconnect</v-icon>
-                </v-badge>
+        <v-dialog v-model="dialog" width="500">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn text v-bind="attrs" v-on="on">
+              <v-badge
+                :content="contOperations"
+                :value="contOperations"
+                color="error"
+              >
+                <v-icon v-if="isEmulatorConnected" color="success"
+                  >mdi-lan-connect</v-icon
+                >
+                <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
+              </v-badge>
             </v-btn>
+          </template>
+          <!-- Comiezo del DIALOG -->
+          <v-card>
+            <v-card-title class="headline grey lighten-2">
+              Events
+            </v-card-title>
+
+            <v-card-text>
+              <!-- Con datos fijos -->
+<!--               <v-list>
+                <v-list-item
+                  v-for="(item, i) in eventAux"
+                  :key="i"
+                  @click="() => {}"
+                >
+                  <v-list-item-title>{{
+                    item
+                  }}</v-list-item-title>
+                </v-list-item>
+              </v-list> -->
+
+              <!-- Con datos del evento -->
+              {{ this.eventAux}}
+            </v-card-text>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="primary" text @click="dialog = false">
+                <v-icon dark left>
+                  mdi-arrow-left
+                </v-icon>
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
             <v-divider inset vertical />
             <v-menu v-model="menu" :close-on-content-click="false" offset-y class="logout">
                 <template v-slot:activator="{ on }">
@@ -106,6 +151,9 @@ export default {
     mixins: [baseUserApiMixin, textField],
     data() {
         return {
+            operationEvent:"",
+            propEvent:[],
+            eventAux:"",            
             contOperations: 0,
             deviceapi: [],
             todo: true,
@@ -175,6 +223,10 @@ export default {
             }
         },
     },
+    mounted(){
+    /*      this.eventAux = localStorage.eventName
+    */
+    },
     created() {
         if (!this.$api) {
             this.$router.push({
@@ -232,6 +284,8 @@ export default {
                             let operaConfigs = JSON.parse(localStorage.operationsConfig);
                             if (event.data) {
                                 const eventObj = JSON.parse(event.data);
+                                localStorage.eventName += eventObj.operation.request.name+ ","+this.deviceId+":"
+                                this.eventAux = localStorage.eventName                            
                                 if (
                                     operaConfigs[this.deviceId][eventObj.operation.request.name] &&
                                     operaConfigs[this.deviceId][eventObj.operation.request.name]
@@ -307,6 +361,15 @@ export default {
         tab: function () {
             this.tabActivo = this.tab;
         },
+        eventAux: function() {
+        if(localStorage.eventName){
+            this.operationEvent = localStorage.eventName.split(",")
+
+            this.propEvent = this.operationEvent
+        }
+
+
+        }
     },
 };
 </script>
