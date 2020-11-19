@@ -1,6 +1,6 @@
 <template>
 <v-app id="inspire">
-    <v-app-bar extended app color="primary" dark elevate-on-scroll>
+    <v-app-bar extended app color="primary" dense dark elevate-on-scroll>
         <v-app-bar-nav-icon @click="routerlister" v-if="deviceId">
             <v-icon> mdi-chevron-left </v-icon>
         </v-app-bar-nav-icon>
@@ -11,10 +11,10 @@
         </v-toolbar-title>
         <v-spacer />
         <v-toolbar-items>
-            <v-btn text>
-                <v-badge :content="contOperations" :value="contOperations" color="error">
-                    <v-icon v-if="isEmulatorConnected" color="success">mdi-lan-connect</v-icon>
-                    <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
+            <v-btn :color="isEmulatorConnected?'success':''" :text="!isEmulatorConnected">
+                <v-badge :content="contOperations" :value="contOperations" color="error" overlap>
+                    <v-icon v-if="isEmulatorConnected" >mdi-lan-connect</v-icon>
+                    <v-icon v-else >mdi-lan-disconnect</v-icon>
                 </v-badge>
             </v-btn>
             <v-divider inset vertical />
