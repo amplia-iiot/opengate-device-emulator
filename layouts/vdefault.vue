@@ -273,9 +273,6 @@ export default {
                             "Successfully connected to the echo websocket server..."
                         );
 
-                        if (this.send === true) {
-                            mqttCopy.send("hola")
-                        }
                         this.socketKeepAlive = setInterval(() => {
                             if (mqttCopy) {
                                 mqttCopy.send("Keep alive!!!")
