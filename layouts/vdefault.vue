@@ -43,7 +43,7 @@
 
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="primary" text @click="dialog = false">
+                        <v-btn color="primary" text @click="logDialog = false">
                             <v-icon dark left>
                                 mdi-arrow-left
                             </v-icon>
