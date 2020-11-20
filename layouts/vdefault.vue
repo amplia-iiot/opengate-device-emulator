@@ -11,58 +11,46 @@
         </v-toolbar-title>
         <v-spacer />
         <v-toolbar-items>
-        <v-dialog v-model="dialog" width="500">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn text v-bind="attrs" v-on="on">
-              <v-badge
-                :content="contOperations"
-                :value="contOperations"
-                color="error"
-              >
-                <v-icon v-if="isEmulatorConnected" color="success"
-                  >mdi-lan-connect</v-icon
-                >
-                <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
-              </v-badge>
-            </v-btn>
-          </template>
-          <!-- Comiezo del DIALOG -->
-          <v-card>
-            <v-card-title class="headline grey lighten-2">
-              Events
-            </v-card-title>
+            <v-dialog v-model="logDialog" width="500">
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn text v-bind="attrs" v-on="on">
+                        <v-badge :content="contOperations" :value="contOperations" color="error">
+                            <v-icon v-if="isEmulatorConnected" color="success">mdi-lan-connect</v-icon>
+                            <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
+                        </v-badge>
+                    </v-btn>
+                </template>
+                <!-- Comiezo del DIALOG -->
+                <v-card>
+                    <v-card-title class="headline grey lighten-2">
+                        Events
+                    </v-card-title>
 
-            <v-card-text>
-              <!-- Lista de eventos -->
-              <v-list>
-                <v-list-item
-                  v-for="(item, i) in eventAux.split(':')"
-                  :key="i"
-                  @click="() => {}"
-                >
-                  <v-list-item-title>{{
-                    item
-                  }}</v-list-item-title>
-                </v-list-item>
-              </v-list>
+                    <v-card-text>
+                        <!-- Lista de eventos -->
+                        <v-list>
+                            <v-list-item v-for="(item, i) in eventAux.split(':')" :key="i" @click="() => {}">
+                                <v-list-item-title>{{ item }}</v-list-item-title>
+                            </v-list-item>
+                        </v-list>
 
-              <!-- Con datos del evento -->
-<!--               {{ this.eventAux}}
+                        <!-- Con datos del evento -->
+                        <!--               {{ this.eventAux}}
               {{ this.propEvent}} -->
-            </v-card-text>
+                    </v-card-text>
 
-            <v-divider></v-divider>
+                    <v-divider></v-divider>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" text @click="dialog = false">
-                <v-icon dark left>
-                  mdi-arrow-left
-                </v-icon>
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="primary" text @click="dialog = false">
+                            <v-icon dark left>
+                                mdi-arrow-left
+                            </v-icon>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
             <v-divider inset vertical />
             <v-menu v-model="menu" :close-on-content-click="false" offset-y class="logout">
                 <template v-slot:activator="{ on }">
@@ -86,7 +74,7 @@
                         </v-list-item-content>
                     </v-list-item>
 
-                    <v-dialog v-model="dialog" persistent>
+                    <v-dialog v-model="logoutDialog" persistent>
                         <template v-slot:activator="{ on, attrs }" align-center>
                             <div class="text-center">
                                 <v-btn color="red" dark v-bind="attrs" v-on="on" depressed>
@@ -99,7 +87,7 @@
                             <v-card-text>Are you sure?</v-card-text>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="green darken-1" text @click="dialog = false">
+                                <v-btn color="green darken-1" text @click="logoutDialog = false">
                                     No
                                 </v-btn>
                                 <v-btn color="red" text @click="routerdialog"> YES </v-btn>
@@ -152,15 +140,16 @@ export default {
     mixins: [baseUserApiMixin, textField],
     data() {
         return {
-            operationEvent:"",
+            operationEvent: "",
             propEvent: [],
-            eventAux:"",            
+            eventAux: "",
             contOperations: 0,
             deviceapi: [],
             todo: true,
             devices: [],
             field: null,
-            dialog: false,
+            logDialog: false,
+            logoutDialog: false,
             valid: false,
             tabActivo: "sistema",
             menu: false,
@@ -196,12 +185,16 @@ export default {
                 text: this.field,
             });
         },
-        saveRequest(string, eventObj) {
+        sendResponse(string, eventObj) {
             this.operationResponse.operation.response.name = eventObj.operation.request.name
             this.operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
             this.operationResponse.operation.response.parameters = eventObj.operation.request.parameters
             this.operationResponse.operation.response.id = eventObj.operation.request.id
             this.operationResponse.operation.response.resultCode = string
+
+            setTimeout(() => {
+                this.mqttClient.send(JSON.stringify(this.operationResponse))
+            }, 1000)
         }
     },
     computed: {
@@ -224,9 +217,9 @@ export default {
             }
         },
     },
-    mounted(){
-    /*      this.eventAux = localStorage.eventName
-    */
+    mounted() {
+        /*      this.eventAux = localStorage.eventName
+         */
     },
     created() {
         if (!this.$api) {
@@ -287,55 +280,51 @@ export default {
                             if (event.data) {
                                 const eventObj = JSON.parse(event.data);
                                 localStorage.eventName = ""
-                                localStorage.eventName += eventObj.operation.request.name+ ","+this.deviceId+":"
+                                localStorage.eventName += eventObj.operation.request.name + "," + this.deviceId + ":"
                                 this.eventAux += localStorage.eventName
-/*                                 if(this.eventAux){
-                                    this.propEvent = this.eventName.split(':')
-                                }
-                                console.log(this.propEvent)     */                 
-                               if(operaConfigs[this.deviceId]){
+                                /*                                 if(this.eventAux){
+                                                                    this.propEvent = this.eventName.split(':')
+                                                                }
+                                                                console.log(this.propEvent)     */
+                                if (operaConfigs[this.deviceId]) {
 
-                                
-                                if (
-                                    operaConfigs[this.deviceId][eventObj.operation.request.name] &&
-                                    operaConfigs[this.deviceId][eventObj.operation.request.name]
-                                    .enabled
-                                ) {
-                                    let functionCode =
-                                        "(function(operaData) {console.log(operaData);" +
+                                    if (
+                                        operaConfigs[this.deviceId][eventObj.operation.request.name] &&
                                         operaConfigs[this.deviceId][eventObj.operation.request.name]
-                                        .code +
-                                        "})";
+                                        .enabled
+                                    ) {
+                                        let functionCode =
+                                            "(function(operaData) {console.log(operaData);" +
+                                            operaConfigs[this.deviceId][eventObj.operation.request.name]
+                                            .code +
+                                            "})";
 
-                                    const functionObj = eval(functionCode)
+                                        const functionObj = eval(functionCode)
 
-                                    try{
-                                        functionObj(eventObj.operation.request)
-                                        this.sendResponse("SUCCESSFUL", eventObj)
+                                        try {
+                                            functionObj(eventObj.operation.request)
+                                            this.sendResponse("SUCCESSFUL", eventObj)
+                                        } catch (error) {
+                                            console.error(error)
+                                        }
+
+                                    } else if (operaConfigs[this.deviceId][eventObj.operation.request.name]) {
+                                        this.sendResponse("NOT_SUPPORTED", eventObj)
+                                        console.error(
+                                            "no soportada la operación " + eventObj.operation.request.name
+                                        )
+                                    } else {
+                                        this.sendResponse("CANCELLED", eventObj)
+                                        console.error(failure)
+
                                     }
-                                    catch(error){
-                                        console.erro(error)
-                                    }
-
-                                } else if (operaConfigs[this.deviceId][eventObj.operation.request.name]) {
-                                    this.sendResponse("NOT_SUPPORTED", eventObj)
-                                    console.error(
-                                        "no soportada la operación " + eventObj.operation.request.name
-                                    )
                                 } else {
-                                    this.sendResponse("CANCELLED", eventObj)
-                                    console.error(failure)
-                                    
-
-                                }
-                                }
-                                else{
-                                     this.sendResponse("NOT_SUPPORTED", eventObj)
+                                    this.sendResponse("NOT_SUPPORTED", eventObj)
                                     console.error("NOT_SUPPORTED")
                                 }
                             }
                         } else {
-                            this.saveRequest("NOT_SUPPORTED", eventObj)
+                            this.sendResponse("NOT_SUPPORTED", eventObj)
                         }
                     };
 
@@ -381,13 +370,12 @@ export default {
         tab: function () {
             this.tabActivo = this.tab;
         },
-        eventAux: function() {
-        if(localStorage.eventName){
-            this.operationEvent = localStorage.eventName.split(",")
+        eventAux: function () {
+            if (localStorage.eventName) {
+                this.operationEvent = localStorage.eventName.split(",")
 
-            this.propEvent = this.operationEvent
-        }
-
+                this.propEvent = this.operationEvent
+            }
 
         }
     },
