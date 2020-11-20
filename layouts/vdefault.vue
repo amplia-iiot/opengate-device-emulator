@@ -33,10 +33,10 @@
             </v-card-title>
 
             <v-card-text>
-              <!-- Con datos fijos -->
-<!--               <v-list>
+              <!-- Lista de eventos -->
+              <v-list>
                 <v-list-item
-                  v-for="(item, i) in eventAux"
+                  v-for="(item, i) in eventAux.split(':')"
                   :key="i"
                   @click="() => {}"
                 >
@@ -44,10 +44,11 @@
                     item
                   }}</v-list-item-title>
                 </v-list-item>
-              </v-list> -->
+              </v-list>
 
               <!-- Con datos del evento -->
-              {{ this.eventAux}}
+<!--               {{ this.eventAux}}
+              {{ this.propEvent}} -->
             </v-card-text>
 
             <v-divider></v-divider>
@@ -152,7 +153,7 @@ export default {
     data() {
         return {
             operationEvent:"",
-            propEvent:[],
+            propEvent: [],
             eventAux:"",            
             contOperations: 0,
             deviceapi: [],
@@ -165,6 +166,11 @@ export default {
             menu: false,
             mqttClient: null,
             socketConnected: null,
+            operationResponse: {
+                operation: {
+                    response: {}
+                }
+            },
             send: false
         };
     },
@@ -190,18 +196,12 @@ export default {
                 text: this.field,
             });
         },
-        sendResponse(resultCode, event) {
-             let operationResponse= {
-                operation :{
-                    response:{}
-                }
-            }
-            operationResponse.operation.response.timestamp = event.operation.request.timestamp
-            operationResponse.operation.response.name = event.operation.request.name
-            operationResponse.operation.response.parameters = event.operation.request.parameters
-            operationResponse.operation.response.id = event.operation.request.id
-            operationResponse.operation.response.resultCode = resultCode
-            this.mqttClient.send(JSON.stringify(operationResponse))
+        saveRequest(string, eventObj) {
+            this.operationResponse.operation.response.name = eventObj.operation.request.name
+            this.operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
+            this.operationResponse.operation.response.parameters = eventObj.operation.request.parameters
+            this.operationResponse.operation.response.id = eventObj.operation.request.id
+            this.operationResponse.operation.response.resultCode = string
         }
     },
     computed: {
@@ -283,11 +283,17 @@ export default {
 
                         if (localStorage && localStorage.operationsConfig) {
                             let operaConfigs = JSON.parse(localStorage.operationsConfig);
+
                             if (event.data) {
                                 const eventObj = JSON.parse(event.data);
+                                localStorage.eventName = ""
                                 localStorage.eventName += eventObj.operation.request.name+ ","+this.deviceId+":"
-                                this.eventAux = localStorage.eventName                            
-                                if(operaConfigs[this.deviceId]){
+                                this.eventAux += localStorage.eventName
+/*                                 if(this.eventAux){
+                                    this.propEvent = this.eventName.split(':')
+                                }
+                                console.log(this.propEvent)     */                 
+                               if(operaConfigs[this.deviceId]){
 
                                 
                                 if (
@@ -329,10 +335,7 @@ export default {
                                 }
                             }
                         } else {
-                             if (event.data) {
-                                const eventObj = JSON.parse(event.data)
-                            this.sendResponse("NOT_SUPPORTED", eventObj)
-                             }
+                            this.saveRequest("NOT_SUPPORTED", eventObj)
                         }
                     };
 
