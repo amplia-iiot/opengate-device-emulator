@@ -67,16 +67,15 @@ export default {
         theme: "default",
       },
       selectedOperation: null,
-      jsonLocal: null,
+      jsonLocal: {},
     }
   },
   methods: {
     operationChanged(newOpera) {
       if (newOpera) {
         if(!localStorage.operationsConfig){
-          localStorage.operationsConfig =  JSON.stringify({})
-        }
-        else {
+          localStorage.operationsConfig = JSON.stringify({})
+        } else {
           this.jsonLocal = JSON.parse(localStorage.operationsConfig)
         }
         
@@ -93,7 +92,7 @@ export default {
 
         // se guarda una copia para trabajar con ella
       } else {
-        this.jsonLocal = null
+        this.jsonLocal = {}
       }
     },
     saveOperation() {
