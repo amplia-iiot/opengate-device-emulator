@@ -27,16 +27,45 @@
                     </v-card-title>
 
                     <v-card-text>
-                        <!-- Lista de eventos -->
+                        <!-- Lista de tareas -->
                         <v-list>
                             <v-list-item v-for="(item, i) in eventAux.split(':')" :key="i" @click="() => {}">
                                 <v-list-item-title>{{ item }}</v-list-item-title>
                             </v-list-item>
                         </v-list>
+                        <!-- Lista de tareas, DeviceId, DateTime, Type, Description falla -->
+                        <v-list two-line>
+                        <v-list-item-group
+                            v-model="selected"
+                            multiple
+                        >
+                            <template v-for="(item, index) in eventArr">
+                            <v-list-item :key="item.type">
+                                <template>
+                                <v-list-item-content>
+                                    <v-list-item-title v-text="item.type"></v-list-item-title>
 
-                        <!-- Con datos del evento -->
-                        <!--               {{ this.eventAux}}
-              {{ this.propEvent}} -->
+                                    <v-list-item-subtitle
+                                    class="text--primary"
+                                    v-text="item.devId"
+                                    ></v-list-item-subtitle>
+
+                                    <v-list-item-subtitle v-text="item.description"></v-list-item-subtitle>
+                                </v-list-item-content>
+
+                                <v-list-item-action>
+                                    <v-list-item-action-text v-text="item.dateTime"></v-list-item-action-text>
+                                </v-list-item-action>
+                                </template>
+                            </v-list-item>
+
+                            <v-divider
+                                v-if="index < eventArr.length - 1"
+                                :key="index"
+                            ></v-divider>
+                            </template>
+                        </v-list-item-group>
+                        </v-list>                        
                     </v-card-text>
 
                     <v-divider></v-divider>
@@ -140,9 +169,12 @@ export default {
     mixins: [baseUserApiMixin, textField],
     data() {
         return {
-            operationEvent: "",
-            propEvent: [],
+            selected:[2],
+            date: "",
+            time:"",
+            devId:"",
             eventAux: "",
+            eventArr:[],
             contOperations: 0,
             deviceapi: [],
             todo: true,
@@ -282,10 +314,15 @@ export default {
                                 localStorage.eventName = ""
                                 localStorage.eventName += eventObj.operation.request.name + "," + this.deviceId + ":"
                                 this.eventAux += localStorage.eventName
-                                /*                                 if(this.eventAux){
-                                                                    this.propEvent = this.eventName.split(':')
-                                                                }
-                                                                console.log(this.propEvent)     */
+                                this.eventArr.splice(0, this.eventArr.length)
+                                    this.date = new Date()
+                                    this.time = this.date.getHours() + ":" + this.date.getMinutes()
+                                this.eventArr.push({
+                                    type:'Connect',
+                                    devId: this.deviceId,
+                                    dateTime: this.time,
+                                    description: this.eventObj.operation.request.name
+                                })
                                 if (operaConfigs[this.deviceId]) {
 
                                     if (
@@ -304,6 +341,13 @@ export default {
                                         try {
                                             functionObj(eventObj.operation.request)
                                             this.sendResponse("SUCCESSFUL", eventObj)
+                                                this.eventArr.splice(0, this.eventArr.length)
+
+                                                this.eventArr.push({
+                                                    type:'SUCCESSFUL',
+                                                    description: this.eventObj.operation.request.name,
+                                                    devId: this.deviceId,
+                                                })                                            
                                         } catch (error) {
                                             console.error(error)
                                         }
@@ -313,35 +357,88 @@ export default {
                                         console.error(
                                             "no soportada la operación " + eventObj.operation.request.name
                                         )
+                                        this.eventArr.splice(0, this.eventArr.length)
+                                       
+                                        this.eventArr.push({
+                                            type:'NOT_SUPPORTED',
+                                            description: this.eventObj.operation.request.name,
+                                            devId: this.deviceId,
+                                        })                                        
                                     } else {
                                         this.sendResponse("CANCELLED", eventObj)
                                         console.error(failure)
+                                        this.eventArr.splice(0, this.eventArr.length)
 
+                                        this.eventArr.push({
+                                            type:'CANCELLED',
+                                            description: this.eventObj.operation.request.name,
+                                            devId: this.deviceId,
+                                        })
                                     }
                                 } else {
                                     this.sendResponse("NOT_SUPPORTED", eventObj)
                                     console.error("NOT_SUPPORTED")
+                                    this.eventArr.splice(0, this.eventArr.length)
+
+                                    this.eventArr.push({
+                                        type:'NOT_SUPPORTED',
+                                        description: this.eventObj.operation.request.name,
+                                        devId: this.deviceId,
+                                    })                                    
                                 }
                             }
                         } else {
                             this.sendResponse("NOT_SUPPORTED", eventObj)
+                        this.eventArr.splice(0, this.eventArr.length)
+
+                        this.eventArr.push({
+                            type:'NOT_SUPPORTED',
+                            description: this.eventObj.operation.request.name,
+                            devId: this.deviceId,
+                        })                            
                         }
+                        this.eventArr.splice(0, this.eventArr.length)
+                        
+/*                         this.eventArr.push({
+                            type:'Connect',
+                            description: this.eventObj.operation.request.name,
+                            devId: this.deviceId,
+                        }) */
+
                     };
 
                     const mqttCopy = this.mqttClient;
                     this.mqttClient.onopen = (event) => {
                         console.log(event)
-                        console.log("Successfully connected to the echo websocket server...");
-                        this.contOperations++;
+                        console.log("Successfully connected to the echo websocket server...")
+                        this.contOperations++
                         this.socketConnected = true
+
+                        this.eventArr.splice(0, this.eventArr.length)
+                            this.date = new Date()
+                            this.time = this.date.getHours() + ":" + this.date.getMinutes()
+                        this.eventArr.push({
+                            type:'Connect',
+                            devId: this.deviceId,
+                            dateTime: this.time
+                         })
                     }
 
                     this.mqttClient.onclose = (event) => {
-                        this.contOperations++
+                        this.contOperations = 0
 
                         if (this.socketConnected) {
                             // reiniciar conexión
                         }
+/*                         this.eventArr.splice(0, this.eventArr.length)
+ */                            this.date = new Date()
+                            this.time = this.date.getHours() + ":" + this.date.getMinutes()
+                         this.eventArr.push({
+
+                            type:'Disconnect',
+                            devId: this.deviceId,
+                            dateTime: this.time
+                        })                       
                     }
 
                     // this.mqttClient.onConnectionLost = () => {
