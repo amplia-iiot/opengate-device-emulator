@@ -22,56 +22,53 @@
                 </template>
                 <!-- Comiezo del DIALOG -->
                 <v-card>
-                    <v-card-actions>
-                    <v-card-title>
-                        Events
-                    </v-card-title>                        
-                        <v-btn color="primary" text @click="logDialog = false">                            
-                            <v-icon dark left>
-                                mdi-close
-                            </v-icon>
-                        </v-btn>
-                    </v-card-actions>                    
-                    <v-divider></v-divider>
-
+                    <v-card-title class="pa-0">
+                        <v-toolbar flat width="100%">
+                            <v-toolbar-title>
+                                Events
+                            </v-toolbar-title>
+                        
+                        <v-spacer />          
+                        <v-toolbar-items>
+                            <v-divider vertical inset />                  
+                            <v-btn color="error" icon @click="logDialog = false">                            
+                                <v-icon dark >
+                                    mdi-close
+                                </v-icon>
+                            </v-btn>
+                        </v-toolbar-items>
+                        </v-toolbar>
+                    </v-card-title>               
+                    
                     <v-card-text class="pa-1">
                         <!-- Lista de tareas, DeviceId, DateTime, Type, Description falla -->
                         <v-list two-line>
-                            <v-list-item-group v-model="selected" multiple>
-                               
-                                <template v-for="(item, index) in eventArr">
-                                    <v-list-item :key="item.type">
-                                        <v-list-item-icon>
-                                            <v-icon  v-if="eventArr.type = 'Connect'" >mdi-lan-connect</v-icon>
-                                            <v-icon v-else-if="eventArr.type = 'Disconnect'">mdi-lan-disconnect</v-icon>
-                                            <v-icon v-else-if="eventArr.type = 'SUCCESSFUL'">mdi-thumb-up</v-icon>
+                            <v-list-item v-for="(item, index) in eventArr" :key="item.type + '_' + index">
+                                <v-list-item-icon>
+                                    <v-icon v-if="item.type === 'Connect'" >mdi-lan-connect</v-icon>
+                                    <v-icon v-else-if="item.type === 'Disconnect'">mdi-lan-disconnect</v-icon>
+                                    <v-icon v-else-if="item.type === 'SUCCESSFUL'">mdi-thumb-up</v-icon>
 
-                                            <v-icon v-else> mdi-pencil</v-icon>
-                                        </v-list-item-icon>                                          
-                                        <template>
-                                            <v-list-item-content>
-                                              
-                                                <v-list-item-title>
-                                                     
-                                                </v-list-item-title>
-                                                <v-list-item-title v-text="item.type">
-                                                   
-                                                </v-list-item-title>
+                                    <v-icon v-else> mdi-pencil</v-icon>
+                                </v-list-item-icon>                                          
+                                <v-list-item-content>
+                                    
+                                    <v-list-item-title>
+                                            
+                                    </v-list-item-title>
+                                    <v-list-item-title v-text="item.type">
+                                        
+                                    </v-list-item-title>
 
-                                                <v-list-item-subtitle class="text--primary" v-text="item.devId"></v-list-item-subtitle>
+                                    <v-list-item-subtitle class="text--primary" v-text="item.devId"></v-list-item-subtitle>
 
-                                                <v-list-item-subtitle v-text="item.description"></v-list-item-subtitle>
-                                            </v-list-item-content>
+                                    <v-list-item-subtitle v-text="item.description"></v-list-item-subtitle>
+                                </v-list-item-content>
 
-                                            <v-list-item-action>
-                                                <v-list-item-action-text v-text="item.dateTime"></v-list-item-action-text>
-                                            </v-list-item-action>
-                                        </template>
-                                    </v-list-item>
-
-                                    <v-divider v-if="index < eventArr.length - 1" :key="index"></v-divider>
-                                </template>
-                            </v-list-item-group>
+                                <v-list-item-action>
+                                    <v-list-item-action-text v-text="item.dateTime"></v-list-item-action-text>
+                                </v-list-item-action>
+                            </v-list-item>
                         </v-list>
                     </v-card-text>
                 </v-card>
@@ -166,7 +163,6 @@ export default {
     data() {
         return {
             ifIcon:"",
-            selected: [2],
             date: "",
             time: "",
             devId: "",
@@ -270,13 +266,6 @@ export default {
                             let operaConfigs = JSON.parse(localStorage.operationsConfig);
                             this.date = new Date()
                             this.time = this.date.getHours() + ":" + this.date.getMinutes()
-
-                            this.eventArr.push({
-                                type: 'Connect',
-                                devId: this.deviceId,
-                                dateTime: this.time,
-                                description: eventObj.operation.request.name
-                            })
 
                             if (operaConfigs[this.deviceId]) {
                                 if (
