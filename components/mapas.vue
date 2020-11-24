@@ -1,6 +1,6 @@
 <template>
 <div class="pa-0 ma-0">
-    <l-map style="height: calc(100vh - 140px); width:100%" :zoom="zoom" :center="center" @click="addMarker" @update:center="centerUpdated">
+    <l-map style="height: calc(100vh - 140px); width:100%" :zoom="zoom" :center="center" @click="addMarker" @ready="mapReady">
         <l-tile-layer :url="url"></l-tile-layer>
         <l-control :position="'bottomleft'">
             <v-card>
@@ -18,6 +18,7 @@
 
 <script>
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js"
+import { map } from 'leaflet';
 
 // import VueLayers from "vuelayers";
 // import "vuelayers/lib/style.css";
@@ -57,6 +58,7 @@ export default {
                 start: null,
                 end: null,
             },
+            mapObj: null
         };
     },
     mounted() {
@@ -74,15 +76,20 @@ export default {
         },
     },
     methods: {
-        centerUpdated() {
-            this.zoom = 5
+        // centerUpdated(event) {
+        //     this.zoom = 15
+        // },
+        mapReady(mapObj) {
+            this.mapObj = mapObj
         },
         addMarker(event) {
             this.markers.splice(0, 1, event.latlng)
-            this.center = this.markers[0]
+            // this.center = this.markers[0]
             this.logLat = this.markers[0]
             console.log(event.latlng)
             this.markerBol = true
+
+            this.$nextTick(() => this.mapObj.flyTo(this.markers[0], 15, {duration: 2}))
 
             this.send()
         },
