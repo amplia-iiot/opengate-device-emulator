@@ -22,19 +22,41 @@
                 </template>
                 <!-- Comiezo del DIALOG -->
                 <v-card>
+                    <v-card-actions>
                     <v-card-title>
                         Events
-                    </v-card-title>
+                    </v-card-title>                        
+                        <v-btn color="primary" text @click="logDialog = false">                            
+                            <v-icon dark left>
+                                mdi-close
+                            </v-icon>
+                        </v-btn>
+                    </v-card-actions>                    
                     <v-divider></v-divider>
+
                     <v-card-text class="pa-1">
                         <!-- Lista de tareas, DeviceId, DateTime, Type, Description falla -->
                         <v-list two-line>
                             <v-list-item-group v-model="selected" multiple>
+                               
                                 <template v-for="(item, index) in eventArr">
                                     <v-list-item :key="item.type">
+                                        <v-list-item-icon>
+                                            <v-icon  v-if="eventArr.type = 'Connect'" >mdi-lan-connect</v-icon>
+                                            <v-icon v-else-if="eventArr.type = 'Disconnect'">mdi-lan-disconnect</v-icon>
+                                            <v-icon v-else-if="eventArr.type = 'SUCCESSFUL'">mdi-thumb-up</v-icon>
+
+                                            <v-icon v-else> mdi-pencil</v-icon>
+                                        </v-list-item-icon>                                          
                                         <template>
                                             <v-list-item-content>
-                                                <v-list-item-title v-text="item.type"></v-list-item-title>
+                                              
+                                                <v-list-item-title>
+                                                     
+                                                </v-list-item-title>
+                                                <v-list-item-title v-text="item.type">
+                                                   
+                                                </v-list-item-title>
 
                                                 <v-list-item-subtitle class="text--primary" v-text="item.devId"></v-list-item-subtitle>
 
@@ -52,17 +74,6 @@
                             </v-list-item-group>
                         </v-list>
                     </v-card-text>
-
-                    <v-divider></v-divider>
-
-                    <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="primary" text @click="logDialog = false">
-                            <v-icon dark left>
-                                mdi-arrow-left
-                            </v-icon>
-                        </v-btn>
-                    </v-card-actions>
                 </v-card>
             </v-dialog>
             <v-divider inset vertical />
@@ -154,6 +165,7 @@ export default {
     mixins: [baseUserApiMixin, textField],
     data() {
         return {
+            ifIcon:"",
             selected: [2],
             date: "",
             time: "",
@@ -298,12 +310,12 @@ export default {
                                 this.date = new Date()
                                 this.time = this.date.getHours() + ":" + this.date.getMinutes()
 
-                                this.eventArr.push({
+/*                                 this.eventArr.push({
                                     type: 'Connect',
                                     devId: this.deviceId,
-                                    dateTime: this.time,
+                                    dateTime: new Date().toLocaleString(),
                                     description: eventObj.operation.request.name
-                                })
+                                }) */
                                 if (operaConfigs[this.deviceId]) {
 
                                     if (
@@ -326,6 +338,7 @@ export default {
                                                 type: 'SUCCESSFUL',
                                                 description: eventObj.operation.request.name,
                                                 devId: this.deviceId,
+                                                dateTime: new Date().toLocaleString()
                                             })
                                         } catch (error) {
                                             console.error(error)
@@ -342,6 +355,7 @@ export default {
                                             type: 'NOT_SUPPORTED',
                                             description: eventObj.operation.request.name,
                                             devId: this.deviceId,
+                                            dateTime: new Date().toLocaleString()
                                         })
                                     } else {
                                         this.sendResponse("CANCELLED", eventObj)
@@ -351,8 +365,23 @@ export default {
                                             type: 'CANCELLED',
                                             description: eventObj.operation.request.name,
                                             devId: this.deviceId,
+                                            dateTime: new Date().toLocaleString()
                                         })
                                     }
+/*                             switch(this.eventArr.type){
+                                case "Connect":
+                                    ifIcon = "mdi-lan-connect";
+                                case "SUCCESSFUL":
+                                    ifIcon = "mdi-lan-connect";
+                                case "NOT_CONFIGURED":
+                                    ifIcon = "mdi-lan-connect";
+                                case "NOT_SUPPORTED": 
+                                    ifIcon = "mdi-lan-connect";
+                                case "CANCELLED":  
+                                    ifIcon = "mdi-lan-connect"
+                                break
+
+                            } */
                                 } else {
                                     this.sendResponse("NOT_SUPPORTED", eventObj)
                                     console.error("NOT_SUPPORTED")
@@ -375,6 +404,7 @@ export default {
                                     dateTime: new Date().toLocaleString()
                                 })
                             }
+
                         }
                     };
 
