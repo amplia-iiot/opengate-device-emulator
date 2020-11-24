@@ -48,6 +48,12 @@
                                     <v-icon v-if="item.type === 'Connect'" >mdi-lan-connect</v-icon>
                                     <v-icon v-else-if="item.type === 'Disconnect'">mdi-lan-disconnect</v-icon>
                                     <v-icon v-else-if="item.type === 'SUCCESSFUL'">mdi-thumb-up</v-icon>
+                                    <v-icon v-else-if="item.type === 'NOT_SUPPORTED'">mdi-thumb-down</v-icon>
+                                    <v-icon v-else-if="item.type === 'CANCELLED'">mdi-thumb-down</v-icon>
+                                    <v-icon v-else-if="item.type === 'NOT_CONFIGURED'">mdi-thumb-down</v-icon>
+                                    
+
+
 
                                     <v-icon v-else> mdi-pencil</v-icon>
                                 </v-list-item-icon>                                          
