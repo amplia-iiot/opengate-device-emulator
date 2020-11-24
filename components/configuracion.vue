@@ -6,16 +6,16 @@
           v-model="selectedOperation"
           @change="operationChanged"
         ></v-autocomplete>
-        <div v-if="jsonLocal">
+        <div v-if="jsonLocal && jsonLocal[deviceId] && jsonLocal[deviceId][selectedOperationLocal]">
           <v-card>
             <v-card-text>
           <p>function {{selectedOperation}}(operaData) {</p>
-          <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperation].code" />
+          <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperationLocal].code" />
           <p>}</p>
             </v-card-text>
           </v-card>
           <hr>
-          <v-switch v-model="jsonLocal[deviceId][selectedOperation].enabled" />
+          <v-switch v-model="jsonLocal[deviceId][selectedOperationLocal].enabled" />
           <v-btn @click="saveOperation"> Save </v-btn>
           <v-btn @click="deleteOperation"> Delete </v-btn>
         </div>
@@ -67,6 +67,7 @@ export default {
         theme: "default",
       },
       selectedOperation: null,
+      selectedOperationLocal: null,
       jsonLocal: {},
     }
   },
@@ -90,9 +91,11 @@ export default {
           }
         }
 
+        this.selectedOperationLocal = newOpera
+
         // se guarda una copia para trabajar con ella
       } else {
-        this.jsonLocal = {}
+this.selectedOperationLocal = null
       }
     },
     saveOperation() {

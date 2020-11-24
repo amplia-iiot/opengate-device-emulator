@@ -149,9 +149,9 @@
 
     <!-- <lister v-if="this.$store.state.appbar.currentPage == 'lister'"/>
       <emulator v-else-if="this.$store.state.appbar.currentPage == 'emulador'"/> -->
-    <v-content>
+    <v-main>
         <Nuxt />
-    </v-content>
+    </v-main>
 </v-app>
 </template>
 
@@ -217,13 +217,206 @@ export default {
         sendResponse(string, eventObj) {
             this.operationResponse.operation.response.name = eventObj.operation.request.name
             this.operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
-            this.operationResponse.operation.response.parameters = eventObj.operation.request.parameters
+            // this.operationResponse.operation.response.parameters = eventObj.operation.request.parameters
             this.operationResponse.operation.response.id = eventObj.operation.request.id
             this.operationResponse.operation.response.resultCode = string
 
             setTimeout(() => {
                 this.mqttClient.send(JSON.stringify(this.operationResponse))
             }, 1000)
+        },
+        deviceConnect() {
+            try {
+                // this.mqttClient = mqtt.connect('mqtt://preproapi.opengate.es:1883',
+                //     {
+                //         clientId: newVal,
+                //         username: newVal,
+                //         password: this.userData.apiKey
+                //     })
+                //
+                // this.mqttClient.on('connect', () => {
+                // console.log('connected')
+                // debugger
+                // this.mqttClient.subscribe('odm/request/'+ newVal, {}, (err) => {
+                // if (!err) {
+                // console.log('hola')
+                // }
+                // })
+                // })
+
+                // client.on('message', function (topic, message) {
+                // // message is Buffer
+                // console.log(message.toString())
+                // client.end()
+                // })
+
+                // cierro si hubiera alguna conexión abierta
+                if (this.mqttClient && this.mqttClient.close) {
+                    this.mqttClient.close();
+                }
+
+                this.mqttClient = new WebSocket(
+                    "ws://api.opengate.es/south/v80/sessions/" + this.deviceId + "?X-ApiKey=" + this.apiUsuario.apiKey
+                );
+
+                this.mqttClient.onmessage = (event) => {
+                    console.log(event);
+
+                    if (event.data) {
+                        this.contOperations++
+                        const eventObj = JSON.parse(event.data);
+
+                        if (localStorage && localStorage.operationsConfig) {
+                            let operaConfigs = JSON.parse(localStorage.operationsConfig);
+                            this.date = new Date()
+                            this.time = this.date.getHours() + ":" + this.date.getMinutes()
+
+                            this.eventArr.push({
+                                type: 'Connect',
+                                devId: this.deviceId,
+                                dateTime: this.time,
+                                description: eventObj.operation.request.name
+                            })
+
+                            if (operaConfigs[this.deviceId]) {
+                                if (
+                                    operaConfigs[this.deviceId][eventObj.operation.request.name] &&
+                                    operaConfigs[this.deviceId][eventObj.operation.request.name].enabled
+                                ) {
+                                    let functionCode =
+                                        "(function(operaData) {console.log(operaData);" +
+                                        operaConfigs[this.deviceId][eventObj.operation.request.name]
+                                        .code +
+                                        "})";
+
+                                    const functionObj = eval(functionCode)
+
+                                    try {
+                                        functionObj(eventObj.operation.request)
+                                        this.sendResponse("SUCCESSFUL", eventObj)
+
+                                        this.eventArr.push({
+                                            type: 'SUCCESSFUL',
+                                            description: eventObj.operation.request.name,
+                                            devId: this.deviceId,
+                                        })
+                                    } catch (error) {
+                                        console.error(error)
+                                    }
+
+                                } else if (operaConfigs[this.deviceId][eventObj.operation.request.name]) {
+                                    this.sendResponse("NOT_SUPPORTED", eventObj)
+                                    console.error(
+                                        "no soportada la operación " + eventObj.operation.request.name
+                                    )
+
+                                    // poner fecha de operación
+                                    this.eventArr.push({
+                                        type: 'NOT_SUPPORTED',
+                                        description: eventObj.operation.request.name,
+                                        devId: this.deviceId,
+                                    })
+                                } else {
+                                    this.sendResponse("CANCELLED", eventObj)
+                                    console.error(failure)
+                                    // poner fecha de operación
+                                    this.eventArr.push({
+                                        type: 'CANCELLED',
+                                        description: eventObj.operation.request.name,
+                                        devId: this.deviceId,
+                                    })
+                                }
+                            } else {
+                                this.sendResponse("NOT_SUPPORTED", eventObj)
+                                console.error("NOT_SUPPORTED")
+
+                                // poner fecha de operación
+                                this.eventArr.push({
+                                    type: 'NOT_SUPPORTED',
+                                    description: eventObj.operation.request.name,
+                                    devId: this.deviceId,
+                                    dateTime: new Date().toLocaleString()
+                                })
+                            }
+                        } else {
+                            this.sendResponse("NOT_CONFIGURED", eventObj)
+
+                            this.eventArr.push({
+                                type: 'NOT_CONFIGURED',
+                                description: eventObj.operation.request.name,
+                                devId: this.deviceId,
+                                dateTime: new Date().toLocaleString()
+                            })
+                        }
+                    }
+                };
+
+                this.mqttClient.onopen = (event) => {
+                    console.log(event)
+                    console.log("Successfully connected to the echo websocket server...")
+                    this.contOperations++
+                    this.socketConnected = true
+
+                    this.eventArr.push({
+                        type: 'Connect',
+                        devId: this.deviceId,
+                        dateTime: new Date().toLocaleString()
+                    })
+                }
+
+                this.mqttClient.onclose = (event) => {
+                    this.contOperations++
+
+                    this.eventArr.push({
+                        type: 'Disconnect',
+                        devId: this.deviceId,
+                        dateTime: new Date().toLocaleString()
+                    })
+
+                    if (this.socketConnected) {
+                        // reiniciar conexión
+                       this.deviceConnect()
+                    }
+                }
+
+                this.mqttClient.onerror = (event) => {
+                    this.contOperations++
+
+                    if (this.socketConnected) {
+                        // reiniciar conexión
+                        this.deviceConnect()
+                    }
+  
+                    this.eventArr.push({
+                        type: 'Error',
+                        devId: this.deviceId,
+                        dateTime: new Date().toLocaleString()
+                    })
+                }
+
+                // this.mqttClient.onConnectionLost = () => {
+                //     console.log('desconectao')
+                // };
+                // this.mqttClient.onMessageArrived = (msg) => {
+                //     console.log(msg)
+                // };
+
+                // this.mqttClient.connect(options);
+            } catch (connError) {
+                this.mqttClient = null;
+                this.socketConnected = false
+                this.contOperations++
+                console.error(connError);
+                this.eventArr.push({
+                    type: 'Error',
+                    devId: this.deviceId,
+                    dateTime: new Date().toLocaleString(),
+                    description: conError
+                })
+                if (this.mqttClient && this.mqttClient.close) {
+                    this.mqttClient.close();
+                }
+            }
         }
     },
     computed: {
@@ -267,191 +460,9 @@ export default {
         },
         deviceId(newVal, oldVal) {
             if (newVal && newVal !== oldVal) {
-                try {
-                    // this.mqttClient = mqtt.connect('mqtt://preproapi.opengate.es:1883',
-                    //     {
-                    //         clientId: newVal,
-                    //         username: newVal,
-                    //         password: this.userData.apiKey
-                    //     })
-                    //
-                    // this.mqttClient.on('connect', () => {
-                    // console.log('connected')
-                    // debugger
-                    // this.mqttClient.subscribe('odm/request/'+ newVal, {}, (err) => {
-                    // if (!err) {
-                    // console.log('hola')
-                    // }
-                    // })
-                    // })
-
-                    // client.on('message', function (topic, message) {
-                    // // message is Buffer
-                    // console.log(message.toString())
-                    // client.end()
-                    // })
-
-                    this.mqttClient = new WebSocket(
-                        "ws://api.opengate.es/south/v80/sessions/" +
-                        newVal +
-                        "?X-ApiKey=" +
-                        this.apiUsuario.apiKey
-                    );
-
-                    this.mqttClient.onmessage = (event) => {
-                        console.log(event);
-
-                        if (event.data) {
-                            this.contOperations++
-                            const eventObj = JSON.parse(event.data);
-
-                            if (localStorage && localStorage.operationsConfig) {
-                                let operaConfigs = JSON.parse(localStorage.operationsConfig);
-                                this.date = new Date()
-                                this.time = this.date.getHours() + ":" + this.date.getMinutes()
-
-/*                                 this.eventArr.push({
-                                    type: 'Connect',
-                                    devId: this.deviceId,
-                                    dateTime: new Date().toLocaleString(),
-                                    description: eventObj.operation.request.name
-                                }) */
-                                if (operaConfigs[this.deviceId]) {
-
-                                    if (
-                                        operaConfigs[this.deviceId][eventObj.operation.request.name] &&
-                                        operaConfigs[this.deviceId][eventObj.operation.request.name].enabled
-                                    ) {
-                                        let functionCode =
-                                            "(function(operaData) {console.log(operaData);" +
-                                            operaConfigs[this.deviceId][eventObj.operation.request.name]
-                                            .code +
-                                            "})";
-
-                                        const functionObj = eval(functionCode)
-
-                                        try {
-                                            functionObj(eventObj.operation.request)
-                                            this.sendResponse("SUCCESSFUL", eventObj)
-
-                                            this.eventArr.push({
-                                                type: 'SUCCESSFUL',
-                                                description: eventObj.operation.request.name,
-                                                devId: this.deviceId,
-                                                dateTime: new Date().toLocaleString()
-                                            })
-                                        } catch (error) {
-                                            console.error(error)
-                                        }
-
-                                    } else if (operaConfigs[this.deviceId][eventObj.operation.request.name]) {
-                                        this.sendResponse("NOT_SUPPORTED", eventObj)
-                                        console.error(
-                                            "no soportada la operación " + eventObj.operation.request.name
-                                        )
-
-                                        // poner fecha de operación
-                                        this.eventArr.push({
-                                            type: 'NOT_SUPPORTED',
-                                            description: eventObj.operation.request.name,
-                                            devId: this.deviceId,
-                                            dateTime: new Date().toLocaleString()
-                                        })
-                                    } else {
-                                        this.sendResponse("CANCELLED", eventObj)
-                                        console.error(failure)
-                                        // poner fecha de operación
-                                        this.eventArr.push({
-                                            type: 'CANCELLED',
-                                            description: eventObj.operation.request.name,
-                                            devId: this.deviceId,
-                                            dateTime: new Date().toLocaleString()
-                                        })
-                                    }
-/*                             switch(this.eventArr.type){
-                                case "Connect":
-                                    ifIcon = "mdi-lan-connect";
-                                case "SUCCESSFUL":
-                                    ifIcon = "mdi-lan-connect";
-                                case "NOT_CONFIGURED":
-                                    ifIcon = "mdi-lan-connect";
-                                case "NOT_SUPPORTED": 
-                                    ifIcon = "mdi-lan-connect";
-                                case "CANCELLED":  
-                                    ifIcon = "mdi-lan-connect"
-                                break
-
-                            } */
-                                } else {
-                                    this.sendResponse("NOT_SUPPORTED", eventObj)
-                                    console.error("NOT_SUPPORTED")
-
-                                    // poner fecha de operación
-                                    this.eventArr.push({
-                                        type: 'NOT_SUPPORTED',
-                                        description: eventObj.operation.request.name,
-                                        devId: this.deviceId,
-                                        dateTime: new Date().toLocaleString()
-                                    })
-                                }
-                            } else {
-                                this.sendResponse("NOT_CONFIGURED", eventObj)
-
-                                this.eventArr.push({
-                                    type: 'NOT_CONFIGURED',
-                                    description: eventObj.operation.request.name,
-                                    devId: this.deviceId,
-                                    dateTime: new Date().toLocaleString()
-                                })
-                            }
-
-                        }
-                    };
-
-                    const mqttCopy = this.mqttClient;
-                    this.mqttClient.onopen = (event) => {
-                        console.log(event)
-                        console.log("Successfully connected to the echo websocket server...")
-                        this.contOperations = 1
-                        this.socketConnected = true
-
-                        this.eventArr.splice(0, this.eventArr.length)
-                         
-                        this.eventArr.push({
-                            type: 'Connect',
-                            devId: this.deviceId,
-                            dateTime: new Date().toLocaleString()
-                        })
-                    }
-
-                    this.mqttClient.onclose = (event) => {
-                        this.contOperations++
-
-                        if (this.socketConnected) {
-                            // reiniciar conexión
-                        }
-                        /*                         this.eventArr.splice(0, this.eventArr.length)
-                         */
-                        this.eventArr.push({
-                            type: 'Disconnect',
-                            devId: this.deviceId,
-                            dateTime: new Date().toLocaleString()
-                        })
-                    }
-
-                    // this.mqttClient.onConnectionLost = () => {
-                    //     console.log('desconectao')
-                    // };
-                    // this.mqttClient.onMessageArrived = (msg) => {
-                    //     console.log(msg)
-                    // };
-
-                    // this.mqttClient.connect(options);
-                } catch (connError) {
-                    this.mqttClient = null;
-                    this.socketConnected = false
-                    console.error(connError);
-                }
+                this.eventArr.splice(0, this.eventArr.length)
+                this.contOperations = 0
+                this.deviceConnect()
             } else {
                 // if (this.mqttClient && this.mqttClient.disconnect) {
                 //     this.mqttClient.disconnect()
