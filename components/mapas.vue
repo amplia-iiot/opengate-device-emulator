@@ -61,15 +61,6 @@ export default {
             mapObj: null
         };
     },
-    mounted() {
-        if (this.model['entity.location']) {
-            this.markers[0][1] = this.model['entity.location']._value._current.value.position.coordinates[0]
-            this.markers[0][0] = this.model['entity.location']._value._current.value.position.coordinates[1]
-            this.center = this.markers[0]
-            this.logLat = "LatLng(" + this.markers[0][0] + ", " + this.markers[0][1] + ")"
-            this.markerBol = true
-        }
-    },
     computed: {
         deviceId() {
             return this.$route.query.id;
@@ -81,6 +72,14 @@ export default {
         // },
         mapReady(mapObj) {
             this.mapObj = mapObj
+            if (this.model['entity.location']) {
+            this.markers[0][1] = this.model['entity.location']._value._current.value.position.coordinates[0]
+            this.markers[0][0] = this.model['entity.location']._value._current.value.position.coordinates[1]
+            this.$nextTick(() => this.mapObj.flyTo(this.markers[0], 15, {duration: 2}))
+            this.logLat = "LatLng(" + this.markers[0][0] + ", " + this.markers[0][1] + ")"
+            this.markerBol = true
+        }
+            
         },
         addMarker(event) {
             this.markers.splice(0, 1, event.latlng)
