@@ -96,7 +96,7 @@ export default {
         }
 
         const finalDatastreams = this.datastreams.filter((dsTmp) => {
-          return this.selectedSensors.includes(dsTmp.identifier);
+          return this.selectedSensors.includes(dsTmp.identifier)
         })
 
         finalDatastreams.forEach((dsTmp) => {
@@ -137,20 +137,25 @@ export default {
     this.mapModelInfo(this.model)
   },
   methods: {
+/*     autoSend(){
+         arrSensors().forEach((element)=> {
+               if (this.model[element]) {
+                 }
+          }
+        
+    },
+
+ */
     mapModelInfo(modelData) {
       this.innerModel = {}
       if (modelData) {
         this.selectedSensors = []
         this.arrSensors.forEach((element) => {
           if (modelData[element]) {
-            this.innerModel[element] = modelData[
-              element
-            ]._value._current.value
+            this.innerModel[element] = modelData[element]._value._current.value
             this.selectedSensors.push(element);
           } else if (modelData["provision." + element]) {
-            this.innerModel[element] = modelData[
-              "provision." + element
-            ]._value._current.value
+            this.innerModel[element] = modelData["provision." + element]._value._current.value
             this.selectedSensors.push(element)
           }
         })

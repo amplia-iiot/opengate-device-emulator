@@ -12,8 +12,8 @@
         <v-spacer />
         <v-toolbar-items>
             <v-dialog v-model="logDialog" width="500">
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn text v-bind="attrs" v-on="on">
+                <template v-slot:activator="{ on, attrs}">
+                    <v-btn text v-bind="attrs" v-on="on" @click="contOperations=0">
                         <v-badge :content="contOperations" :value="contOperations" color="error">
                             <v-icon v-if="isEmulatorConnected" color="success">mdi-lan-connect</v-icon>
                             <v-icon v-else color="error">mdi-lan-disconnect</v-icon>
@@ -45,6 +45,8 @@
                         <v-list two-line>
                             <v-list-item v-for="(item, index) in eventArr" :key="item.type + '_' + index">
                                 <v-list-item-icon>
+                                                                        <v-icon v-text="listIcon"> </v-icon>
+
                                     <v-icon v-if="item.type === 'Connect'" >mdi-lan-connect</v-icon>
                                     <v-icon v-else-if="item.type === 'Disconnect'">mdi-lan-disconnect</v-icon>
                                     <v-icon v-else-if="item.type === 'SUCCESSFUL'">mdi-thumb-up</v-icon>
@@ -168,11 +170,7 @@ export default {
     mixins: [baseUserApiMixin, textField],
     data() {
         return {
-            ifIcon:"",
-            date: "",
-            time: "",
-            devId: "",
-            eventAux: "",
+            varIcon:"",
             eventArr: [],
             contOperations: 0,
             deviceapi: [],
@@ -294,6 +292,7 @@ export default {
                                             type: 'SUCCESSFUL',
                                             description: eventObj.operation.request.name,
                                             devId: this.deviceId,
+                                            dateTime: new Date().toLocaleString()
                                         })
                                     } catch (error) {
                                         console.error(error)
@@ -310,6 +309,7 @@ export default {
                                         type: 'NOT_SUPPORTED',
                                         description: eventObj.operation.request.name,
                                         devId: this.deviceId,
+                                        dateTime: new Date().toLocaleString()
                                     })
                                 } else {
                                     this.sendResponse("CANCELLED", eventObj)
@@ -319,6 +319,7 @@ export default {
                                         type: 'CANCELLED',
                                         description: eventObj.operation.request.name,
                                         devId: this.deviceId,
+                                        dateTime: new Date().toLocaleString()
                                     })
                                 }
                             } else {
@@ -415,6 +416,21 @@ export default {
         }
     },
     computed: {
+        listIcon(){
+            if(this.eventArr.type === 'Connect'){
+               return this.varIcon = "mdi-lan-connect"
+            }else if(this.eventArr.type ==='Disconnect'){
+               return this.varIcon = "mdi-lan-disconnect"
+            }else{
+              return  this.varIcon = "hola" + this.eventArr.type
+            }
+ /*             'Connect'" >mdi-lan-connect
+'Disconnect'">mdi-lan-disconnect
+'SUCCESSFUL'">mdi-thumb-up
+'NOT_SUPPORTED'">mdi-thumb-down
+'CANCELLED'">mdi-thumb-down
+'NOT_CONFIGURED'">mdi-thumb-down */
+        },
         operationCount() {
             if (this.event) {
                 contOperations++;
