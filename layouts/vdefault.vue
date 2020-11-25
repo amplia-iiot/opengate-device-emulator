@@ -210,9 +210,9 @@ export default {
             });
         },
         sendResponse(string, eventObj) {
-            operationResponse = {
-                operation = {
-                    response = {}
+            let operationResponse = {
+                operation : {
+                    response : {}
                 }
             }
             operationResponse.operation.response.name = eventObj.operation.request.name

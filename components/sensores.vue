@@ -1,13 +1,25 @@
 <template>
   <div>
+  <v-btn  v-on:click="autoSend" v-model="switchMe">AutoShip(60 seconds)
+    </v-btn>
+    <div v-show="switchMe">
+      <v-text-field
+        v-model="contSend"
+        color="cyan darken"
+        label="Second"
+        placeholder = "Seconds..."
+        loading
+      ></v-text-field>
+    </div>
+
     <v-btn
       @click="sendInfo"
-      :disabled="!valid"
+      :disabled="change"  
       fab
       fixed
       bottom
       right
-      color="accent"
+      color="accet"
     >
       <v-icon> mdi-send </v-icon>
     </v-btn>
@@ -59,6 +71,11 @@ export default {
     },
   },
   computed: {
+/*     sendAuto(){
+      if(switchMe === true){
+        setInterval(sendInfo(), contSend)
+      }
+    }, */
     deviceId() {
       return this.$route.query.id
     },
@@ -124,6 +141,10 @@ export default {
   },
   data() {
     return {
+      contSend: 3000, // 1000 = 1 second
+      switchMe: false,
+      change: false,
+
       valid: false,
       readOnly: true,
       selectedSensors: [],
@@ -134,9 +155,16 @@ export default {
     };
   },
   mounted() {
-    this.mapModelInfo(this.model)
+/*     setInterval(this.sendInfo(), 3000)
+ */    this.mapModelInfo(this.model)
   },
   methods: {
+    autoSend(){
+      setInterval(this.sendInfoApi(), 10000)
+      this.switchMe = true
+       // this.sendInfoApi()
+      
+    },
 /*     autoSend(){
          arrSensors().forEach((element)=> {
                if (this.model[element]) {
