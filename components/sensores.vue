@@ -160,8 +160,8 @@ export default {
   },
   methods: {
     autoSend(){
-      setInterval(this.sendInfoApi(), 10000)
-      this.switchMe = true
+      setInterval(this.sendInfo, 10000)
+      this.switchMe = !this.switchMe
        // this.sendInfoApi()
       
     },
