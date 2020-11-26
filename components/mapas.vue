@@ -11,7 +11,22 @@
             <l-marker v-for="marker in markers" :lat-lng="marker" :key="marker.lat"></l-marker>
         </div>
     </l-map>
-
+<v-snackbar
+        v-model="snackbar"
+      >
+        {{ "Location sended" }}
+  
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="pink"
+            text
+            v-bind="attrs"
+            @click="snackbar = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     <!-- </v-sheet> -->
 </div>
 </template>
@@ -58,8 +73,9 @@ export default {
                 start: null,
                 end: null,
             },
-            mapObj: null
-        };
+            mapObj: null,
+            snackbar: false,
+        }
     },
     computed: {
         deviceId() {
@@ -91,6 +107,7 @@ export default {
             this.$nextTick(() => this.mapObj.flyTo(this.markers[0], 15, {duration: 2}))
 
             this.send()
+            this.snackbar = true
         },
         async send() {
             try {
