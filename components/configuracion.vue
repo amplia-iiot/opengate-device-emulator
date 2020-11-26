@@ -43,7 +43,9 @@
           <br>
           operaResponse.operation.request.timestamp
           <br>
-          operaResponse.operation.request.params
+          operaResponse.operation.request.resultCode
+          <br>
+          operaResponse.operation.request.resultDescription
         </span>
       </v-tooltip>) {</p>
           <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperationLocal].code" />
@@ -68,6 +70,22 @@
           <v-btn @click="saveOperation"> Save </v-btn>
           <v-btn @click="deleteOperation"> Delete </v-btn>
         </div>
+        <v-snackbar
+        v-model="snackbar"
+      >
+        {{ "Operation save with your javascript thank you!" }}
+  
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="pink"
+            text
+            v-bind="attrs"
+            @click="snackbar = false"
+          >
+            Close
+          </v-btn>
+        </template>
+      </v-snackbar>
     </div>
 </template> 
 <script>
@@ -126,6 +144,7 @@ export default {
   data() {
     return {
       availableOperations:null,
+      snackbar: false,
       availableOperationsItems:[],
       operationsObject:{
         operation: "",
@@ -161,7 +180,7 @@ export default {
 
         if (!this.jsonLocal[this.deviceId][newOpera]) {
          this.jsonLocal[this.deviceId][newOpera] = {
-            code: 'return',
+            code: 'return operaResponse',
             enabled: false
           }
         }
@@ -175,7 +194,7 @@ this.selectedOperationLocal = null
     },
     saveOperation() {
       localStorage.operationsConfig = JSON.stringify(this.jsonLocal)
-      alert("Operation save with your javascript thank you!");
+      this.snackbar = true
     },
     deleteOperation() {
       this.code = "";

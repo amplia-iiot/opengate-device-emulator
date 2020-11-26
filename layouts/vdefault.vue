@@ -216,6 +216,7 @@ export default {
             this.operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
             this.operationResponse.operation.response.id = eventObj.operation.request.id
             this.operationResponse.operation.response.resultCode = string
+            this.operationResponse.operation.response.resultDescription = string
 
         },
         deviceConnect() {
@@ -270,7 +271,7 @@ export default {
                                     operaConfigs[this.deviceId][eventObj.operation.request.name].enabled
                                 ) {
                                     let functionCode =
-                                        "(function(operaRequest, operaResponse) {console.log(operaData);" +
+                                        "(function(operaRequest, operaResponse) {" +
                                         operaConfigs[this.deviceId][eventObj.operation.request.name]
                                         .code +
                                         "})";
