@@ -2,6 +2,10 @@
   <div>
   <v-btn  v-on:click="autoSend" v-model="switchMe">AutoShip(60 seconds)
     </v-btn>
+    <v-btn v-if="switchMe ===  true" v-on:click="stopSend" v-model="switchMe">
+        <v-icon> mdi-cancel </v-icon>
+
+    </v-btn>
     <div v-show="switchMe">
       <v-text-field
         v-model="contSend"
@@ -160,20 +164,13 @@ export default {
   },
   methods: {
     autoSend(){
-      setInterval(this.sendInfo, 10000)
-      this.switchMe = !this.switchMe
-       // this.sendInfoApi()
-      
+      setInterval(this.sendInfo, this.contSend)
+      this.switchMe = !this.switchMe      
     },
-/*     autoSend(){
-         arrSensors().forEach((element)=> {
-               if (this.model[element]) {
-                 }
-          }
-        
+    stopSend(){
+      this.contSend = 86400000
+    //  clearInterval(this.autoSend)
     },
-
- */
     mapModelInfo(modelData) {
       this.innerModel = {}
       if (modelData) {
