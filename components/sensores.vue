@@ -1,6 +1,6 @@
 <template>
   <div>
-  <v-btn  v-on:click="autoSend" v-model="switchMe">AutoShip(60 seconds)
+  <v-btn @click="switchMe = true">AutoShip
     </v-btn>
     <v-btn v-if="switchMe ===  true" v-on:click="stopSend" v-model="switchMe">
         <v-icon> mdi-cancel </v-icon>
@@ -8,6 +8,7 @@
     </v-btn>
     <div v-show="switchMe">
       <v-text-field
+        @keyup.enter="autoSend"
         v-model="contSend"
         color="cyan darken"
         label="Second"
@@ -145,7 +146,8 @@ export default {
   },
   data() {
     return {
-      contSend: 3000, // 1000 = 1 second
+      autoSendVar:"",
+      contSend: 100, // 1000 = 1 second
       switchMe: false,
       change: false,
 
@@ -164,11 +166,16 @@ export default {
   },
   methods: {
     autoSend(){
-      setInterval(this.sendInfo, this.contSend)
-      this.switchMe = !this.switchMe      
-    },
+      if(this.contSend){
+        clearInterval(this.autoSendVar)
+      }
+      let contSendVar = 1000 * this.contSend
+      this.autoSendVar = setInterval(this.sendInfo, contSendVar)
+/*       this.switchMe = true     
+ */    },
     stopSend(){
-      this.contSend = 86400000
+      clearInterval(this.autoSendVar)
+      this.switchMe = false
     //  clearInterval(this.autoSend)
     },
     mapModelInfo(modelData) {
