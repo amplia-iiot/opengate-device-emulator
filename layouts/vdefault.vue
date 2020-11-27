@@ -212,28 +212,12 @@ export default {
             });
         },
         sendResponse(string, eventObj) {
-<<<<<<< HEAD
-            let operationResponse = {
-                operation : {
-                    response : {}
-                }
-            }
-            operationResponse.operation.response.name = eventObj.operation.request.name
-            operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
-            operationResponse.operation.response.id = eventObj.operation.request.id
-            operationResponse.operation.response.resultCode = string
-
-            setTimeout(() => {
-                this.mqttClient.send(JSON.stringify(this.operationResponse))
-            }, 1000)
-=======
             this.operationResponse.operation.response.name = eventObj.operation.request.name
             this.operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
             this.operationResponse.operation.response.id = eventObj.operation.request.id
             this.operationResponse.operation.response.resultCode = string
             this.operationResponse.operation.response.resultDescription = string
 
->>>>>>> EMU-17
         },
         deviceConnect() {
             try {
