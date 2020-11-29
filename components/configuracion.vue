@@ -1,13 +1,24 @@
 <template>
     <div>
         <v-autocomplete
-          :items="availableOperations"
+          :items="operationsMap"
           label="Operation to configure"
           v-model="selectedOperation"
           @change="operationChanged"
+          item-text="value"
         >
+        <template v-slot:item="{item, on}">
+          <v-list-item v-on="on">
+            <v-list-item-title>
+              {{item.text.name}}
+            </v-list-item-title>
+            <v-list-item-icon v-if="item.text.configured">
+              <v-icon>mdi-notebook-edit</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </template>
         </v-autocomplete>
-        <div v-if="jsonLocal && jsonLocal[deviceId] && jsonLocal[deviceId][selectedOperationLocal]">
+        <div v-if="jsonLocal && jsonLocal[deviceId] && jsonLocal[deviceId][selectedOperation]">
           <v-card>
             <v-card-text>
           <p>function {{selectedOperation}}(<v-tooltip bottom>
@@ -19,13 +30,18 @@
           </span>
         </template>
         <span>
-          operaRequest.operation.request.name
-          <br>
-          operaRequest.operation.request.id
-          <br>
-          operaRequest.operation.request.timestamp
-          <br>
-          operaRequest.operation.request.params
+          <pre>
+          operaRequest: {
+            operation:{
+              request:{
+                name,
+                id,
+                timestamp,
+                params
+              }
+            }
+          }
+          </pre>
         </span>
       </v-tooltip>,
       <v-tooltip bottom>
@@ -37,32 +53,26 @@
           </span>
         </template>
         <span>
-          operaResponse.operation.request.name
-          <br>
-          operaResponse.operation.request.id
-          <br>
-          operaResponse.operation.request.timestamp
-          <br>
-          operaResponse.operation.request.resultCode
-          <br>
-          operaResponse.operation.request.resultDescription
+          <pre>
+          operaResponse: {
+            operation:{
+              response:{
+                name,
+                id,
+                timestamp,
+                resultcode,
+                resultDescription
+              }
+            }
+          }
+          </pre>
         </span>
       </v-tooltip>) {</p>
-          <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperationLocal].code" />
-          <v-tooltip bottom>
-        <template v-slot:activator="{ on, attrs }">
-          <v-icon
-            color="primary"
-            dark
-            v-bind="attrs"
-            v-on="on"
-          >
-            mdi-help
-          </v-icon>
-        </template>
-        <span>This function must return a operaResponse object that will be send as response to the opengate platform</span>
-      </v-tooltip>
-          <p>}</p>
+          <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperation].code" />
+          
+          <p><pre>return operaResponse
+            }
+            </pre></p>
             </v-card-text>
           </v-card>
           <hr>
@@ -111,25 +121,34 @@ export default {
       return this.$route.query.id
     },
     operationsMap(){
-       if(!localStorage.operationsConfig){
-          localStorage.operationsConfig = JSON.stringify({})
-        } else {
-          this.jsonList = JSON.parse(localStorage.operationsConfig)
-        }
-      let localOperations = this.availableOperations.map((element)=>{
-        return element
-      })
-      localOperations.forEach(element => {
-        this.operationsObject.operation = element
-      if(this.jsonList[this.deviceId][element]){
-        this.operationsObject.conigured = true
+      if(!this.availableOperations){
+        return []
       }
-
-        this.availableOperationsItems.push(this.operationsObject)
-      })
-      return this.availableOperationsItems
+       if(!localStorage.operationsConfig){
+          return {...this.availableOperations}
+        } else {
+          const jsonList = JSON.parse(localStorage.operationsConfig)
+        
+      return this.availableOperations.map((operationName)=>{
+        const finalElement={
+          text:{
+            name:operationName,
+            configured:false,
+            enabled:false
+          },
+          value:operationName
+        }
+        if(jsonList[this.deviceId] && jsonList[this.deviceId][operationName]){
+        finalElement.text.configured = true
+      
+      
     }
+      return finalElement
 
+      })
+        }
+      
+  }
   },
   async mounted() {
     const operationsCatalog = await this.$api.rawSearchBuilder().from('/catalog/operations').build().execute()
@@ -201,5 +220,5 @@ this.selectedOperationLocal = null
       localStorage.operationsConfig = JSON.stringify(this.jsonLocal)
     },
   },
-};
+}
 </script>

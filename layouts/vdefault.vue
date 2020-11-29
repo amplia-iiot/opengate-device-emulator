@@ -211,13 +211,25 @@ export default {
                 text: this.field,
             });
         },
-        sendResponse(string, eventObj) {
-            this.operationResponse.operation.response.name = eventObj.operation.request.name
-            this.operationResponse.operation.response.timestamp = eventObj.operation.request.timespamp
-            this.operationResponse.operation.response.id = eventObj.operation.request.id
-            this.operationResponse.operation.response.resultCode = string
-            this.operationResponse.operation.response.resultDescription = string
+        buildResponse(string, eventObj) {
+            let response = {
+                operation: {
+                    response: {
+                        name = eventObj.operation.request.name,
+                        timestamp = eventObj.operation.request.timespamp,
+                        id = eventObj.operation.request.id,
+                        resultCode = string,
+                        resultDescription = string
+                    }
+                }
+            }
+            return response
 
+        },
+        sendResponse(response) {
+            setTimeout(() => {
+                this.mqttClient.send(JSON.stringify(response))
+            }, 1000)
         },
         deviceConnect() {
             try {
@@ -274,16 +286,14 @@ export default {
                                         "(function(operaRequest, operaResponse) {" +
                                         operaConfigs[this.deviceId][eventObj.operation.request.name]
                                         .code +
-                                        "})";
+                                        "return operaResponse})";
 
                                     const functionObj = eval(functionCode)
 
                                     try {
-                                        this.sendResponse("SUCCESSFUL", eventObj)
-                                        this.operationResponse = functionObj(eventObj.operation.request, this.operationResponse)
-                                        setTimeout(() => {
-                                            this.mqttClient.send(JSON.stringify(this.operationResponse))
-                                        }, 1000)
+                                        let response = this.BuildResponse("SUCCESSFUL", eventObj)
+                                        response = functionObj(eventObj.operation.request, response)
+                                        this.sendResponse(response)
                                         this.eventArr.push({
                                             type: 'SUCCESSFUL',
                                             description: eventObj.operation.request.name,
@@ -294,7 +304,8 @@ export default {
                                     }
 
                                 } else if (operaConfigs[this.deviceId][eventObj.operation.request.name]) {
-                                    this.sendResponse("NOT_SUPPORTED", eventObj)
+                                    let response = this.buildResponse("NOT_SUPPORTED", eventObj)
+                                    this.sendResponse(response)
                                     console.error(
                                         "no soportada la operación " + eventObj.operation.request.name
                                     )
@@ -306,7 +317,8 @@ export default {
                                         devId: this.deviceId,
                                     })
                                 } else {
-                                    this.sendResponse("CANCELLED", eventObj)
+                                    let response = this.buildResponse("CANCELLED", eventObj)
+                                    this.sendResponse(response)
                                     console.error(failure)
                                     // poner fecha de operación
                                     this.eventArr.push({
@@ -316,7 +328,8 @@ export default {
                                     })
                                 }
                             } else {
-                                this.sendResponse("NOT_SUPPORTED", eventObj)
+                                let response = this.buildResponse("NOT_SUPPORTED", eventObj)
+                                this.sendResponse(response)
                                 console.error("NOT_SUPPORTED")
 
                                 // poner fecha de operación
@@ -328,7 +341,8 @@ export default {
                                 })
                             }
                         } else {
-                            this.sendResponse("NOT_CONFIGURED", eventObj)
+                            let response = this.buildResponse("NOT_CONFIGURED", eventObj)
+                            this.sendResponse(response)
 
                             this.eventArr.push({
                                 type: 'NOT_CONFIGURED',
