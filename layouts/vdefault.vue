@@ -215,11 +215,11 @@ export default {
             let response = {
                 operation: {
                     response: {
-                        name = eventObj.operation.request.name,
-                        timestamp = eventObj.operation.request.timespamp,
-                        id = eventObj.operation.request.id,
-                        resultCode = string,
-                        resultDescription = string
+                        name : eventObj.operation.request.name,
+                        timestamp : eventObj.operation.request.timespamp,
+                        id : eventObj.operation.request.id,
+                        resultCode : string,
+                        resultDescription : string
                     }
                 }
             }
