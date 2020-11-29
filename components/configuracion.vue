@@ -199,7 +199,7 @@ export default {
 
         if (!this.jsonLocal[this.deviceId][newOpera]) {
          this.jsonLocal[this.deviceId][newOpera] = {
-            code: 'return operaResponse',
+            code: '',
             enabled: false
           }
         }
