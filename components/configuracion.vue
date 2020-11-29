@@ -1,17 +1,78 @@
 <template>
     <div>
         <v-autocomplete
-          :items="availableOperations"
+          :items="operationsMap"
           label="Operation to configure"
           v-model="selectedOperation"
           @change="operationChanged"
-        ></v-autocomplete>
-        <div v-if="jsonLocal">
+          item-text="value"
+        >
+        <template v-slot:item="{item, on}">
+          <v-list-item v-on="on">
+            <v-list-item-title>
+              {{item.text.name}}
+            </v-list-item-title>
+            <v-list-item-icon v-if="item.text.configured">
+              <v-icon>mdi-notebook-edit</v-icon>
+            </v-list-item-icon>
+          </v-list-item>
+        </template>
+        </v-autocomplete>
+        <div v-if="jsonLocal && jsonLocal[deviceId] && jsonLocal[deviceId][selectedOperation]">
           <v-card>
             <v-card-text>
-          <p>function {{selectedOperation}}(operaData) {</p>
+          <p>function {{selectedOperation}}(<v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <span v-bind="attrs"
+            v-on="on"
+          >
+            operaRequest
+          </span>
+        </template>
+        <span>
+          <pre>
+          operaRequest: {
+            operation:{
+              request:{
+                name,
+                id,
+                timestamp,
+                params
+              }
+            }
+          }
+          </pre>
+        </span>
+      </v-tooltip>,
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <span v-bind="attrs"
+            v-on="on"
+          >
+            operaResponse
+          </span>
+        </template>
+        <span>
+          <pre>
+          operaResponse: {
+            operation:{
+              response:{
+                name,
+                id,
+                timestamp,
+                resultcode,
+                resultDescription
+              }
+            }
+          }
+          </pre>
+        </span>
+      </v-tooltip>) {</p>
           <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperation].code" />
-          <p>}</p>
+          
+          <p><pre>return operaResponse
+            }
+            </pre></p>
             </v-card-text>
           </v-card>
           <hr>
@@ -42,7 +103,36 @@ export default {
   computed: {
     deviceId() {
       return this.$route.query.id
+    },
+    operationsMap(){
+      if(!this.availableOperations){
+        return []
+      }
+       if(!localStorage.operationsConfig){
+          return {...this.availableOperations}
+        } else {
+          const jsonList = JSON.parse(localStorage.operationsConfig)
+        
+      return this.availableOperations.map((operationName)=>{
+        const finalElement={
+          text:{
+            name:operationName,
+            configured:false,
+            enabled:false
+          },
+          value:operationName
+        }
+        if(jsonList[this.deviceId] && jsonList[this.deviceId][operationName]){
+        finalElement.text.configured = true
+      
+      
     }
+      return finalElement
+
+      })
+        }
+      
+  }
   },
   async mounted() {
     const operationsCatalog = await this.$api.rawSearchBuilder().from('/catalog/operations').build().execute()
@@ -104,5 +194,5 @@ export default {
       localStorage.operationsConfig = JSON.stringify(this.jsonLocal)
     },
   },
-};
+}
 </script>
