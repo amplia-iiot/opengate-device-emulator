@@ -286,12 +286,12 @@ export default {
                                         "(function(operaRequest, operaResponse) {" +
                                         operaConfigs[this.deviceId][eventObj.operation.request.name]
                                         .code +
-                                        "return operaResponse})";
+                                        " return operaResponse})";
 
                                     const functionObj = eval(functionCode)
 
                                     try {
-                                        let response = this.BuildResponse("SUCCESSFUL", eventObj)
+                                        let response = this.buildResponse("SUCCESSFUL", eventObj)
                                         response = functionObj(eventObj.operation.request, response)
                                         this.sendResponse(response)
                                         this.eventArr.push({
