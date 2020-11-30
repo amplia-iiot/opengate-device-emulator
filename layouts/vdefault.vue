@@ -283,10 +283,10 @@ export default {
                                     operaConfigs[this.deviceId][eventObj.operation.request.name].enabled
                                 ) {
                                     let functionCode =
-                                        "(function(operaRequest, operaResponse) {" +
+                                        "(function(operaRequest, operaResponse){\n" +
                                         operaConfigs[this.deviceId][eventObj.operation.request.name]
                                         .code +
-                                        " return operaResponse})";
+                                        "\nreturn operaResponse})";
 
                                     const functionObj = eval(functionCode)
 
