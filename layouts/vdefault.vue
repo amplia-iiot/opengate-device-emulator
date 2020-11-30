@@ -5,13 +5,12 @@
             <v-icon> mdi-chevron-left </v-icon>
         </v-app-bar-nav-icon>
         <v-toolbar-title>
-            {{
-          deviceId ? "" + deviceId + " Emulator" : "Select device to emulate"
-        }}
+            {{deviceId ? "" + deviceId + " Emulator" : "Select device to emulate"}}
         </v-toolbar-title>
         <v-spacer />
         <v-toolbar-items>
-            <v-dialog v-model="logDialog" width="500">
+            <!-- Comienzo de alertas -->
+            <v-menu v-model="logDialog" width="500">
                 <template v-slot:activator="{ on, attrs}">
                     <v-btn text v-bind="attrs" v-on="on" @click="contOperations=0">
                         <v-badge :content="contOperations" :value="contOperations" color="error">
@@ -20,21 +19,15 @@
                         </v-badge>
                     </v-btn>
                 </template>
-                <!-- Comiezo del DIALOG -->
                 <v-card>
                     <v-card-title class="pa-0">
                         <v-toolbar flat width="100%">
-                            <v-toolbar-title>
-                                Events
-                            </v-toolbar-title>
-
+                            <v-toolbar-title>Events</v-toolbar-title>
                             <v-spacer />
                             <v-toolbar-items>
                                 <v-divider vertical inset />
                                 <v-btn color="error" icon @click="logDialog = false">
-                                    <v-icon dark>
-                                        mdi-close
-                                    </v-icon>
+                                    <v-icon dark>mdi-close</v-icon>
                                 </v-btn>
                             </v-toolbar-items>
                         </v-toolbar>
@@ -45,28 +38,11 @@
                         <v-list two-line>
                             <v-list-item v-for="(item, index) in eventArr" :key="item.type + '_' + index">
                                 <v-list-item-icon>
-                                    <v-icon v-text="listIcon"> </v-icon>
-
-                                    <v-icon v-if="item.type === 'Connect'">mdi-lan-connect</v-icon>
-                                    <v-icon v-else-if="item.type === 'Disconnect'">mdi-lan-disconnect</v-icon>
-                                    <v-icon v-else-if="item.type === 'SUCCESSFUL'">mdi-thumb-up</v-icon>
-                                    <v-icon v-else-if="item.type === 'NOT_SUPPORTED'">mdi-thumb-down</v-icon>
-                                    <v-icon v-else-if="item.type === 'CANCELLED'">mdi-thumb-down</v-icon>
-                                    <v-icon v-else-if="item.type === 'NOT_CONFIGURED'">mdi-thumb-down</v-icon>
-
-                                    <v-icon v-else> mdi-pencil</v-icon>
+                                    <v-icon v-text="item.icon"> </v-icon>
                                 </v-list-item-icon>
                                 <v-list-item-content>
-
-                                    <v-list-item-title>
-
-                                    </v-list-item-title>
-                                    <v-list-item-title v-text="item.type">
-
-                                    </v-list-item-title>
-
+                                    <v-list-item-title v-text="item.type"></v-list-item-title>
                                     <v-list-item-subtitle class="text--primary" v-text="item.devId"></v-list-item-subtitle>
-
                                     <v-list-item-subtitle v-text="item.description"></v-list-item-subtitle>
                                 </v-list-item-content>
 
@@ -77,7 +53,7 @@
                         </v-list>
                     </v-card-text>
                 </v-card>
-            </v-dialog>
+            </v-menu>
             <v-divider inset vertical />
             <v-menu v-model="menu" :close-on-content-click="false" offset-y class="logout">
                 <template v-slot:activator="{ on }">
@@ -167,7 +143,6 @@ export default {
     mixins: [baseUserApiMixin, textField],
     data() {
         return {
-            varIcon: "",
             eventArr: [],
             contOperations: 0,
             deviceapi: [],
@@ -190,6 +165,7 @@ export default {
         };
     },
     methods: {
+
         ...mapMutations({
             sendText: "appbar/setFilter",
             setTab: "appbar/setTab",
@@ -291,13 +267,15 @@ export default {
                                     const functionObj = eval(functionCode)
 
                                     try {
-                                        let response = this.BuildResponse("SUCCESSFUL", eventObj)
+                                        let response = this.buildResponse("SUCCESSFUL", eventObj)
                                         response = functionObj(eventObj.operation.request, response)
                                         this.sendResponse(response)
                                         this.eventArr.push({
+                                            icon:'mdi-thumb-up',
                                             type: 'SUCCESSFUL',
                                             description: eventObj.operation.request.name,
                                             devId: this.deviceId,
+                                            dateTime: new Date().toLocaleString()
                                         })
                                     } catch (error) {
                                         console.error(error)
@@ -312,9 +290,12 @@ export default {
 
                                     // poner fecha de operación
                                     this.eventArr.push({
+                                        icon:'mdi-thumb-down',
                                         type: 'NOT_SUPPORTED',
                                         description: eventObj.operation.request.name,
                                         devId: this.deviceId,
+                                        dateTime: new Date().toLocaleString()
+
                                     })
                                 } else {
                                     let response = this.buildResponse("CANCELLED", eventObj)
@@ -322,9 +303,11 @@ export default {
                                     console.error(failure)
                                     // poner fecha de operación
                                     this.eventArr.push({
+                                        icon:'mdi-thumb-down',
                                         type: 'CANCELLED',
                                         description: eventObj.operation.request.name,
                                         devId: this.deviceId,
+                                        dateTime: new Date().toLocaleString()
                                     })
                                 }
                             } else {
@@ -334,6 +317,7 @@ export default {
 
                                 // poner fecha de operación
                                 this.eventArr.push({
+                                    icon:'mdi-thumb-down',
                                     type: 'NOT_SUPPORTED',
                                     description: eventObj.operation.request.name,
                                     devId: this.deviceId,
@@ -345,6 +329,7 @@ export default {
                             this.sendResponse(response)
 
                             this.eventArr.push({
+                                icon:'mdi-thumb-down',
                                 type: 'NOT_CONFIGURED',
                                 description: eventObj.operation.request.name,
                                 devId: this.deviceId,
@@ -361,6 +346,7 @@ export default {
                     this.socketConnected = true
 
                     this.eventArr.push({
+                        icon:'mdi-lan-connect',
                         type: 'Connect',
                         devId: this.deviceId,
                         dateTime: new Date().toLocaleString()
@@ -371,6 +357,7 @@ export default {
                     this.contOperations++
 
                     this.eventArr.push({
+                        icon:'mdi-lan-disconnect',
                         type: 'Disconnect',
                         devId: this.deviceId,
                         dateTime: new Date().toLocaleString()
@@ -391,6 +378,7 @@ export default {
                     }
 
                     this.eventArr.push({
+                        icon:'mdi-thumb-down',
                         type: 'Error',
                         devId: this.deviceId,
                         dateTime: new Date().toLocaleString()
@@ -417,27 +405,12 @@ export default {
                     description: conError
                 })
                 if (this.mqttClient && this.mqttClient.close) {
-                    this.mqttClient.close();
+                    this.mqttClient.close()
                 }
             }
         }
     },
     computed: {
-        listIcon() {
-            if (this.eventArr.type === 'Connect') {
-                return this.varIcon = "mdi-lan-connect"
-            } else if (this.eventArr.type === 'Disconnect') {
-                return this.varIcon = "mdi-lan-disconnect"
-            } else {
-                return this.varIcon = "hola" + this.eventArr.type
-            }
-            /*             'Connect'" >mdi-lan-connect
-'Disconnect'">mdi-lan-disconnect
-'SUCCESSFUL'">mdi-thumb-up
-'NOT_SUPPORTED'">mdi-thumb-down
-'CANCELLED'">mdi-thumb-down
-'NOT_CONFIGURED'">mdi-thumb-down */
-        },
         operationCount() {
             if (this.event) {
                 contOperations++;
@@ -447,13 +420,13 @@ export default {
             return this.deviceId && this.socketConnected;
         },
         deviceId() {
-            return this.$route.query.id;
+            return this.$route.query.id
         },
         render() {
             if (this.$store.state.appbar.currentPage === "lister") {
-                return true;
+                return true
             } else {
-                return false;
+                return false
             }
         },
     },
@@ -487,12 +460,12 @@ export default {
                 // }
                 this.socketConnected = false
                 if (this.mqttClient && this.mqttClient.close) {
-                    this.mqttClient.close();
+                    this.mqttClient.close()
                 }
             }
         },
         tab: function () {
-            this.tabActivo = this.tab;
+            this.tabActivo = this.tab
         }
     },
 };
