@@ -193,9 +193,7 @@ export default {
             JSHINT.errors.forEach(error=>{
               let msg = document.createElement("div")
               let icon = msg.appendChild(document.createElement("span"))
-              icon.innerHTML = "!!"
               icon.className = "lint-error-icon"
-              msg.appendChild(document.createTextNode(error.reason))
               msg.className = "lint-error"
               this.widgets.push(mirror.addLineWidget(error.line , msg, {coverGutter: false, noHScroll: true}))
             })
