@@ -66,7 +66,7 @@
             </v-card-text>
         </v-card>
         <hr>
-        <v-switch v-model="jsonLocal[deviceId][selectedOperationLocal].enabled" :label="'Code above will run when operation executes'" />
+        <v-switch v-model="jsonLocal[deviceId][selectedOperationLocal].enabled" :label="'If switch on code above will run when operation executes'" />
         <v-btn @click="saveOperation"> Save </v-btn>
         <v-btn @click="deleteOperation"> Delete </v-btn>
     </div>
