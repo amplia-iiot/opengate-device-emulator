@@ -10,7 +10,7 @@
         <v-spacer />
         <v-toolbar-items>
             <!-- Comienzo de alertas -->
-            <v-menu v-model="logDialog" width="500">
+            <v-menu v-model="logDialog" width="500"  class="operationLog">
                 <template v-slot:activator="{ on, attrs}">
                     <v-btn text v-bind="attrs" v-on="on" @click="contOperations=0">
                         <v-badge :content="contOperations" :value="contOperations" color="error">
@@ -497,6 +497,9 @@ export default {
 }
 
 .logout {
+    z-index: 9999;
+}
+.operationLog {
     z-index: 9999;
 }
 </style>
