@@ -1,25 +1,25 @@
 <template>
   <div>
-  <v-btn @click="switchMe = true">AutoShip
-    </v-btn>
-    <v-btn v-if="switchMe ===  true" v-on:click="stopSend" v-model="switchMe">
-        <v-icon> mdi-cancel </v-icon>
-
-    </v-btn>
+    <v-switch
+      label="Auto"
+      @click="switchMe = !switchMe"
+      v-on:click="stopAndPlay"
+    >
+    </v-switch>
     <div v-show="switchMe">
       <v-text-field
         @keyup.enter="autoSend"
         v-model="contSend"
         color="cyan darken"
         label="Second"
-        placeholder = "Seconds..."
+        placeholder="Seconds..."
         loading
       ></v-text-field>
     </div>
 
     <v-btn
       @click="sendInfo"
-      :disabled="change"  
+      :disabled="change"
       fab
       fixed
       bottom
@@ -56,7 +56,7 @@ import "@koumoul/vjsf/lib/deps/third-party.js";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 
 export default {
-  name: 'sensores',
+  name: "sensores",
   mixins: [baseUserApiMixin],
   components: {
     VJsf,
@@ -76,13 +76,8 @@ export default {
     },
   },
   computed: {
-/*     sendAuto(){
-      if(switchMe === true){
-        setInterval(sendInfo(), contSend)
-      }
-    }, */
     deviceId() {
-      return this.$route.query.id
+      return this.$route.query.id;
     },
     arrSensors() {
       return [
@@ -115,15 +110,15 @@ export default {
           type: "object",
           properties: {},
           definitions: this.basicTypes.definitions,
-        }
+        };
 
         const finalDatastreams = this.datastreams.filter((dsTmp) => {
-          return this.selectedSensors.includes(dsTmp.identifier)
-        })
+          return this.selectedSensors.includes(dsTmp.identifier);
+        });
 
         finalDatastreams.forEach((dsTmp) => {
           finalSchema.properties[dsTmp.identifier] = dsTmp.schema;
-        })
+        });
 
         console.log(finalSchema);
 
@@ -139,58 +134,61 @@ export default {
   watch: {
     model: {
       handler(newVal, oldVal) {
-        this.mapModelInfo(newVal)
+        this.mapModelInfo(newVal);
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   data() {
     return {
-      autoSendVar:"",
+      autoSendVar: "",
       contSend: 100, // 1000 = 1 second
       switchMe: false,
       change: false,
-
       valid: false,
-      readOnly: true,
       selectedSensors: [],
       options: {},
       innerModel: {},
-      only: true,
-      finalSensorsSchema: []
     };
   },
   mounted() {
-/*     setInterval(this.sendInfo(), 3000)
- */    this.mapModelInfo(this.model)
+    this.mapModelInfo(this.model);
+  },
+  destroyed() {
+    if (this.switchMe) {
+      clearInterval(this.autoSendVar);
+    }
   },
   methods: {
-    autoSend(){
-      if(this.contSend){
-        clearInterval(this.autoSendVar)
+    stopAndPlay() {
+      if (this.switchMe === true) {
+        this.autoSend();
+      } else {
+        clearInterval(this.autoSendVar);
       }
-      let contSendVar = 1000 * this.contSend
-      this.autoSendVar = setInterval(this.sendInfo, contSendVar)
-/*       this.switchMe = true     
- */    },
-    stopSend(){
-      clearInterval(this.autoSendVar)
-      this.switchMe = false
-    //  clearInterval(this.autoSend)
     },
+    autoSend() {
+      if (this.contSend) {
+        clearInterval(this.autoSendVar);
+      }
+      let contSendVar = 1000 * this.contSend;
+      this.autoSendVar = setInterval(this.sendInfo, contSendVar);
+    },
+
     mapModelInfo(modelData) {
       this.innerModel = {}
       if (modelData) {
         this.selectedSensors = []
         this.arrSensors.forEach((element) => {
           if (modelData[element]) {
-            this.innerModel[element] = modelData[element]._value._current.value
-            this.selectedSensors.push(element);
+            this.innerModel[element] = modelData[element]._value._current.value;
+            this.selectedSensors.push(element)
           } else if (modelData["provision." + element]) {
-            this.innerModel[element] = modelData["provision." + element]._value._current.value
+            this.innerModel[element] =
+              modelData["provision." + element]._value._current.value;
             this.selectedSensors.push(element)
           }
-        })
+        });
       }
     },
     sendInfo() {
@@ -200,29 +198,29 @@ export default {
       try {
         let mb = this.$api
           .deviceMessageBuilder()
-          .withDataStreamVersion("" + new Date().getTime());
+          .withDataStreamVersion("" + new Date().getTime())
 
         // Se pasan los datos del modelo al builder
         for (const prop in this.innerModel) {
-          console.log(this.innerModel[prop]);
+          console.log(this.innerModel[prop])
           if (this.innerModel[prop] != null) {
             let datapointsBuilder = this.$api
               .datapointsBuilder()
-              .withValue(this.innerModel[prop]);
+              .withValue(this.innerModel[prop])
             let datastreamBuilder = this.$api.datastreamBuilder().withId(prop);
             mb.withDataStream(
               datastreamBuilder.withDatapoint(datapointsBuilder)
-            )
+            );
           }
         }
 
         // se pasa el id del dispositivo a actualizar
-        mb.withId(this.deviceId);
+        mb.withId(this.deviceId)
 
         // se lanza la petición
-        const result = await mb.create();
+        const result = await mb.create()
       } catch (errorApi) {
-        console.error(errorApi);
+        console.error(errorApi)
       }
     },
   },
