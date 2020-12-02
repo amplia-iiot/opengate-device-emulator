@@ -1,6 +1,7 @@
 <template>
   <div>
-    <v-switch
+    <!-- version 1 -->
+<!--     <v-switch
       label="Auto"
       @click="switchMe = !switchMe"
       v-on:click="stopAndPlay"
@@ -15,7 +16,37 @@
         placeholder="Seconds..."
         loading
       ></v-text-field>
+    </div> -->
+
+<!-- Version 2 -->
+    <div style="display:inline">
+      <v-row style="width:17%; margin:0">
+          <v-switch
+            label=""
+            @click="switchMe = !switchMe"
+            v-on:click="stopAndPlay"
+          >
+          </v-switch>
+
+          <v-text-field
+            :disabled= !switchMe 
+            @keyup.enter="autoSend"
+            v-model="contSend"
+            color="cyan darken"
+            label="Enviar automáticamente cada(segundos):"
+            style="width:15%; display:'inline'"
+            outlined
+            dense
+            rounded
+          ></v-text-field>           
+      </v-row>
+
+     
     </div>
+
+
+
+
 
     <v-btn
       @click="sendInfo"
@@ -162,7 +193,8 @@ export default {
   methods: {
     stopAndPlay() {
       if (this.switchMe === true) {
-        this.autoSend();
+        this.autoSend()
+        this.only = false
       } else {
         clearInterval(this.autoSendVar);
       }
