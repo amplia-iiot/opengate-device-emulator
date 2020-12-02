@@ -14,7 +14,8 @@
         />
       </v-tab-item>
       <v-tab-item value="configuracion">
-        <configuracion />
+        <configuracion 
+        :basic-types="basicTypes"/>
       </v-tab-item>
       <v-tab-item value="mapas">
         <mapas :model="model"/>
