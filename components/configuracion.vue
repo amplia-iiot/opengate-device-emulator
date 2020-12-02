@@ -6,7 +6,12 @@
                 <v-list-item-title>
                     {{item.text.name}}
                 </v-list-item-title>
-                <v-list-item-icon v-if="item.text.configured">
+                <v-list-item-icon v-if="item.text.configured && item.text.enabled">
+                    <v-icon>mdi-play-circle</v-icon>
+                    <v-icon>mdi-notebook-edit</v-icon>
+                </v-list-item-icon>
+                <v-list-item-icon v-else-if="item.text.configured">
+                    <v-icon>mdi-pause-circle</v-icon>
                     <v-icon>mdi-notebook-edit</v-icon>
                 </v-list-item-icon>
             </v-list-item>
@@ -56,7 +61,7 @@
           }</pre>
                         </span>
                     </v-tooltip>) {</p>
-                <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperation].code" @changes="linter" ref="codemirror" />
+                <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperation].code" @changes="linter" @onLoad="linter" ref="codemirror" />
 
                 <p>
                     <pre>return operaResponse
@@ -67,7 +72,7 @@
         </v-card>
         <hr>
         <v-switch v-model="jsonLocal[deviceId][selectedOperationLocal].enabled" :label="'If switch on code above will run when operation executes'" />
-        <v-btn @click="saveOperation"> Save </v-btn>
+        <v-btn @click="saveOperation" :disabled="disabled"> Save </v-btn>
         <v-btn @click="deleteOperation"> Delete </v-btn>
     </div>
     <v-snackbar v-model="snackbar">
@@ -133,6 +138,10 @@ export default {
                     }
                     if (jsonList[this.deviceId] && jsonList[this.deviceId][operationName]) {
                         finalElement.text.configured = true
+                        if(jsonList[this.deviceId][operationName].enabled===true){
+                             finalElement.text.enabled = true
+                        }
+                       
 
                     }
                     return finalElement
@@ -155,6 +164,7 @@ export default {
     data() {
         return {
             availableOperations: null,
+            disabled: false,
             snackbar: false,
             availableOperationsItems: [],
             operationsObject: {
@@ -181,29 +191,45 @@ export default {
     },
     methods: {
         linter() {
-          let mirror = this.$refs.codemirror.codemirror
+          let mirror =  this.$refs.codemirror.codemirror
             this.widgets.forEach(element => {
               mirror.removeLineWidget(element)
             });
             this.widgets.splice(0,this.widgets.length)
             
-            const value = "(function(operaRequest, operaResponse){\n" + mirror.getValue() +
-                "\nreturn operaResponse})"
+            const value = "function "+this.selectedOperation+" (operaRequest, operaResponse){\n" + mirror.getValue() +
+                "\nreturn operaResponse;}"
             JSHINT(value)
+            console.log(JSHINT.errors)
             JSHINT.errors.forEach(error=>{
+              if(error.id){
+                  if(error.id=="(error)"){
+                        this.disabled = true
+                  }
+                
+              }
+              else if(!error.id){
+                  this.disabled = false
+              } 
               let msg = document.createElement("div")
               let icon = msg.appendChild(document.createElement("span"))
               icon.className = "lint-error-icon"
               msg.className = "lint-error"
               this.widgets.push(mirror.addLineWidget(error.line , msg, {coverGutter: false, noHScroll: true}))
             })
-            
-                  
+            if(JSHINT.errors.length==0){
+                this.disabled=false
+            }
+           
             
             let info = mirror.getScrollInfo();
-            let after = mirror.charCoords({line: mirror.getCursor().line + 1, ch: 0}, "local").top;
+            let after = mirror.charCoords({line: mirror.getCursor().line + 1, ch: 0}, "local").top
             if (info.top + info.clientHeight < after)
-                mirror.scrollTo(null, after - info.clientHeight + 3);
+                mirror.scrollTo(null, after - info.clientHeight + 3)
+            if(this.jsonLocal[this.deviceId][this.selectedOperation].code===""){
+                this.disabled = true
+            }
+            
         },
         operationChanged(newOpera) {
             if (newOpera) {
@@ -229,7 +255,10 @@ export default {
                 // se guarda una copia para trabajar con ella
             } else {
                 this.selectedOperationLocal = null
-            }
+            } 
+           setTimeout(() => {
+                this.linter()
+            }, 1000)
         },
         saveOperation() {
             localStorage.operationsConfig = JSON.stringify(this.jsonLocal)
