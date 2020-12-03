@@ -17,6 +17,9 @@
         <configuracion 
         :basic-types="basicTypes"/>
       </v-tab-item>
+      <v-tab-item value="eventos">
+        <eventos/>
+      </v-tab-item>
       <v-tab-item value="mapas">
         <mapas :model="model"/>
       </v-tab-item>
@@ -25,12 +28,13 @@
 </template>
 
 <script>
-import sistema from "@/components/sistema";
-import sensores from "@/components/sensores";
-import configuracion from "@/components/configuracion";
-import mapas from "@/components/mapas";
-import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
-import { mapMutations } from "vuex";
+import sistema from "@/components/sistema"
+import sensores from "@/components/sensores"
+import configuracion from "@/components/configuracion"
+import eventos from "@/components/eventos"
+import mapas from "@/components/mapas"
+import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js"
+import { mapMutations } from "vuex"
 import textField from '@/mixins/textField.mixin.js'
 
 

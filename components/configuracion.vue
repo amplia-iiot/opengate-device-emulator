@@ -1,43 +1,5 @@
 <template>
 <div>
-    <v-menu v-model="menu" :close-on-content-click="true" offset-y>
-        <template v-slot:activator="{ on }">
-            <v-btn v-on="on" color="primary">
-                Choose what you want to configure
-            </v-btn>
-        </template>
-        <v-card>
-            <v-list-item @click="mapPage('operation')">
-                <v-list-item-content>
-                    <v-list-item-title>Operations</v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
-            <v-list-item @click="mapPage('event')">
-                <v-list-item-content>
-                    <v-list-item-title>Events</v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
-        </v-card>
-    </v-menu>
-    <div v-if="activePage==='event'">
-        <v-form ref="form" v-model="valid">
-        <v-autocomplete :items="deviceEvents" label="Event to send to platform" v-model="selectedEvent" @change="eventChanged" />
-        <v-jsf v-if="eventSchema" :schema="eventSchema" :options="options"  v-model="innerModel"/>
-        <v-btn @click="saveModel" fab fixed bottom right color="accent">
-        <v-icon> mdi-send </v-icon>
-        </v-btn>
-        </v-form>
-        <v-snackbar v-model="snackbar">
-            {{ "Event save and sended to platform" }}
-
-            <template v-slot:action="{ attrs }">
-                <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
-                    Close
-                </v-btn>
-            </template>
-        </v-snackbar>
-    </div>
-    <div v-else-if="activePage==='operation'">
         <v-autocomplete :items="operationsMap" label="Operation to configure" v-model="selectedOperation" @change="operationChanged" item-text="value">
             <template v-slot:item="{item, on}">
                 <v-list-item v-on="on">
@@ -122,7 +84,6 @@
                 </v-btn>
             </template>
         </v-snackbar>
-    </div>
 </div>
 </template>
 
@@ -150,89 +111,8 @@ export default {
         VJsf,
         codemirror,
     },
-    props: {
-        basicTypes: {
-            type: Object,
-            default: () => null,
-        },
-    },
     mixins: [baseUserApiMixin],
     computed: {
-        eventSchema() {
-            let finalSchema = null
-            if (this.selectedEvent) {
-                switch (this.selectedEvent) {
-                    case "endLifeTimeEvent":
-                        finalSchema = {
-                            type: "object",
-                            properties: {
-                                timeRemaining: {
-                                    type: "number",
-                                    title: "Time remaining"
-                                }
-                            },
-                        }
-                        break
-                    case "tamperingEvent":
-                        finalSchema = {
-                            type: "object",
-                            properties: {
-                                reason: {
-                                    type: "string",
-                                    title: "Reason"
-                                }
-                            }
-                        }
-                        break
-                    case "temperatureEvent":
-                        finalSchema = {
-                            type: "object",
-                            properties: {
-                                temperature: {
-                                    type: "number",
-                                    title: "Temperature"
-                                },
-                                threshold: {
-                                    type: "number",
-                                    title: "Threshold"
-                                },
-                                trend: {
-                                    type: "string",
-                                    title: "trend",
-                                    enum: ["RISING", "DECREASING", "FLAT", "UNKNOWN"]
-                                }
-                            }
-                        }
-                        break
-                    case "batteryEvent":
-                        finalSchema = {
-                            type: "object",
-                            properties: {
-                                batteryLevel: {
-                                    type: "number",
-                                    title: "Battery level"
-                                },
-                                threshold: {
-                                    type: "number",
-                                    title: "Threshold"
-                                },
-                                trend: {
-                                    type: "string",
-                                    title: "trend",
-                                    enum: ["RISING", "DECREASING", "FLAT", "UNKNOWN"]
-                                }
-                            }
-                        }
-                        break
-                }
-                return finalSchema
-            } else {
-                return {
-                    type: "object",
-                    properties: {},
-                }
-            }
-        },
         deviceId() {
             return this.$route.query.id
         },
@@ -282,18 +162,11 @@ export default {
     },
     data() {
         return {
-            options: {},
             valid:false,
-            innerModel:{},
-            menu: false,
             availableOperations: null,
             disabled: false,
             snackbar: false,
             availableOperationsItems: [],
-            operationsObject: {
-                operation: "",
-                configured: false
-            },
             cmOptions: {
                 tabSize: 1,
                 styleActiveLine: true,
@@ -306,13 +179,10 @@ export default {
                 theme: "default",
             },
             selectedOperation: null,
-            selectedEvent: null,
             selectedOperationLocal: null,
             jsonLocal: {},
             jsonList: {},
-            jsonModel:{},
             widgets: [],
-            deviceEvents: ["birthEvent", "endLifeTimeEvent", "statusEvent", "tamperingEvent", "temperatureEvent", "batteryEvent"],
             activePage: null,
         }
     },
@@ -339,13 +209,6 @@ export default {
         saveModel(){
             localStorage.eventModel = JSON.stringify(this.jsonModel)
             this.snackbar = true
-        },
-        mapPage(page) {
-            if (page === "operation") {
-                this.activePage = "operation"
-            } else if (page === "event") {
-                this.activePage = "event"
-            }
         },
         linter() {
             let mirror = this.$refs.codemirror.codemirror
