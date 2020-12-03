@@ -20,33 +20,29 @@
 
 <!-- Version 2 -->
     <div style="display:inline">
-      <v-row style="width:17%; margin:0">
+      <v-row style="width:30%; margin:0">
           <v-switch
-            label=""
+            right
             @click="switchMe = !switchMe"
             v-on:click="stopAndPlay"
+            inset
           >
           </v-switch>
 
           <v-text-field
-            :disabled= !switchMe 
+            :disabled="!switchMe" 
             @keyup.enter="autoSend"
             v-model="contSend"
             color="cyan darken"
             label="Enviar automáticamente cada(segundos):"
-            style="width:15%; display:'inline'"
-            outlined
+            style="margin-top: 10%;"
+            
             dense
             rounded
+            hide-details
           ></v-text-field>           
       </v-row>
-
-     
     </div>
-
-
-
-
 
     <v-btn
       @click="sendInfo"
@@ -58,6 +54,17 @@
       color="accet"
     >
       <v-icon> mdi-send </v-icon>
+    </v-btn>
+    <v-btn
+      @click="switchMe = !switchMe"
+      fab
+      fixed
+      bottom
+      right
+      color="accet"
+      style="margin-bottom:8%"
+    >
+      <v-icon> mdi-clock-end </v-icon>
     </v-btn>
 
     <v-form ref="form" v-model="valid">

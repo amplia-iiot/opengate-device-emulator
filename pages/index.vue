@@ -1,5 +1,7 @@
 <template>
-<v-app id="inspire">
+<v-app id="inspire" height=700> 
+<!--     <v-parallax height=900 dark src="https://s4.eestatic.com/2017/07/15/actualidad/Actualidad_231491145_129959668_1060x760.jpg">
+ -->
     <v-card elevation="24" style="max-width:50%;left:50%;transform:translate(-50%, -50%);top:50%;">
         <v-card-text>
             <v-form ref="form" v-model="valid" lazy-validation>
@@ -14,7 +16,10 @@
             </v-form>
         </v-card-text>
     </v-card>
+<!--     </v-parallax>
+ -->
 </v-app>
+
 </template>
 
 <script>
@@ -161,6 +166,9 @@ export default {
 </script>
 
 <style scoped>
+template {
+    background-image: url("https://s4.eestatic.com/2017/07/15/actualidad/Actualidad_231491145_129959668_1060x760.jpg")
+}
 .login-window {
 
     max-width: 40%;
