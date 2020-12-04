@@ -55,7 +55,7 @@
                 </v-card>
             </v-menu>
             <v-divider inset vertical />
-            <v-menu v-model="menu" :close-on-content-click="false" offset-y class="logout">
+            <v-menu v-model="menu" :close-on-content-click="true" offset-y class="logout">
                 <template v-slot:activator="{ on }">
                     <v-btn text v-on="on">
                         <v-icon>mdi-menu</v-icon>
@@ -64,11 +64,10 @@
                 <v-card>
                     <v-list-item>
                         <v-list-item-icon>
-                            <v-icon color="indigo">
+                            <v-icon>
                                 mdi-email
                             </v-icon>
                         </v-list-item-icon>
-
                         <v-list-item-content>
                             <v-list-item-title>{{
                                         this.$store.state.appbar.user
@@ -76,14 +75,58 @@
                             <v-list-item-subtitle>User</v-list-item-subtitle>
                         </v-list-item-content>
                     </v-list-item>
-
+                    <div v-if="deviceId" class="mobile">
+                    <v-list-item @click="setContent('sistema')">
+                        <v-list-item-icon>
+                        <v-icon>mdi-cellphone-link</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>System</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="setContent('sensores')">
+                        <v-list-item-icon>
+                        <v-icon>mdi-list-status</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Sensors</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="setContent('configuracion')">
+                        <v-list-item-icon>
+                        <v-icon>mdi-cog</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Operations</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="setContent('eventos')">
+                        <v-list-item-icon>
+                        <v-icon>mdi-calendar-alert</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Events</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item @click="setContent('mapas')">
+                        <v-list-item-icon>
+                        <v-icon>mdi-map-marker-radius</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Map</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    </div>
                     <v-dialog v-model="logoutDialog" persistent>
                         <template v-slot:activator="{ on, attrs }" align-center>
-                            <div class="text-center">
-                                <v-btn color="red" dark v-bind="attrs" v-on="on" depressed>
-                                    Log out
-                                </v-btn>
-                            </div>
+                        <v-list-item v-bind="attrs" v-on="on">
+                        <v-list-item-icon>
+                        <v-icon>mdi-logout</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title>Logout</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
                         </template>
                         <v-card>
                             <v-card-title class="headline"> ATTENTION </v-card-title>
@@ -104,21 +147,26 @@
         <template v-slot:extension>
             <v-text-field v-if="!deviceId" label="Search device" clearable v-model="field" @keyup.enter="search" @click:append="search" @click:clear="search" single-line solo solo-inverted hide-details dense append-icon="mdi-magnify" />
 
-            <v-tabs v-if="deviceId" v-model="tabActivo" grow centered dense icons-and-text>
+            <v-tabs v-if="deviceId" v-model="tabActivo" grow centered dense icons-and-text
+            class="no-mobile">
                 <v-tab class="ma-0" href="#sistema">
-                    <span class="no-mobile">System</span>
+                    <span >System</span>
                     <v-icon>mdi-cellphone-link</v-icon>
                 </v-tab>
                 <v-tab class="ma-0" href="#sensores">
-                    <span class="no-mobile">Sensors</span>
+                    <span>Sensors</span>
                     <v-icon>mdi-list-status</v-icon>
                 </v-tab>
                 <v-tab class="ma-0" href="#configuracion">
-                    <span class="no-mobile">Operations</span>
+                    <span>Operations</span>
                     <v-icon>mdi-cog</v-icon>
                 </v-tab>
+                <v-tab class="ma-0" href="#eventos">
+                    <span>Events</span>
+                    <v-icon>mdi-calendar-alert</v-icon>
+                </v-tab>
                 <v-tab class="ma-0" href="#mapas">
-                    <span class="no-mobile">Map</span>
+                    <span>Map</span>
                     <v-icon>mdi-map-marker-radius</v-icon>
                 </v-tab>
             </v-tabs>
@@ -170,6 +218,9 @@ export default {
             sendText: "appbar/setFilter",
             setTab: "appbar/setTab",
         }),
+        setContent(tab){
+            this.tabActivo = tab
+        },
         routerdialog() {
             localStorage.checkbox = false;
             this.$router.push({

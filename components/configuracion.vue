@@ -1,33 +1,33 @@
 <template>
 <div>
-    <v-autocomplete :items="operationsMap" label="Operation to configure" v-model="selectedOperation" @change="operationChanged" item-text="value">
-        <template v-slot:item="{item, on}">
-            <v-list-item v-on="on">
-                <v-list-item-title>
-                    {{item.text.name}}
-                </v-list-item-title>
-                <v-list-item-icon v-if="item.text.configured && item.text.enabled">
-                    <v-icon>mdi-play-circle</v-icon>
-                    <v-icon>mdi-notebook-edit</v-icon>
-                </v-list-item-icon>
-                <v-list-item-icon v-else-if="item.text.configured">
-                    <v-icon>mdi-pause-circle</v-icon>
-                    <v-icon>mdi-notebook-edit</v-icon>
-                </v-list-item-icon>
-            </v-list-item>
-        </template>
-    </v-autocomplete>
-    <div v-if="jsonLocal && jsonLocal[deviceId] && jsonLocal[deviceId][selectedOperation]">
-        <v-card>
-            <v-card-text>
-                <p>function {{selectedOperation}}(<v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                            <span v-bind="attrs" v-on="on">
-                                operaRequest
-                            </span>
-                        </template>
-                        <span>
-                            <pre>
+        <v-autocomplete :items="operationsMap" label="Operation to configure" v-model="selectedOperation" @change="operationChanged" item-text="value">
+            <template v-slot:item="{item, on}">
+                <v-list-item v-on="on">
+                    <v-list-item-title>
+                        {{item.text.name}}
+                    </v-list-item-title>
+                    <v-list-item-icon v-if="item.text.configured && item.text.enabled">
+                        <v-icon>mdi-play-circle</v-icon>
+                        <v-icon>mdi-notebook-edit</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-icon v-else-if="item.text.configured">
+                        <v-icon>mdi-pause-circle</v-icon>
+                        <v-icon>mdi-notebook-edit</v-icon>
+                    </v-list-item-icon>
+                </v-list-item>
+            </template>
+        </v-autocomplete>
+        <div v-if="jsonLocal && jsonLocal[deviceId] && jsonLocal[deviceId][selectedOperation]">
+            <v-card>
+                <v-card-text>
+                    <p>function {{selectedOperation}}(<v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <span v-bind="attrs" v-on="on">
+                                    operaRequest
+                                </span>
+                            </template>
+                            <span>
+                                <pre>
           operaRequest: {
             operation:{
               request:{
@@ -38,16 +38,16 @@
               }
             }
           }</pre>
-                        </span>
-                    </v-tooltip>,
-                    <v-tooltip bottom>
-                        <template v-slot:activator="{ on, attrs }">
-                            <span v-bind="attrs" v-on="on">
-                                operaResponse
                             </span>
-                        </template>
-                        <span>
-                            <pre>
+                        </v-tooltip>,
+                        <v-tooltip bottom>
+                            <template v-slot:activator="{ on, attrs }">
+                                <span v-bind="attrs" v-on="on">
+                                    operaResponse
+                                </span>
+                            </template>
+                            <span>
+                                <pre>
           operaResponse: {
             operation:{
               response:{
@@ -59,31 +59,31 @@
               }
             }
           }</pre>
-                        </span>
-                    </v-tooltip>) {</p>
-                <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperation].code" @changes="linter" @onLoad="linter" ref="codemirror" />
+                            </span>
+                        </v-tooltip>) {</p>
+                    <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedOperation].code" @changes="linter" @onLoad="linter" ref="codemirror" />
 
-                <p>
-                    <pre>return operaResponse
+                    <p>
+                        <pre>return operaResponse
             }
             </pre>
-                </p>
-            </v-card-text>
-        </v-card>
-        <hr>
-        <v-switch v-model="jsonLocal[deviceId][selectedOperationLocal].enabled" :label="'If switch on code above will run when operation executes'" />
-        <v-btn @click="saveOperation" :disabled="disabled"> Save </v-btn>
-        <v-btn @click="deleteOperation"> Delete </v-btn>
-    </div>
-    <v-snackbar v-model="snackbar">
-        {{ "Operation save with your javascript thank you!" }}
+                    </p>
+                </v-card-text>
+            </v-card>
+            <hr>
+            <v-switch v-model="jsonLocal[deviceId][selectedOperationLocal].enabled" :label="'If switch on code above will run when operation executes'" />
+            <v-btn @click="saveOperation" :disabled="disabled"> Save </v-btn>
+            <v-btn @click="deleteOperation"> Delete </v-btn>
+        </div>
+        <v-snackbar v-model="snackbar">
+            {{ "Operation save with your javascript thank you!" }}
 
-        <template v-slot:action="{ attrs }">
-            <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
-                Close
-            </v-btn>
-        </template>
-    </v-snackbar>
+            <template v-slot:action="{ attrs }">
+                <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">
+                    Close
+                </v-btn>
+            </template>
+        </v-snackbar>
 </div>
 </template>
 
@@ -138,10 +138,9 @@ export default {
                     }
                     if (jsonList[this.deviceId] && jsonList[this.deviceId][operationName]) {
                         finalElement.text.configured = true
-                        if(jsonList[this.deviceId][operationName].enabled===true){
-                             finalElement.text.enabled = true
+                        if (jsonList[this.deviceId][operationName].enabled === true) {
+                            finalElement.text.enabled = true
                         }
-                       
 
                     }
                     return finalElement
@@ -163,14 +162,11 @@ export default {
     },
     data() {
         return {
+            valid:false,
             availableOperations: null,
             disabled: false,
             snackbar: false,
             availableOperationsItems: [],
-            operationsObject: {
-                operation: "",
-                configured: false
-            },
             cmOptions: {
                 tabSize: 1,
                 styleActiveLine: true,
@@ -186,50 +182,78 @@ export default {
             selectedOperationLocal: null,
             jsonLocal: {},
             jsonList: {},
-            widgets: []
+            widgets: [],
+            activePage: null,
         }
     },
     methods: {
+        eventChanged(newEvent){
+             if (newEvent) {
+                if (!localStorage.eventModel) {
+                    localStorage.eventModel = JSON.stringify({})
+                } else {
+                    this.jsonModel = JSON.parse(localStorage.eventModel)
+                }
+
+                if (!this.jsonModel[this.deviceId]) {
+                    this.jsonModel[this.deviceId] = {}
+                }
+
+                if (!this.jsonModel[this.deviceId][newEvent]) {
+                    this.jsonModel[this.deviceId][newEvent] = {
+                    }
+                }
+                this.innerModel = this.jsonModel[this.deviceId][newEvent]
+             }
+        },
+        saveModel(){
+            localStorage.eventModel = JSON.stringify(this.jsonModel)
+            this.snackbar = true
+        },
         linter() {
-          let mirror =  this.$refs.codemirror.codemirror
+            let mirror = this.$refs.codemirror.codemirror
             this.widgets.forEach(element => {
-              mirror.removeLineWidget(element)
+                mirror.removeLineWidget(element)
             });
-            this.widgets.splice(0,this.widgets.length)
-            
-            const value = "function "+this.selectedOperation+" (operaRequest, operaResponse){\n" + mirror.getValue() +
+            this.widgets.splice(0, this.widgets.length)
+
+            const value = "function " + this.selectedOperation + " (operaRequest, operaResponse){\n" + mirror.getValue() +
                 "\nreturn operaResponse;}"
             JSHINT(value)
             console.log(JSHINT.errors)
-            JSHINT.errors.forEach(error=>{
-              if(error.id){
-                  if(error.id=="(error)"){
+            JSHINT.errors.forEach(error => {
+                if (error.id) {
+                    if (error.id == "(error)") {
                         this.disabled = true
-                  }
-                
-              }
-              else if(!error.id){
-                  this.disabled = false
-              } 
-              let msg = document.createElement("div")
-              let icon = msg.appendChild(document.createElement("span"))
-              icon.className = "lint-error-icon"
-              msg.className = "lint-error"
-              this.widgets.push(mirror.addLineWidget(error.line , msg, {coverGutter: false, noHScroll: true}))
+                    }
+
+                } else if (!error.id) {
+                    this.disabled = false
+                }
+                let msg = document.createElement("div")
+                let icon = msg.appendChild(document.createElement("span"))
+                icon.className = "lint-error-icon"
+                msg.className = "lint-error"
+                this.widgets.push(mirror.addLineWidget(error.line, msg, {
+                    coverGutter: false,
+                    noHScroll: true
+                }))
             })
-            if(JSHINT.errors.length==0){
-                this.disabled=false
+            if (JSHINT.errors.length == 0) {
+                this.disabled = false
             }
-           
-            
+
             let info = mirror.getScrollInfo();
-            let after = mirror.charCoords({line: mirror.getCursor().line + 1, ch: 0}, "local").top
+            let after = mirror.charCoords({
+                line: mirror.getCursor().line + 1,
+                ch: 0
+            }, "local").top
             if (info.top + info.clientHeight < after)
                 mirror.scrollTo(null, after - info.clientHeight + 3)
-            if(this.jsonLocal[this.deviceId][this.selectedOperation].code===""){
+            if (this.jsonLocal[this.deviceId][this.selectedOperation].code === "") {
                 this.disabled = true
             }
-            
+
         },
         operationChanged(newOpera) {
             if (newOpera) {
@@ -255,8 +279,8 @@ export default {
                 // se guarda una copia para trabajar con ella
             } else {
                 this.selectedOperationLocal = null
-            } 
-           setTimeout(() => {
+            }
+            setTimeout(() => {
                 this.linter()
             }, 1000)
         },
