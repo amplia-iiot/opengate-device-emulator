@@ -21,26 +21,25 @@
 <!-- Version 2 -->
     <div style="display:inline">
       <v-row style="width:30%; margin:0">
-          <v-switch
+          <v-checkbox
             right
             @click="switchMe = !switchMe"
             v-on:click="stopAndPlay"
             inset
           >
-          </v-switch>
-
-          <v-text-field
+           <template v-slot:prepend>
+             <v-text-field
             :disabled="!switchMe" 
             @keyup.enter="autoSend"
             v-model="contSend"
             color="cyan darken"
-            label="Enviar automáticamente cada(segundos):"
-            style="margin-top: 10%;"
-            
+            label="Envio automatico"
             dense
             rounded
-            hide-details
-          ></v-text-field>           
+          >
+          </v-text-field>      
+          </template>
+          </v-checkbox>   
       </v-row>
     </div>
 

@@ -166,8 +166,8 @@ export default {
 </script>
 
 <style scoped>
-template {
-    background-image: url("https://s4.eestatic.com/2017/07/15/actualidad/Actualidad_231491145_129959668_1060x760.jpg")
+body {
+    background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1493x1920/bf0e3981056465dd5e3b18249f063f48/photo-1580691746056-4badd831b86e.jpg")
 }
 .login-window {
 
