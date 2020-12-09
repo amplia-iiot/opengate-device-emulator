@@ -144,6 +144,20 @@ export default {
         saveModel(){
             localStorage.eventModel = JSON.stringify(this.jsonModel)
             this.snackbar = true
+
+            let eventObj = { 
+                "event":{
+                    "alarm":{
+                        "deviceId": this.deviceId,
+                        "severity":"INFORMATIVE",
+                        "priority":"LOW",
+                        "name":this.selectedEvent,
+                        "timestamp":new Date().getTime(),
+                        "variables": [this.jsonModel[this.deviceId][this.selectedEvent]]
+                    }
+                }
+            }
+            this.$api.Sapi.post(`devices/${this.deviceId}/events/alarms`, eventObj)
         }
     }
 }
