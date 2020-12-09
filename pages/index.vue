@@ -179,7 +179,6 @@ export default {
 </script>
 
 <style scoped>
-<<<<<<< HEAD
 #inspire {
     background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1493x1920/bf0e3981056465dd5e3b18249f063f48/photo-1580691746056-4badd831b86e.jpg");
     max-width: auto;
@@ -187,10 +186,6 @@ export default {
     background-repeat: no-repeat;
     background-size: cover;
     
-=======
-body {
-    background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1493x1920/bf0e3981056465dd5e3b18249f063f48/photo-1580691746056-4badd831b86e.jpg")
->>>>>>> 1efec751d526ed3d9beab4cd0667942349cbb1f0
 }
 .login-window {
 
