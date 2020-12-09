@@ -1,47 +1,27 @@
 <template>
   <div>
-    <!-- version 1 -->
-<!--     <v-switch
-      label="Auto"
-      @click="switchMe = !switchMe"
-      v-on:click="stopAndPlay"
-    >
-    </v-switch>
-    <div v-show="switchMe">
-      <v-text-field
-        @keyup.enter="autoSend"
-        v-model="contSend"
-        color="cyan darken"
-        label="Second"
-        placeholder="Seconds..."
-        loading
-      ></v-text-field>
-    </div> -->
-
-<!-- Version 2 -->
     <div style="display:inline">
-      <v-row style="width:30%; margin:0">
-          <v-switch
+        <v-row style="width:30%; margin:0">
+          <v-checkbox
             right
             @click="switchMe = !switchMe"
             v-on:click="stopAndPlay"
             inset
           >
-          </v-switch>
-
-          <v-text-field
-            :disabled="!switchMe" 
-            @keyup.enter="autoSend"
-            v-model="contSend"
-            color="cyan darken"
-            label="Enviar automáticamente cada(segundos):"
-            style="margin-top: 10%;"
-            
-            dense
-            rounded
-            hide-details
-          ></v-text-field>           
-      </v-row>
+            <template v-slot:prepend>
+                <v-text-field
+                :disabled="!switchMe" 
+                @keyup.enter="autoSend"
+                v-model="contSend"
+                color="cyan darken"
+                label="Envio automatico"
+                dense
+                rounded
+              >
+              </v-text-field>      
+            </template>
+          </v-checkbox>   
+        </v-row>
     </div>
 
     <v-btn
@@ -55,7 +35,7 @@
     >
       <v-icon> mdi-send </v-icon>
     </v-btn>
-    <v-btn
+    <!-- <v-btn
       @click="switchMe = !switchMe"
       fab
       fixed
@@ -65,7 +45,7 @@
       style="margin-bottom:8%"
     >
       <v-icon> mdi-clock-end </v-icon>
-    </v-btn>
+    </v-btn> -->
 
     <v-form ref="form" v-model="valid">
       <v-autocomplete
@@ -265,3 +245,10 @@ export default {
   },
 };
 </script>
+<style scoped>
+.switch {
+
+flex: unset;
+
+}
+</style>

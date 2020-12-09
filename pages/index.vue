@@ -1,23 +1,36 @@
 <template>
 <v-app id="inspire" height=700> 
-<!--     <v-parallax height=900 dark src="https://s4.eestatic.com/2017/07/15/actualidad/Actualidad_231491145_129959668_1060x760.jpg">
- -->
-    <v-card elevation="24" style="max-width:50%;left:50%;transform:translate(-50%, -50%);top:50%;">
-        <v-card-text>
-            <v-form ref="form" v-model="valid" lazy-validation>
-                <!-- <v-autocomplete style="color: red; " class="items" v-model="servidor" :items="items" label="servidor" required></v-autocomplete> -->
-                <v-text-field style="" v-model="name" label="Nombre"></v-text-field>
-                <v-text-field style="" v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="Contraseña" hint="Min 8 caracteres" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
-                <v-checkbox v-model="checkbox" :label="`Recordar datos`"></v-checkbox>
-                <v-btn color="success" class="mr-4" @click="enviar"> Enviar </v-btn>
-                <v-btn color="error" class="mr-4" @click="reset">
-                    Vaciar Campos
-                </v-btn>
-            </v-form>
-        </v-card-text>
+    <v-card elevation="24" id="login_content" style="max-width:50%;left:50%;transform:translate(-50%, -50%);top:50%;">
+      <v-list-item three-line>
+        <v-list-item-content id="login-extend" >
+          <div class="overline mb-4">
+            EMULATOR DEVICE
+          </div>
+          <v-list-item-title class="headline mb-1">
+            ....
+          </v-list-item-title>
+          <v-list-item-subtitle>Amplia)))</v-list-item-subtitle>
+        </v-list-item-content>
+  
+        <v-list-item-avatar
+          tile
+          size="auto"
+        >
+            <v-card-text>
+                <v-form ref="form" v-model="valid" lazy-validation>
+                    <!-- <v-autocomplete style="color: red; " class="items" v-model="servidor" :items="items" label="servidor" required></v-autocomplete> -->
+                    <v-text-field style="" v-model="name" label="Nombre"></v-text-field>
+                    <v-text-field style="" v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="Contraseña" hint="Min 8 caracteres" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
+                    <v-checkbox v-model="checkbox" :label="`Recordar datos`"></v-checkbox>
+                    <v-btn color="success" class="mr-4" @click="enviar"> Enviar </v-btn>
+
+                </v-form>
+            </v-card-text>        
+        </v-list-item-avatar>
+      </v-list-item>
+        
+
     </v-card>
-<!--     </v-parallax>
- -->
 </v-app>
 
 </template>
@@ -166,11 +179,40 @@ export default {
 </script>
 
 <style scoped>
-template {
-    background-image: url("https://s4.eestatic.com/2017/07/15/actualidad/Actualidad_231491145_129959668_1060x760.jpg")
+#inspire {
+    background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1493x1920/bf0e3981056465dd5e3b18249f063f48/photo-1580691746056-4badd831b86e.jpg");
+    max-width: auto;
+    height: auto;
+    background-repeat: no-repeat;
+    background-size: cover;
+    
 }
 .login-window {
 
     max-width: 40%;
+}
+
+@media only screen and (max-width: 768px) {
+    .nav_item {
+        display: none;
+    }
+
+    .mobile {
+        display: block;
+    }
+
+    .no-mobile {
+        display: none;
+    }
+    #login-extend{
+        display: none;
+    }
+    #login_content {
+        max-width: 70%;
+        transform:translate(-30%, -30%)
+        
+        
+
+    }
 }
 </style>
