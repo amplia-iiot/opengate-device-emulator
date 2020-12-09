@@ -1,13 +1,18 @@
 <template>
   <div>
     <div style="display:inline">
+<<<<<<< HEAD
         <v-row style="width:30%; margin:0">
+=======
+      <v-row style="width:30%; margin:0">
+>>>>>>> 1efec751d526ed3d9beab4cd0667942349cbb1f0
           <v-checkbox
             right
             @click="switchMe = !switchMe"
             v-on:click="stopAndPlay"
             inset
           >
+<<<<<<< HEAD
             <template v-slot:prepend>
                 <v-text-field
                 :disabled="!switchMe" 
@@ -22,6 +27,22 @@
             </template>
           </v-checkbox>   
         </v-row>
+=======
+           <template v-slot:prepend>
+             <v-text-field
+            :disabled="!switchMe" 
+            @keyup.enter="autoSend"
+            v-model="contSend"
+            color="cyan darken"
+            label="Envio automatico"
+            dense
+            rounded
+          >
+          </v-text-field>      
+          </template>
+          </v-checkbox>   
+      </v-row>
+>>>>>>> 1efec751d526ed3d9beab4cd0667942349cbb1f0
     </div>
 
     <v-btn
