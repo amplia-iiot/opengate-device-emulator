@@ -228,7 +228,7 @@ export default {
             });
         },
         routerlister(id) {
-            this.tabActivo = "sistema";
+            this.tabActivo = "sistema"
             this.$router.push({
                 path: "/listerpage",
             });
@@ -285,7 +285,7 @@ export default {
 
                 // cierro si hubiera alguna conexión abierta
                 if (this.mqttClient && this.mqttClient.close) {
-                    this.mqttClient.close();
+                    this.mqttClient.close()
                 }
 
                 this.mqttClient = new WebSocket(
@@ -293,14 +293,14 @@ export default {
                 );
 
                 this.mqttClient.onmessage = (event) => {
-                    console.log(event);
+                    console.log(event)
 
                     if (event.data) {
                         this.contOperations++
-                        const eventObj = JSON.parse(event.data);
+                        const eventObj = JSON.parse(event.data)
 
                         if (localStorage && localStorage.operationsConfig) {
-                            let operaConfigs = JSON.parse(localStorage.operationsConfig);
+                            let operaConfigs = JSON.parse(localStorage.operationsConfig)
                             this.date = new Date()
                             this.time = this.date.getHours() + ":" + this.date.getMinutes()
 
@@ -313,7 +313,7 @@ export default {
                                         "(function(operaRequest, operaResponse){\n" +
                                         operaConfigs[this.deviceId][eventObj.operation.request.name]
                                         .code +
-                                        "\nreturn operaResponse})";
+                                        "\nreturn operaResponse})"
 
                                     const functionObj = eval(functionCode)
 
@@ -445,10 +445,10 @@ export default {
 
                 // this.mqttClient.connect(options);
             } catch (connError) {
-                this.mqttClient = null;
+                this.mqttClient = null
                 this.socketConnected = false
                 this.contOperations++
-                console.error(connError);
+                console.error(connError)
                 this.eventArr.push({
                     type: 'Error',
                     devId: this.deviceId,
@@ -464,11 +464,11 @@ export default {
     computed: {
         operationCount() {
             if (this.event) {
-                contOperations++;
+                contOperations++
             }
         },
         isEmulatorConnected() {
-            return this.deviceId && this.socketConnected;
+            return this.deviceId && this.socketConnected
         },
         deviceId() {
             return this.$route.query.id

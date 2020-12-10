@@ -1,38 +1,20 @@
 <template>
 <div>
-    <!-- version 1 -->
-    <!--     <v-switch
-      label="Auto"
-      @click="switchMe = !switchMe"
-      v-on:click="stopAndPlay"
-    >
-    </v-switch>
-    <div v-show="switchMe">
-      <v-text-field
-        @keyup.enter="autoSend"
-        v-model="contSend"
-        color="cyan darken"
-        label="Second"
-        placeholder="Seconds..."
-        loading
-      ></v-text-field>
-    </div> -->
-
-    <!-- Version 2 -->
-    <div>
       <v-text-field
             @keyup.enter="autoSend" 
             v-model="contSend" 
             color="accent" 
             label="Envio automatico" dense rounded 
+            type="number"
             outlined
-            hide-details>
+            hide-details
+            >
             
           <template v-slot:prepend>
-            <v-simple-checkbox color="primary" v-model="switchMe" @click="stopAndPlay"></v-simple-checkbox>
+            <v-simple-checkbox color="primary" v-model="switchMe" @click="autoSend"></v-simple-checkbox>
         </template>
       </v-text-field>
-    </div>
+
 
     <v-btn @click="sendInfo" :disabled="change" fab fixed bottom right color="accet">
         <v-icon> mdi-send </v-icon>
@@ -158,22 +140,16 @@ export default {
         }
     },
     methods: {
-        stopAndPlay() {
-            if (this.switchMe === true) {
-                this.autoSend()
-                this.only = false
-            } else {
-                clearInterval(this.autoSendVar);
-            }
-        },
         autoSend() {
+
             if (this.contSend) {
                 clearInterval(this.autoSendVar);
             }
-
-            if (this.switchMe) {
+            if (this.switchMe === true) {
               let contSendVar = 1000 * this.contSend;
               this.autoSendVar = setInterval(this.sendInfo, contSendVar);
+            }else {
+                clearInterval(this.autoSendVar)
             }
         },
         mapModelInfo(modelData) {
