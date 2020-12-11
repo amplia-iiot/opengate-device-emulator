@@ -1,34 +1,44 @@
 <template>
 <v-app id="inspire" height=700> 
-    <v-card elevation="24" id="login_content" style="max-width:50%;left:50%;transform:translate(-50%, -50%);top:50%;">
-      <v-list-item three-line>
-        <v-list-item-content id="login-extend" >
+    <v-card class="loginCard" elevation="24" >
+      <v-list-item three-line class="login-extend" >
+        <v-list-item-content>
           <div class="overline mb-4">
             EMULATOR DEVICE
           </div>
           <v-list-item-title class="headline mb-1">
-            ....
+              ......................
           </v-list-item-title>
-          <v-list-item-subtitle>Amplia)))</v-list-item-subtitle>
+          <v-list-item-subtitle> 
+              <a :ref="url"> Amplia)))</a>
+          </v-list-item-subtitle>
         </v-list-item-content>
   
         <v-list-item-avatar
           tile
-          size="auto"
+          size="60%"
+          class="login-extend"
         >
-            <v-card-text>
-                <v-form ref="form" v-model="valid" lazy-validation>
+            <v-card-text >
+                <v-form ref="form" v-model="valid" lazy-validation class="formLogin">
                     <!-- <v-autocomplete style="color: red; " class="items" v-model="servidor" :items="items" label="servidor" required></v-autocomplete> -->
-                    <v-text-field style="" v-model="name" label="Nombre"></v-text-field>
-                    <v-text-field style="" v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="Contraseña" hint="Min 8 caracteres" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
+                    <v-text-field v-model="name" label="Nombre"></v-text-field>
+                    <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="Contraseña" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
                     <v-checkbox v-model="checkbox" :label="`Recordar datos`"></v-checkbox>
-                    <v-btn color="success" class="mr-4" @click="enviar"> Enviar </v-btn>
-
+                    <v-btn color="primary" class="mr-4" @click="enviar"> Login </v-btn>
                 </v-form>
             </v-card-text>        
         </v-list-item-avatar>
       </v-list-item>
-        
+            <v-card-text class="loginPc" >
+                <v-form ref="form" v-model="valid" lazy-validation>
+                    <!-- <v-autocomplete style="color: red; " class="items" v-model="servidor" :items="items" label="servidor" required></v-autocomplete> -->
+                    <v-text-field v-model="name" label="Nombre"></v-text-field>
+                    <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="Contraseña" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
+                    <v-checkbox v-model="checkbox" :label="`Recordar datos`"></v-checkbox>
+                    <v-btn color="primary" class="mr-4" @click="enviar"> Login </v-btn>
+                </v-form>
+            </v-card-text>        
 
     </v-card>
 </v-app>
@@ -46,6 +56,8 @@ export default {
     layout: "login",
     data() {
         return {
+            valor:"",
+            url: "https://www.amplia-iiot.com/",
             name: "",
             valid: true,
 
@@ -129,6 +141,14 @@ export default {
         reset() {
             this.$refs.form.reset();
         },
+
+        itemMostrar() {
+            if ($(window).width() < 720) {
+                 return this.valor = "auto";
+            } else {
+                 return this.valor = "50%";
+            }
+        },
     },
     async mounted() {
         if (localStorage.checkbox === "true" && localStorage.api && localStorage.name ) {
@@ -191,8 +211,26 @@ export default {
 
     max-width: 40%;
 }
+.loginCard{
+    opacity: 0.98;
+    max-width:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    top:50%;
+    height:40%;
+}
+.loginPc{
+    display: none;
+}
 
 @media only screen and (max-width: 768px) {
+    .loginPc{
+    display: block
+}
+    .formLogin{
+        max-width: 100%;
+    }
+
     .nav_item {
         display: none;
     }
@@ -204,15 +242,15 @@ export default {
     .no-mobile {
         display: none;
     }
-    #login-extend{
+    .login-extend{
         display: none;
     }
-    #login_content {
-        max-width: 70%;
-        transform:translate(-30%, -30%)
-        
-        
+    .loginCard {
+        max-width: 100%;       
 
+    }
+    v-list-item-avatar{
+        size: 100%;
     }
 }
 </style>
