@@ -13,8 +13,8 @@
           :model="model"
         />
       </v-tab-item>
-      <v-tab-item value="configuracion">
-        <configuracion 
+      <v-tab-item value="operations">
+        <operations 
         :basic-types="basicTypes"/>
       </v-tab-item>
       <v-tab-item value="eventos">
@@ -30,7 +30,7 @@
 <script>
 import sistema from "@/components/sistema"
 import sensores from "@/components/sensores"
-import configuracion from "@/components/configuracion"
+import operations from "@/components/operations"
 import eventos from "@/components/eventos"
 import mapas from "@/components/mapas"
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js"
@@ -42,7 +42,7 @@ export default {
   components: {
     sistema,
     sensores,
-    configuracion,
+    operations,
     mapas,
   },
   mixins: [baseUserApiMixin,textField],

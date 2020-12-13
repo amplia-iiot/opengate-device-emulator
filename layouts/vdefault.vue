@@ -61,7 +61,7 @@
                         <v-icon>mdi-menu</v-icon>
                     </v-btn>
                 </template>
-                <v-card>
+                <v-card class="card">
                     <v-list-item>
                         <v-list-item-icon>
                             <v-icon>
@@ -92,7 +92,7 @@
                             <v-list-item-title>Sensors</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="setContent('configuracion')">
+                    <v-list-item @click="setContent('operations')">
                         <v-list-item-icon>
                         <v-icon>mdi-cog</v-icon>
                         </v-list-item-icon>
@@ -157,7 +157,7 @@
                     <span>Sensors</span>
                     <v-icon>mdi-list-status</v-icon>
                 </v-tab>
-                <v-tab class="ma-0" href="#configuracion">
+                <v-tab class="ma-0" href="#operations">
                     <span>Operations</span>
                     <v-icon>mdi-cog</v-icon>
                 </v-tab>
@@ -536,7 +536,6 @@ export default {
     .nav_item {
         display: none;
     }
-
     .menu,
     .mobile {
         display: block;

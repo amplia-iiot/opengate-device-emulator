@@ -3,12 +3,14 @@
     <v-card class="loginCard" elevation="24" >
       <v-list-item three-line class="login-extend" >
         <v-list-item-content>
-          <div class="overline mb-4">
+          <div class="titleEmulator">
             EMULATOR DEVICE
           </div>
-          <v-list-item-title class="headline mb-1">
-              ......................
-          </v-list-item-title>
+            <p class="subtitleP">Una herramienta con la que podras simular multiples dispositivos. </p>
+                
+            <p class="subtitleP">    Configura tu dispositivo y potencia tu proyecto.</p> 
+                
+            <p class="subtitleP">    Reduce costes e incrementa rendimiento</p>
           <v-list-item-subtitle> 
               <a :ref="url"> Amplia)))</a>
           </v-list-item-subtitle>
@@ -16,7 +18,7 @@
   
         <v-list-item-avatar
           tile
-          size="60%"
+          size="50%"
           class="login-extend"
         >
             <v-card-text >
@@ -199,10 +201,17 @@ export default {
 </script>
 
 <style scoped>
+.subtitleP{
+    font-family: Consolas;
+    color: black;
+}
+.titleEmulator{
+    font-size:  200%;
+    font-family: Consolas;
+    color:black;
+}
 #inspire {
     background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/1493x1920/bf0e3981056465dd5e3b18249f063f48/photo-1580691746056-4badd831b86e.jpg");
-    max-width: auto;
-    height: auto;
     background-repeat: no-repeat;
     background-size: cover;
     
@@ -217,7 +226,8 @@ export default {
     left:50%;
     transform:translate(-50%, -50%);
     top:50%;
-    height:40%;
+    height:35%;
+    
 }
 .loginPc{
     display: none;
@@ -249,8 +259,6 @@ export default {
         max-width: 100%;       
 
     }
-    v-list-item-avatar{
-        size: 100%;
-    }
+
 }
 </style>
