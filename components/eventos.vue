@@ -2,7 +2,9 @@
 <div>
     <v-form ref="form" v-model="valid">
         <v-autocomplete :items="deviceEvents" label="Event to send to platform" v-model="selectedEvent" @change="eventChanged" autowidth auto-select-first />
+         <v-btn-toggle>
         <v-dialog v-model="logDialog" width="500">
+       
             <template v-slot:activator="{ on, attrs}">
                 <v-btn text v-bind="attrs" v-on="on">
                     <v-icon>mdi-plus</v-icon>
@@ -27,6 +29,7 @@
         <v-btn text @click="modelformMethod" :disabled="disabledModel">
             <v-icon> mdi-grease-pencil</v-icon>
         </v-btn>
+        </v-btn-toggle>
         <div v-if="mirror">
             <codemirror :options="cmOptions" v-model="jsonLocal[deviceId][selectedEvent].code" @changes="linter" @onLoad="linter" ref="codemirror" />
             <v-btn text @click="saveSchema" :disabled="disabled">
