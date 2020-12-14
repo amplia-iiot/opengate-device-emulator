@@ -1,7 +1,7 @@
 <template>
 <div>
     <v-form ref="form" v-model="valid">
-        <v-autocomplete :items="deviceEvents" label="Event to send to platform" v-model="selectedEvent" @change="eventChanged" autowidth />
+        <v-autocomplete :items="deviceEvents" label="Event to send to platform" v-model="selectedEvent" @change="eventChanged" autowidth auto-select-first />
         <v-dialog v-model="logDialog" width="500">
             <template v-slot:activator="{ on, attrs}">
                 <v-btn text v-bind="attrs" v-on="on">
@@ -21,10 +21,10 @@
             </v-card>
 
         </v-dialog>
-        <v-btn text @click="mirrorMethod">
+        <v-btn text @click="mirrorMethod" :disabled="disabledMirror">
             <v-icon>mdi-cog</v-icon>
         </v-btn>
-        <v-btn text @click="modelformMethod">
+        <v-btn text @click="modelformMethod" :disabled="disabledModel">
             <v-icon> mdi-grease-pencil</v-icon>
         </v-btn>
         <div v-if="mirror">
@@ -80,6 +80,23 @@ export default {
     },
     mixins: [baseUserApiMixin],
     computed: {
+        disabledMirror(){
+            if(this.selectedEvent){
+                return false
+            }
+            else {
+                return true
+            }
+        },
+        disabledModel(){
+            if(this.selectedEvent){
+                return false
+            }
+            else {
+                return true
+            }
+        },
+
         deviceId() {
             return this.$route.query.id
         },
@@ -96,11 +113,9 @@ export default {
             } else {
 
                 this.jsonEvent[this.deviceId] = ["birthEvent", "endLifeTimeEvent", "statusEvent", "tamperingEvent", "temperatureEvent", "batteryEvent"]
-                if (Array.isArray(this.jsonEvent[this.deviceId])) {
+                console.log(this.jsonEvent[this.deviceId])
                     return this.jsonEvent[this.deviceId]
-                } else {
-                    return this.jsonEvent[this.deviceId].split(",")
-                }
+                
             }
         }
     },
@@ -151,6 +166,9 @@ export default {
             }
             else if(!this.mirror){
                 this.mirror = true
+                 setTimeout(() => {
+                this.linter()
+            }, 1000)
             }
         },
          modelformMethod(){
@@ -459,6 +477,7 @@ export default {
 
             }
             localStorage.events = JSON.stringify(this.jsonEvent)
+            this.eventTextField = ''
             this.logDialog = false
 
         },
@@ -487,9 +506,6 @@ export default {
                
                 // se guarda una copia para trabajar con ella
             }
-            setTimeout(() => {
-                this.linter()
-            }, 1000)
                 if (!localStorage.eventModel) {
                     localStorage.eventModel = JSON.stringify({})
                 } else {
@@ -505,6 +521,9 @@ export default {
 
                 }
                 this.innerModel = this.jsonModel[this.deviceId][newEvent]
+             setTimeout(() => {
+                this.linter()
+            }, 1000)
             
         },
         saveModel() {

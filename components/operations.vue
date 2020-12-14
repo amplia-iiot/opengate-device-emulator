@@ -121,9 +121,19 @@ export default {
                 return []
             }
             if (!localStorage.operationsConfig) {
-                return {
-                    ...this.availableOperations
-                }
+                return this.availableOperations.map((operationName) => {
+                    const finalElement = {
+                        text: {
+                            name: operationName,
+                            configured: false,
+                            enabled: false
+                        },
+                        value: operationName
+                    }
+                    return finalElement
+
+                })
+                
             } else {
                 const jsonList = JSON.parse(localStorage.operationsConfig)
 
