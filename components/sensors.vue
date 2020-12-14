@@ -26,7 +26,7 @@ import "@koumoul/vjsf/lib/deps/third-party.js";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 
 export default {
-    name: "sensores",
+    name: "sensors",
     mixins: [baseUserApiMixin],
     components: {
         VJsf,
@@ -60,7 +60,7 @@ export default {
                 "device.powersupply.battery.status",
                 "device.powersupply.battery.voltage",
                 "device.powersupply.outage",
-                "device.powersupplname: 'sistema',sk.total",
+                "device.powersupplname: 'system',sk.total",
                 "device.storage.disk.usage",
                 "device.storage.ramDisk.total",
                 "device.storage.ramDisk.usage",

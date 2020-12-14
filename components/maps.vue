@@ -46,7 +46,7 @@ export default {
             default: () => null,
         }
     },
-    name: "mapas",
+    name: "maps",
     inject: {
         theme: {
             default: {
