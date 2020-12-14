@@ -1,0 +1,23 @@
+[
+  {
+    "name": "emulador",
+    "path": "/emulador",
+    "component": "C:\\\\Users\\\\Angel\\\\Documents\\\\opengate-device-emulator\\\\pages\\\\emulador.vue",
+    "chunkName": "pages/emulador",
+    "_name": "_72e9494a"
+  },
+  {
+    "name": "listerpage",
+    "path": "/listerpage",
+    "component": "C:\\\\Users\\\\Angel\\\\Documents\\\\opengate-device-emulator\\\\pages\\\\listerpage.vue",
+    "chunkName": "pages/listerpage",
+    "_name": "_e4cf25a0"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "C:\\\\Users\\\\Angel\\\\Documents\\\\opengate-device-emulator\\\\pages\\\\index.vue",
+    "chunkName": "pages/index",
+    "_name": "_ef850228"
+  }
+]

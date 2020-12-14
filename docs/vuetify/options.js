@@ -1,0 +1,1 @@
+export default {"theme":{"light":true,"themes":{"light":{"primary":"#ffa72f","secondary":"#20AE74","accent":"#E38605"},"dark":{"primary":"#ffa72f","secondary":"#20AE74","accent":"#E38605"}},"options":{"customProperties":true}}}
