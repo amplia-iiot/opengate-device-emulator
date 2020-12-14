@@ -1,13 +1,13 @@
 <template>
   <div style="padding: 10px">
     <v-tabs-items v-model="tabActivo">
-      <v-tab-item value="sistema">
-        <sistema :basic-types="basicTypes"
+      <v-tab-item value="system">
+        <system :basic-types="basicTypes"
           :datastreams="datastreams"
           :model="model"/>
       </v-tab-item>
-      <v-tab-item value="sensores">
-        <sensores
+      <v-tab-item value="sensors">
+        <sensors
           :basic-types="basicTypes"
           :datastreams="datastreams"
           :model="model"
@@ -20,19 +20,19 @@
       <v-tab-item value="eventos">
         <eventos/>
       </v-tab-item>
-      <v-tab-item value="mapas">
-        <mapas :model="model"/>
+      <v-tab-item value="maps">
+        <maps :model="model"/>
       </v-tab-item>
     </v-tabs-items>
   </div>
 </template>
 
 <script>
-import sistema from "@/components/sistema"
-import sensores from "@/components/sensores"
+import system from "@/components/system"
+import sensors from "@/components/sensors"
 import operations from "@/components/operations"
 import eventos from "@/components/eventos"
-import mapas from "@/components/mapas"
+import maps from "@/components/maps"
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js"
 import { mapMutations } from "vuex"
 import textField from '@/mixins/textField.mixin.js'
@@ -40,10 +40,10 @@ import textField from '@/mixins/textField.mixin.js'
 
 export default {
   components: {
-    sistema,
-    sensores,
+    system,
+    sensors,
     operations,
-    mapas,
+    maps,
   },
   mixins: [baseUserApiMixin,textField],
   computed: {
@@ -57,7 +57,7 @@ export default {
   },
   data() {
     return {
-      tabActivo: "sistema",
+      tabActivo: "system",
       drawer: false,
       group: null,
       deviceData: null,

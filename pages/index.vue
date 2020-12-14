@@ -6,11 +6,11 @@
           <div class="titleEmulator">
             EMULATOR DEVICE
           </div>
-            <p class="subtitleP">Una herramienta con la que podras simular multiples dispositivos. </p>
+            <p class="subtitleP">Una herramienta con la que podras emular multiples dispositivos. </p>
                 
-            <p class="subtitleP">    Configura tu dispositivo y potencia tu proyecto.</p> 
+            <p class="subtitleP">Interactuar con ellos, recibiendo y enviando datos.</p> 
                 
-            <p class="subtitleP">    Reduce costes e incrementa rendimiento</p>
+            <p class="subtitleP"></p>
           <v-list-item-subtitle> 
               <a :ref="url"> Amplia)))</a>
           </v-list-item-subtitle>
@@ -24,9 +24,9 @@
             <v-card-text >
                 <v-form ref="form" v-model="valid" lazy-validation class="formLogin">
                     <!-- <v-autocomplete style="color: red; " class="items" v-model="servidor" :items="items" label="servidor" required></v-autocomplete> -->
-                    <v-text-field v-model="name" label="Nombre"></v-text-field>
-                    <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="Contraseña" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
-                    <v-checkbox v-model="checkbox" :label="`Recordar datos`"></v-checkbox>
+                    <v-text-field v-model="name" label="Name"></v-text-field>
+                    <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="password" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
+                    <v-checkbox v-model="checkbox" :label="`Remember me`"></v-checkbox>
                     <v-btn color="primary" class="mr-4" @click="enviar"> Login </v-btn>
                 </v-form>
             </v-card-text>        
@@ -35,9 +35,9 @@
             <v-card-text class="loginPc" >
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <!-- <v-autocomplete style="color: red; " class="items" v-model="servidor" :items="items" label="servidor" required></v-autocomplete> -->
-                    <v-text-field v-model="name" label="Nombre"></v-text-field>
-                    <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="Contraseña" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
-                    <v-checkbox v-model="checkbox" :label="`Recordar datos`"></v-checkbox>
+                    <v-text-field v-model="name" label="Name"></v-text-field>
+                    <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" name="input-10-1" label="password" counter @click:append="show1 = !show1" @keyup.enter="enviar"></v-text-field>
+                    <v-checkbox v-model="checkbox" :label="`Remember me`"></v-checkbox>
                     <v-btn color="primary" class="mr-4" @click="enviar"> Login </v-btn>
                 </v-form>
             </v-card-text>        
@@ -120,18 +120,18 @@ export default {
             } catch (errPeticion) {
                 console.error(errPeticion)
                 alert("Constraseña o Usuario Incorrectos!")
-                delete localStorage.nombre
+                delete localStorage.name
                 delete localStorage.servidor
                 delete localStorage.password
 
             }
 
             console.log(
-                "Nombre " +
+                " Name " +
                 this.name +
                 " servidor: " +
                 this.servidor +
-                " Contraseña: " +
+                " Password: " +
                 this.password +
                 " Recordar: " +
                 this.checkbox
@@ -180,7 +180,7 @@ export default {
             } catch (errPeticion) {
                 console.error(errPeticion)
                 alert("Constraseña o Usuario Incorrectos!")
-                delete localStorage.nombre
+                delete localStorage.name
                 delete localStorage.servidor
                 delete localStorage.password
                 delete localStorage.api

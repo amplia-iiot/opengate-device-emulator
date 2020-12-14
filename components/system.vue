@@ -17,7 +17,7 @@ import "@koumoul/vjsf/lib/deps/third-party.js";
 import baseUserApiMixin from "@/mixins/baseUserApi.mixin.js";
 
 export default {
-    name: 'sistema',
+    name: 'system',
     components: {
         VJsf,
     },

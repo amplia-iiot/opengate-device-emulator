@@ -76,7 +76,7 @@
                         </v-list-item-content>
                     </v-list-item>
                     <div v-if="deviceId" class="mobile">
-                    <v-list-item @click="setContent('sistema')">
+                    <v-list-item @click="setContent('system')">
                         <v-list-item-icon>
                         <v-icon>mdi-cellphone-link</v-icon>
                         </v-list-item-icon>
@@ -84,7 +84,7 @@
                             <v-list-item-title>System</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="setContent('sensores')">
+                    <v-list-item @click="setContent('sensors')">
                         <v-list-item-icon>
                         <v-icon>mdi-list-status</v-icon>
                         </v-list-item-icon>
@@ -108,7 +108,7 @@
                             <v-list-item-title>Events</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item @click="setContent('mapas')">
+                    <v-list-item @click="setContent('maps')">
                         <v-list-item-icon>
                         <v-icon>mdi-map-marker-radius</v-icon>
                         </v-list-item-icon>
@@ -144,16 +144,16 @@
             </v-menu>
         </v-toolbar-items>
 
-        <template v-slot:extension>
-            <v-text-field v-if="!deviceId" label="Search device" clearable v-model="field" @keyup.enter="search" @click:append="search" @click:clear="search" single-line solo solo-inverted hide-details dense append-icon="mdi-magnify" />
+        <template  v-slot:extension>
+            <v-text-field  v-if="!deviceId" label="Search device" clearable v-model="field" @keyup.enter="search" @click:append="search" @click:clear="search" single-line solo solo-inverted hide-details dense append-icon="mdi-magnify" />
 
-            <v-tabs v-if="deviceId" v-model="tabActivo" grow centered dense icons-and-text
-            class="no-mobile">
-                <v-tab class="ma-0" href="#sistema">
+            <v-tabs class="no-mobile" v-if="deviceId" v-model="tabActivo" grow centered dense icons-and-text
+            >
+                <v-tab class="ma-0" href="#system">
                     <span >System</span>
                     <v-icon>mdi-cellphone-link</v-icon>
                 </v-tab>
-                <v-tab class="ma-0" href="#sensores">
+                <v-tab class="ma-0" href="#sensors">
                     <span>Sensors</span>
                     <v-icon>mdi-list-status</v-icon>
                 </v-tab>
@@ -165,7 +165,7 @@
                     <span>Events</span>
                     <v-icon>mdi-calendar-alert</v-icon>
                 </v-tab>
-                <v-tab class="ma-0" href="#mapas">
+                <v-tab class="ma-0" href="#maps">
                     <span>Map</span>
                     <v-icon>mdi-map-marker-radius</v-icon>
                 </v-tab>
@@ -200,7 +200,7 @@ export default {
             logDialog: false,
             logoutDialog: false,
             valid: false,
-            tabActivo: "sistema",
+            tabActivo: "system",
             menu: false,
             mqttClient: null,
             socketConnected: null,
@@ -228,7 +228,7 @@ export default {
             });
         },
         routerlister(id) {
-            this.tabActivo = "sistema"
+            this.tabActivo = "system"
             this.$router.push({
                 path: "/listerpage",
             });
@@ -539,8 +539,7 @@ export default {
     .menu,
     .mobile {
         display: block;
-    }
-
+    }  
     .no-mobile {
         display: none;
     }
