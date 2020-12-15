@@ -8,8 +8,14 @@ module.exports = {
 export default {
   // Disable server-side rendering (https://go.nuxtjs.dev/ssr-mode)
   ssr: false,
+  build: {
+    publicPath: 'https://amplia-iiot.github.io/opengate-device-emulator'
+  },
   generate: {
     dir: 'docs'
+  },
+  router: {
+    base: '/opengate-device-emulator/'
   },
   // Global page headers (https://go.nuxtjs.dev/config-head)
   head: {
