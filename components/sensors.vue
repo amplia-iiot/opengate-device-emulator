@@ -1,6 +1,6 @@
 <template>
 <div>
-      <v-text-field @keyup.enter="autoSend" v-model="contSend" color="accent" label="Envio automatico" dense rounded type="number" outlined hide-details>            
+      <v-text-field @keyup.enter="autoSend" v-model="contSend" color="accent" label="Autoship" dense rounded type="number" outlined hide-details>            
           <template v-slot:prepend>
             <v-simple-checkbox color="primary" v-model="switchMe" @click="autoSend"></v-simple-checkbox>
         </template>

@@ -6,13 +6,13 @@
           <div class="titleEmulator">
             EMULATOR DEVICE
           </div>
-            <p class="subtitleP">Una herramienta con la que podras emular multiples dispositivos. </p>
+            <p class="subtitleP">A tool with which you can emulate multiple devices. </p>
                 
-            <p class="subtitleP">Interactuar con ellos, recibiendo y enviando datos.</p> 
+            <p class="subtitleP">Interact with them, receiving and sending data.</p> 
                 
             <p class="subtitleP"></p>
           <v-list-item-subtitle> 
-              <a :ref="url"> Amplia)))</a>
+              <a :ref="url"> amplia)))</a>
           </v-list-item-subtitle>
         </v-list-item-content>
   
