@@ -289,7 +289,7 @@ export default {
                 }
 
                 this.mqttClient = new WebSocket(
-                    "ws://api.opengate.es/south/v80/sessions/" + this.deviceId + "?X-ApiKey=" + this.apiUsuario.apiKey
+                    "wss://api.opengate.es/south/v80/sessions/" + this.deviceId + "?X-ApiKey=" + this.apiUsuario.apiKey
                 );
 
                 this.mqttClient.onmessage = (event) => {
