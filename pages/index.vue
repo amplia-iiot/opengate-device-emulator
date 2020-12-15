@@ -221,12 +221,12 @@ export default {
     max-width: 40%;
 }
 .loginCard{
-    opacity: 0.98;
+    opacity: 0.95;
     max-width:50%;
     left:50%;
     transform:translate(-50%, -50%);
     top:50%;
-    height:35%;
+    height:40%;
     
 }
 .loginPc{
