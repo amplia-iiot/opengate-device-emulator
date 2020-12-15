@@ -4,7 +4,7 @@
       <v-list-item three-line class="login-extend" >
         <v-list-item-content>
           <div class="titleEmulator">
-            EMULATOR DEVICE
+            DEVICE EMULATOR  
           </div>
             <p class="subtitleP">A tool with which you can emulate multiple devices. </p>
                 
